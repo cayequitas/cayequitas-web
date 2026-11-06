@@ -65,6 +65,7 @@ nav a[aria-current="page"]{color:var(--bone);border-bottom-color:var(--lime)}
 .pi-t.settled .c{transition:none;will-change:auto}
 @media (max-width:820px){.pi-t{font-size:13vw;line-height:.95}}
 #home h1 em.px{font-family:"Hogisogi",var(--mono);font-weight:700;letter-spacing:.01em;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--lime);animation:pxFlick 5s steps(1) infinite;text-shadow:0 0 34px rgba(209,251,70,.35)}
+#home h1 em.blink{animation:sheen 6s linear infinite,pxFlick 5s steps(1) infinite}
 @keyframes pxFlick{0%,86%,100%{opacity:1}88%{opacity:.2}90%{opacity:1}92%{opacity:.35}94%{opacity:1}}
 
 a.ext{color:var(--lime);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;transition:color .2s}a.ext:hover{color:#fff}
@@ -365,7 +366,7 @@ section.view.wrap::before{display:none}
   </div>
   <div class="copy wrap">
     <div class="eyebrow mono"><span class="pill">Media artist &amp; technical director</span><span class="pill ghost">Berlin · worldwide</span></div>
-    <h1>Pushing <em class="px">pixels</em><br>to create feelings</h1>
+    <h1>Pushing pixels<br>to <em class="blink">create feelings</em></h1>
     <div class="row">
       <p class="lede glass">Carlos Serrano captures the physical world with scans, photogrammetry and volumetric video, and rebuilds it as living, reactive systems for stages, domes and spaces.</p>
       <button class="featcard glass" id="featCard" type="button">
