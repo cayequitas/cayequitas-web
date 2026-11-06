@@ -312,7 +312,7 @@ section.view.wrap::before{display:none}
 <header class="wrap">
   <a class="brand" href="#home"><span class="logo cs" id="logoCs" role="img" aria-label="carlos serrano"></span><span class="voice mono" id="voice">Real-time artist</span></a>
   <nav class="mono" aria-label="Main">
-    <a href="#projects">Projects</a><a href="#shows">Shows</a><a href="#lab">Lab</a><a href="#archive">Archive</a><a href="#about">About</a>
+    <a href="#projects">Projects</a><a href="#shows">Shows</a><a href="#lab">Lab</a><a href="#about">About</a>
   </nav>
 </header>
 
@@ -412,7 +412,7 @@ section.view.wrap::before{display:none}
 
 <footer class="wrap mono"><span>hola@cayequitas.com</span><span>@cayequitas</span><span class="logo cs" style="height:30px" role="img" aria-label="carlos serrano"></span></footer>
 
-<div class="ribbon wrap"><span class="mono">Prototype v0.7 · look and structure only</span><span class="mono">Heuvel Grotesk + Hogisogi · real logos</span></div>
+<div class="ribbon wrap"><span class="mono">Prototype v0.8 · look and structure only</span><span class="mono">Heuvel Grotesk + Hogisogi · real logos</span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 <script>
@@ -422,7 +422,7 @@ document.querySelectorAll(".logo.cs").forEach(el=>{el.style.setProperty("--src",
 document.querySelectorAll(".logo.caye").forEach(el=>{el.style.setProperty("--src",`url(${LOGO.caye.src})`);el.style.setProperty("--ar",LOGO.caye.ar)});
 const P = __PROJECTS__;
 const SHOWS = __SHOWS__;
-const LANES = {stage:{name:"Stage & live",c:"#D1FB46"},immersive:{name:"Immersive & spatial",c:"#86A80C"},systems:{name:"Systems & R&D",c:"#707070"}};
+const LANES = {stage:{name:"Stage & live",c:"#D1FB46"},worlds:{name:"Virtual worlds",c:"#FFFFFF"},immersive:{name:"Immersive & spatial",c:"#86A80C"},systems:{name:"Systems & R&D",c:"#707070"}};
 const $ = s => document.querySelector(s);
 const bySlug = Object.fromEntries(P.map(p=>[p.slug,p]));
 
@@ -432,6 +432,7 @@ function route(){
   let h = (location.hash||"#home").slice(1);
   let target = h, slug = null;
   if (h.startsWith("p-")) { target = "project"; slug = h.slice(2); }
+  if (h==="archive") { location.replace("#projects"); return; }
   if (!views.includes(target)) target = "home";
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on", s.id===target));
   document.querySelectorAll("nav a").forEach(a=>a.setAttribute("aria-current", a.getAttribute("href")==="#"+target || (target==="project" && a.getAttribute("href")==="#projects") ? "page":"false"));
@@ -451,7 +452,7 @@ addEventListener("hashchange", route);
 const layout=[["span 7","0","16/10"],["span 4","120px","4/5"],["span 5","0","1/1"],["span 6","80px","16/9"],["span 4","0","3/4"],["span 8","60px","16/9"],["span 5","0","4/3"],["span 6","140px","4/3"],["span 4","40px","1/1"],["span 7","0","16/10"],["span 5","100px","4/5"],["span 6","0","3/2"],["span 6","60px","4/3"],["span 4","0","1/1"]];
 const live = P.filter(p=>!p.archive);
 const filt=$("#filters"); let active="all";
-const opts=[["all","All",null],["stage",LANES.stage.name,LANES.stage.c],["immersive",LANES.immersive.name,LANES.immersive.c],["systems",LANES.systems.name,LANES.systems.c],["com","Commissions",null],["cay","Cayé (art)",null]];
+const opts=[["all","All",null],["stage",LANES.stage.name,LANES.stage.c],["worlds",LANES.worlds.name,LANES.worlds.c],["immersive",LANES.immersive.name,LANES.immersive.c],["systems",LANES.systems.name,LANES.systems.c],["com","Commissions",null],["cay","Cayé (art)",null]];
 opts.forEach(([k,label,c])=>{const b=document.createElement("button");b.type="button";b.className="chip";b.setAttribute("aria-pressed",k==="all");b.innerHTML=(c?`<span class="sw" style="background:${c}"></span>`:"")+label;b.onclick=()=>{active=k;[...filt.children].forEach(x=>x.setAttribute("aria-pressed",x===b));applyFilter()};filt.appendChild(b)});
 const col=$("#collage");
 live.forEach((p,i)=>{
