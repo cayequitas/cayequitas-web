@@ -122,7 +122,7 @@ if PUBLIC:
     P, SHOWS = P2, S2
     html = re.sub(r'<p class="[^"]*\bpnote\b[^"]*"[^>]*>.*?</p>', '', html, flags=re.S)
     html = html.replace('__TITLE__', 'Carlos Serrano · Portfolio')
-    html = html.replace('__RIBBON__', '<span class="mono">Website portfolio from Carlos Serrano</span>')
+    html = html.replace('__RIBBON__', '<span class="mono">Website portfolio from Carlos Serrano</span><a class="mono ig" href="https://www.instagram.com/cayequitas/" target="_blank" rel="noopener">@cayequitas ↗</a>')
     html = html.replace('<main', '<script>document.documentElement.classList.add("public")</script><main', 1)
     html = html.replace('const P = ', 'const PUBLIC = true;\nconst P = ', 1)
     out = sys.argv[sys.argv.index('--out') + 1] if '--out' in sys.argv else os.path.join(base, 'site.html')
