@@ -241,6 +241,49 @@ const Lab = (function(){
   return {start(){t0=performance.now();resize();prog=0;smooth=0;if(REDUCED){frame(t0+1000);return}runLoop(frame)},stop(){stopLoop()}};
 })();
 
+/* ---------- ABOUT: portrait as particles, with the home scan line ---------- */
+const Portrait = (function(){
+  const fig=$("#portrait"); if(!fig) return {render(){},start(){}};
+  if(!HAS_GL){fig.classList.add("nogl");return {render(){},start(){}}}
+  const canvas=$("#gl-portrait");
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setClearColor(0x000000,0);
+  const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(30,4/5,.1,50); camera.position.set(0,0,4.6);
+  const U={uTime:{value:0},uScan:{value:-2},uMouse:{value:new THREE.Vector2(9,9)},uIntro:{value:0},uPx:{value:1},uLime:{value:LIME}};
+  let pts=null, t0=0, ready=false;
+  const im=new Image();
+  im.onload=()=>{
+    const w=300,h=375,c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
+    const pos=[],lum=[],rnd=[];const SW=1.97,SH=2.46;
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255; if(L>.92) continue; // drop the white backdrop
+      if(Math.random()>.72) continue;
+      pos.push((x/w-.5)*SW+(Math.random()-.5)*.006,-(y/h-.5)*SH+(Math.random()-.5)*.006,(Math.random()-.5)*.05+(L-.5)*.12);lum.push(L);rnd.push(Math.random());}
+    const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));geo.setAttribute("aL",new THREE.Float32BufferAttribute(lum,1));geo.setAttribute("aR",new THREE.Float32BufferAttribute(rnd,1));
+    pts=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:U,transparent:true,depthWrite:false,blending:THREE.NormalBlending,
+      vertexShader:`uniform float uTime,uScan,uIntro,uPx;uniform vec2 uMouse;attribute float aL,aR;varying float vL,vS;
+        void main(){vec3 p=position;vL=aL;
+          p.z+=sin(p.y*5.+uTime*1.3+aR*6.28)*.025;
+          float d=distance(p.xy,uMouse);p+=vec3(normalize(p.xy-uMouse+.0001),.4)*smoothstep(.35,0.,d)*.18;
+          vec3 off=vec3(sin(aR*91.),cos(aR*57.),sin(aR*13.))*1.8;p=mix(p+off,p,smoothstep(0.,1.,clamp(uIntro*1.3-aR*.3,0.,1.)));
+          vS=smoothstep(.07,0.,abs(p.y-uScan));
+          vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=(1.9+aR*.9+vS*2.)*uPx*(4.6/-mv.z);}`,
+      fragmentShader:`uniform vec3 uLime;varying float vL,vS;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
+        float b=.12+pow(smoothstep(.06,.84,vL),.7)*1.1;vec3 col=mix(vec3(b),uLime,clamp(vS*1.3,0.,1.));gl_FragColor=vec4(col,smoothstep(.5,0.,d)*(.85+vS*.4));}`}));
+    scene.add(pts);ready=true;};
+  im.src=$("#portraitImg").src;
+  function size(){const r=canvas.getBoundingClientRect();if(!r.width)return;const pr=Math.min(devicePixelRatio,2);renderer.setPixelRatio(pr);renderer.setSize(r.width,r.height,false);U.uPx.value=pr*r.height/650;}
+  addEventListener("resize",size);
+  const ray=new THREE.Raycaster(),pv=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,0,1),0),hit=new THREE.Vector3();
+  return {start(){t0=performance.now();U.uIntro.value=0;size();},
+    render(now){if(!ready)return;const r=canvas.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
+      if(renderer.domElement.width===0)size();
+      const t=(now-t0)/1000;U.uTime.value=t;U.uIntro.value=Math.min(1,t/2.4);
+      U.uScan.value=1.15-((t*.32)%1)*2.6; // scan sweeps top to bottom
+      pv.set(((mouse.x-r.left)/r.width)*2-1,-((mouse.y-r.top)/r.height)*2+1);ray.setFromCamera(pv,camera);
+      if(Math.abs(pv.x)<1.2&&Math.abs(pv.y)<1.2&&ray.ray.intersectPlane(plane,hit))U.uMouse.value.set(hit.x,hit.y);else U.uMouse.value.set(9,9);
+      pts.rotation.y=Math.sin(t*.25)*.06+(pv.x>-1.2&&pv.x<1.2?pv.x*.08:0);
+      renderer.render(scene,camera);}};
+})();
+
 /* ---------- AMBIENT: 3D world seen through frosted glass ---------- */
 const Amb = (function(){
   if(!HAS_GL) return {start(){},stop(){}};
@@ -282,8 +325,8 @@ const Amb = (function(){
     floor.position.z=Math.floor(camera.position.z/1.4)*1.4;
     solids.forEach((m,i)=>{m.rotation.x=t*m.userData.s;m.rotation.y=t*m.userData.s*1.3;m.position.y=m.userData.b.y+Math.sin(t*.35+i)*.25;m.position.z=m.userData.b.z+camera.position.z-6});
     orbs.forEach((m,i)=>{m.position.x=m.userData.b.x+Math.sin(t*.08+i*2)*1.2;m.position.y=m.userData.b.y+Math.cos(t*.06+i)*.6;m.position.z=m.userData.b.z+camera.position.z-6;m.quaternion.copy(camera.quaternion)});
-    renderer.render(scene,camera);}
-  return {start(m){mode=m;resize();t0=performance.now();canvas.classList.add("on");$("#frost").classList.add("on");if(REDUCED){frame(t0+2000);return}runLoop(frame)},
+    renderer.render(scene,camera);if(mode==="about")Portrait.render(now);}
+  return {start(m){mode=m;resize();t0=performance.now();if(m==="about")Portrait.start();canvas.classList.add("on");$("#frost").classList.add("on");if(REDUCED){frame(t0+2000);return}runLoop(frame)},
     stop(){mode="";canvas.classList.remove("on");$("#frost").classList.remove("on");stopLoop()}};
 })();
 // deepen the glass while choosing a project

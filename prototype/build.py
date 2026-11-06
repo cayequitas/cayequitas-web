@@ -132,5 +132,7 @@ else:
     html = html.replace('const P = ', 'const PUBLIC = false;\nconst P = ', 1)
     out = os.path.join(base, 'cayequitas-prototype.html')
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
+import base64
+html = html.replace('__PORTRAIT__', 'data:image/jpeg;base64,' + base64.b64encode(open(os.path.join(base, 'data', 'portrait.jpg'), 'rb').read()).decode())
 open(out, 'w').write(html)
 print(len(html)//1024, 'KB')
