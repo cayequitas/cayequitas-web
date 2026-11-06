@@ -74,6 +74,16 @@ nav a[aria-current="page"]{color:var(--bone);border-bottom-color:var(--lime)}
 #home h1.dyn .feel{font-size:1.32em;font-weight:900;letter-spacing:-.015em;padding-right:.05em;line-height:.82;background:linear-gradient(180deg,#fff 35%,rgba(255,255,255,.6));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;transform-origin:20% 60%;animation:beat 2.4s cubic-bezier(.3,0,.2,1) infinite;filter:drop-shadow(0 0 0 rgba(209,251,70,0))}
 @keyframes beat{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(209,251,70,0))}8%{transform:scale(1.045);filter:drop-shadow(0 0 22px rgba(209,251,70,.55))}16%{transform:scale(1)}24%{transform:scale(1.03);filter:drop-shadow(0 0 16px rgba(209,251,70,.4))}40%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(209,251,70,0))}}
 @media (prefers-reduced-motion:reduce){#home h1.dyn .feel,#home h1.dyn .px1{animation:none}}
+
+#home h1.one{font-size:clamp(32px,8vw,145px);white-space:nowrap;line-height:.9;letter-spacing:-.01em;
+  background:linear-gradient(100deg,#fff 0%,#fff 38%,var(--lime) 46%,#86A80C 50%,#fff 58%,#fff 100%);background-size:300% 100%;background-position:100% 0;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:sweepTxt 6s cubic-bezier(.65,0,.35,1) infinite}
+#home h1.one span{background:inherit;background-size:inherit;-webkit-background-clip:text;background-clip:text;color:transparent}
+#home h1.one .l{font-weight:300;letter-spacing:-.005em}
+#home h1.one .feel{background:linear-gradient(90deg,var(--lime),#86A80C 50%,var(--lime));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;animation:sheen 4s linear infinite,feelGlow 6s ease-in-out infinite}
+@keyframes sweepTxt{0%{background-position:100% 0}55%,100%{background-position:0% 0}}
+@keyframes feelGlow{0%,45%,100%{filter:drop-shadow(0 0 0 rgba(209,251,70,0))}55%{filter:drop-shadow(0 0 28px rgba(209,251,70,.55))}70%{filter:drop-shadow(0 0 6px rgba(209,251,70,.15))}}
+@media (prefers-reduced-motion:reduce){#home h1.one,#home h1.one .feel{animation:none}}
 @keyframes pxFlick{0%,86%,100%{opacity:1}88%{opacity:.2}90%{opacity:1}92%{opacity:.35}94%{opacity:1}}
 
 a.ext{color:var(--lime);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;transition:color .2s}a.ext:hover{color:#fff}
@@ -374,7 +384,7 @@ section.view.wrap::before{display:none}
   </div>
   <div class="copy wrap">
     <div class="eyebrow mono"><span class="pill">Media artist &amp; technical director</span><span class="pill ghost">Berlin · worldwide</span></div>
-    <h1 class="dyn" aria-label="Pixels you can feel"><span class="px1" aria-hidden="true">Pixels</span><span class="row2" aria-hidden="true"><span class="yc">you<br>can</span><span class="feel">feel</span></span></h1>
+    <h1 class="one"><span class="b">Pixels</span> <span class="l">you can</span> <span class="b feel">feel</span></h1>
     <div class="row">
       <p class="lede glass">Carlos Serrano captures the physical world with scans, photogrammetry and volumetric video, and rebuilds it as living, reactive systems for stages, domes and spaces.</p>
       <button class="featcard glass" id="featCard" type="button">
