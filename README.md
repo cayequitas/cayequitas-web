@@ -21,7 +21,7 @@ python3 prototype/build.py
 
 ### Fonts
 
-Heuvel Grotesk and Hogisogi are licensed and are not in this repository. To embed them locally, add `prototype/data/fonts.json` with base64 data URIs (it is gitignored). Without it the build falls back to system fonts.
+Heuvel Grotesk and Hogisogi are in `prototype/fonts/` (source files) and `prototype/data/fonts.json` (base64, embedded by the build).
 
 ### Palette
 

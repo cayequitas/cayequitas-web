@@ -94,7 +94,7 @@ LAB = [
 ]
 html = open(os.path.join(base, 'template.html')).read()
 brand = json.load(open(os.path.join(base, 'data', 'logos.json')))
-# Brand fonts are licensed and are NOT committed. Put a local fonts.json ({"fonts": {...}}) in data/ to embed them.
+# Brand fonts (Heuvel Grotesk, Hogisogi) as base64 data URIs
 fp = os.path.join(base, 'data', 'fonts.json')
 brand['fonts'] = json.load(open(fp))['fonts'] if os.path.exists(fp) else {}
 ff = ''
