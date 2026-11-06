@@ -16,7 +16,8 @@ Phase 0: clickable prototype. The production app (Next.js + Payload CMS + Postgr
 - `build.py`: assembles everything into `prototype/cayequitas-prototype.html`
 
 ```
-python3 prototype/build.py
+python3 prototype/build.py            # prototype with review notes and TBC markers
+python3 prototype/build.py --public   # clean review build (what GitHub Pages deploys)
 ```
 
 ### Fonts

@@ -1,4 +1,4 @@
-<title>Cayé Site Prototype</title>
+<title>__TITLE__</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 __FONTFACE__
@@ -41,6 +41,7 @@ nav a:hover{color:var(--bone)}
 nav a[aria-current="page"]{color:var(--bone);border-bottom-color:var(--lime)}
 .ribbon{position:fixed;bottom:0;left:0;right:0;z-index:25;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--lime);color:var(--void)}
 .ribbon .mono{font-size:10px}
+.public .pnote{display:none!important}
 
 main{min-height:100%}
 section.view{display:none;padding-top:96px;padding-bottom:80px}
@@ -356,7 +357,7 @@ section.view.wrap::before{display:none}
 <section class="view wrap" id="shows" aria-label="Shows and exhibitions">
   <div class="pagehead"><h2>Shows &amp; exhibitions</h2><span class="mono" style="color:var(--ash)">Hover a year</span></div>
   <div class="index-wrap"><table class="index" id="index"></table></div>
-  <p class="note mono">Draft from the CV and the current site. Years and venues marked TBC need your confirmation. In the real app this list is generated from the Shows collection and syncs with your calendar.</p>
+  <p class="note mono pnote">Draft from the CV and the current site. Years and venues marked TBC need your confirmation. In the real app this list is generated from the Shows collection and syncs with your calendar.</p>
 </section>
 
 <section class="view" id="lab" aria-label="Lab">
@@ -377,7 +378,7 @@ section.view.wrap::before{display:none}
     <div class="lab-prog"><i id="labProg"></i></div>
   </div>
   <div class="lab-spacer" id="labSpacer"></div>
-  <p class="note mono lab-note wrap">Stand-in stills from existing projects. In the real Lab each panel is a 3–6 s muted loop from your Instagram R&amp;D posts, it starts playing when the scan line reaches it, and pointing at it brings it to the front, clean and playing.</p>
+  <p class="note mono lab-note wrap pnote">Stand-in stills from existing projects. In the real Lab each panel is a 3–6 s muted loop from your Instagram R&amp;D posts, it starts playing when the scan line reaches it, and pointing at it brings it to the front, clean and playing.</p>
 </section>
 
 <section class="view" id="archive" aria-label="Archive">
@@ -394,7 +395,7 @@ section.view.wrap::before{display:none}
       <p>His practice starts from the physical world. Photogrammetry, 3D scans and volumetric video become the raw material for generative, reactive systems that examine perception, memory and the machine's gaze. As Cayé he performs live A/V and creates fulldome and installation work; as Carlos Serrano he leads real-time pipelines and technical direction for studios and tours.</p>
       <p>He has taught in the M.A. Media Spaces programme and gives TouchDesigner talks and workshops.</p>
       <span class="logo cs big" role="img" aria-label="carlos serrano" style="margin:8px 0 28px"></span>
-      <p class="mono" style="color:var(--ash)">Draft bio for review. Download CV (generated from the same project data)</p>
+      <p class="mono pnote" style="color:var(--ash)">Draft bio for review. Download CV (generated from the same project data)</p>
     </div>
     <div class="cards">
       <div class="card glass"><h3 class="mono">Selected stages &amp; venues</h3>
@@ -412,7 +413,7 @@ section.view.wrap::before{display:none}
 
 <footer class="wrap mono"><span>hola@cayequitas.com</span><span>@cayequitas</span><span class="logo cs" style="height:30px" role="img" aria-label="carlos serrano"></span></footer>
 
-<div class="ribbon wrap"><span class="mono">Prototype v0.8 · look and structure only</span><span class="mono">Heuvel Grotesk + Hogisogi · real logos</span></div>
+<div class="ribbon wrap">__RIBBON__</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 <script>
@@ -474,14 +475,15 @@ function esc(s){return String(s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">
 function renderProject(slug){
   const p=bySlug[slug]; if(!p){location.hash="projects";return}
   document.documentElement.style.setProperty("--accent",p.accent);
-  const rows=[["Year",p.year||'<span class="todo">TBC</span>'],["Client",p.client||'<span class="todo">TBC</span>'],["Role",p.roleShort||p.role],["Venue",p.venue||'<span class="todo">TBC</span>'],["Lane",LANES[p.lane].name],["Tools",p.tools||'<span class="todo">TBC</span>']];
+  let rows=[["Year",p.year||'<span class="todo">TBC</span>'],["Client",p.client||'<span class="todo">TBC</span>'],["Role",p.roleShort||p.role],["Venue",p.venue||'<span class="todo">TBC</span>'],["Lane",LANES[p.lane].name],["Tools",p.tools||'<span class="todo">TBC</span>']];
+  if(PUBLIC) rows=rows.filter(([k,v])=>v&&!/TBC|to confirm/i.test(v));
   $("#project").innerHTML=`<button class="back mono" type="button" onclick="history.length>1?history.back():location.hash='projects'">← Back</button>
   <div class="hero"><img alt="${esc(p.title)}" src="${IMG[p.slug].img}"></div>
   <div class="titlebar"><h2>${esc(p.title)}</h2><div class="roleline">${esc(p.line)}</div></div>
   <div class="cols"><dl class="mono">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
   <div class="write">${p.text.map(t=>`<p>${esc(t)}</p>`).join("")}
   ${p.credits?`<div class="credits mono">${p.credits.map(c=>`<span>${esc(c)}</span>`).join("")}</div>`:""}
-  <p class="mono" style="color:var(--ash);margin-top:24px">Process captures, video loops and audience numbers go here.</p></div></div>`;
+  <p class="mono pnote" style="color:var(--ash);margin-top:24px">Process captures, video loops and audience numbers go here.</p></div></div>`;
 }
 
 /* ---------- shows ---------- */

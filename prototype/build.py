@@ -102,6 +102,35 @@ for k, src in brand['fonts'].items():
     name = 'Heuvel Grotesk' if fam == 'heuvel' else 'Hogisogi'
     ff += '@font-face{font-family:"%s";src:url(%s) format("opentype");font-weight:%s;font-display:swap}\n' % (name, src, w)
 html = html.replace('__FONTFACE__', ff).replace('__LOGOS__', json.dumps(brand['logos']))
+PUBLIC = '--public' in sys.argv
+if PUBLIC:
+    # Review build for GitHub Pages: no prototype notes, placeholders or TBC markers.
+    import re
+    def clean_p(p):
+        p = dict(p)
+        if re.search(r'TBC|to confirm', p.get('role', ''), re.I): p['role'] = ''
+        if re.search(r'TBC', p.get('client', '')): p['client'] = ''
+        return p
+    P2 = [clean_p(p) for p in P]
+    S2 = []
+    for s in SHOWS:
+        if s.get('up'): continue
+        s = dict(s)
+        s['venue'] = re.sub(r'\s*·?\s*(venues?|years?) TBC', '', s['venue'], flags=re.I).strip(' ·')
+        if s.get('year') == 'TBC': s['year'] = '—'
+        S2.append(s)
+    P, SHOWS = P2, S2
+    html = re.sub(r'<p class="[^"]*\bpnote\b[^"]*"[^>]*>.*?</p>', '', html, flags=re.S)
+    html = html.replace('__TITLE__', 'Carlos Serrano · Portfolio')
+    html = html.replace('__RIBBON__', '<span class="mono">Website portfolio from Carlos Serrano</span>')
+    html = html.replace('<main', '<script>document.documentElement.classList.add("public")</script><main', 1)
+    html = html.replace('const P = ', 'const PUBLIC = true;\nconst P = ', 1)
+    out = sys.argv[sys.argv.index('--out') + 1] if '--out' in sys.argv else os.path.join(base, 'site.html')
+else:
+    html = html.replace('__TITLE__', 'Cayé Site Prototype')
+    html = html.replace('__RIBBON__', '<span class="mono">Prototype v0.9 · look and structure only</span><span class="mono">Heuvel Grotesk + Hogisogi · real logos</span>')
+    html = html.replace('const P = ', 'const PUBLIC = false;\nconst P = ', 1)
+    out = os.path.join(base, 'cayequitas-prototype.html')
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
-open(os.path.join(base, 'cayequitas-prototype.html'), 'w').write(html)
+open(out, 'w').write(html)
 print(len(html)//1024, 'KB')

@@ -27,9 +27,8 @@ jobs:
           python-version: "3.12"
       - name: Build prototype
         run: |
-          python3 prototype/build.py
           mkdir -p _site
-          cp prototype/cayequitas-prototype.html _site/index.html
+          python3 prototype/build.py --public --out _site/index.html
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
