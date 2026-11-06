@@ -1,0 +1,10 @@
+# licensed brand fonts: never commit
+prototype/data/fonts.json
+*.otf
+*.ttf
+*.woff
+*.woff2
+# build output (embeds fonts when present)
+prototype/cayequitas-prototype.html
+.DS_Store
+node_modules/
