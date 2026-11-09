@@ -1,10 +1,14 @@
-# Design direction: "scan sheet" (v1.0)
+# Design direction: "scan sheet, one world" (v1.1)
 
 Carlos captures the physical world with scans and rebuilds it live, so the site reads like his capture notebook:
 a technical drawing sheet with his work on it, measured and annotated, with lime used as a highlighter.
 
 ## Rules
-- **Two grounds.** Night (black) for the live 3D views: Home and Lab. White paper for the work: Projects, a project, Shows, About.
+- **One world.** Every page is black and shares one fixed 3D layer: the Cayé mark as a point cloud. On Home it fills the screen and
+  the laser scans it on its own. On the other pages it steps aside and dims, the scan line follows the scroll, fast scrolling
+  scatters the points, and hovering a project or changing a filter nudges them. Page changes burst the points and re-form them
+  while a lime scan line sweeps down. Lab keeps its own 3D wall. (v1.0 used white paper pages; dropped because black and white
+  felt like two different sites.)
 - **Type.** Heuvel Grotesk Black, uppercase, cropped big for page heads (15vw+). Heuvel Light for contrast inside a headline.
   Hogisogi only for small labels, numbers and the count superscripts.
 - **Lime is flat.** #D1FB46 as a block behind black text (nav state, filters, hover rows, stickers, the page wipe). No gradients, no glow, no text sheen.
@@ -12,7 +16,7 @@ a technical drawing sheet with his work on it, measured and annotated, with lime
 - **Dimension lines.** Project thumbnails draw their own dimension lines on hover (aspect ratio across, index down the side);
   the home has one between the two voices (Carlos Serrano / Cayé).
 - **Stickers.** One tilted lime sticker per screen at most ("feel" on home, "Cayé" on art projects).
-- **Motion.** A lime sheet with the Cayé mark wipes between pages. Projects keeps its "Something cool in every project" intro, on lime.
+- **Motion.** Projects keeps its "Something cool in every project" intro, now over the 3D world with COOL on a lime block.
 
 ## Removed on purpose
 Glassmorphism cards, pill chips, glow blobs, noise overlay, gradient text, HUD brackets, fake FPS/clock/coordinates,
