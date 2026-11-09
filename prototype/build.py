@@ -133,6 +133,61 @@ else:
     out = os.path.join(base, 'cayequitas-prototype.html')
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
 import base64
-html = html.replace('__PORTRAIT__', 'data:image/jpeg;base64,' + base64.b64encode(open(os.path.join(base, 'data', 'portrait.jpg'), 'rb').read()).decode())
-open(out, 'w').write(html)
-print(len(html)//1024, 'KB')
+SITE = sys.argv[sys.argv.index('--site') + 1] if '--site' in sys.argv else None
+if not SITE:
+    html = html.replace('__PORTRAIT__', 'data:image/jpeg;base64,' + base64.b64encode(open(os.path.join(base, 'data', 'portrait.jpg'), 'rb').read()).decode())
+    open(out, 'w').write(html)
+    print(len(html)//1024, 'KB')
+else:
+    # Deployable site: a light index.html plus cacheable assets (woff2 fonts, images, app.js),
+    # instead of one 1.5 MB file with everything base64-inlined.
+    import re, hashlib, shutil, io
+    from fontTools.ttLib import TTFont
+    A = os.path.join(SITE, 'assets'); os.makedirs(os.path.join(A, 'img'), exist_ok=True); os.makedirs(os.path.join(A, 'fonts'), exist_ok=True)
+    def h(data): return hashlib.sha1(data).hexdigest()[:8]
+    def put(rel, data):
+        open(os.path.join(SITE, rel), 'wb').write(data); return rel
+    # fonts -> woff2
+    FMAP = {'heuvel-300': 'HeuvelGrotesk-Light', 'heuvel-400': 'HeuvelGrotesk-Regular', 'heuvel-500': 'HeuvelGrotesk-Medium',
+            'heuvel-700': 'HeuvelGrotesk-Bold', 'heuvel-900': 'HeuvelGrotesk-Black', 'hogi-500': 'Hogisogi-Medium', 'hogi-700': 'Hogisogi-Bold'}
+    ff = ''; preload = ''
+    for k, fn in FMAP.items():
+        f = TTFont(os.path.join(base, 'fonts', fn + '.otf')); f.flavor = 'woff2'; bio = io.BytesIO(); f.save(bio); data = bio.getvalue()
+        rel = put('assets/fonts/%s.%s.woff2' % (fn, h(data)), data)
+        fam, w = k.split('-'); name = 'Heuvel Grotesk' if fam == 'heuvel' else 'Hogisogi'
+        ff += '@font-face{font-family:"%s";src:url(%s) format("woff2");font-weight:%s;font-display:swap}\n' % (name, rel, w)
+        if k in ('heuvel-900', 'heuvel-400', 'hogi-500'):
+            preload += '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>\n' % rel
+    html = re.sub(r'@font-face\{font-family:"(Heuvel Grotesk|Hogisogi)";src:url\(data:[^)]*\)[^}]*\}\n', '', html)
+    html = html.replace('<style>\n', '<style>\n' + ff, 1)
+    # images -> files
+    def dataurl_to_file(m_url, stem):
+        mime, b64 = re.match(r'data:([^;]+);base64,(.*)', m_url, re.S).groups()
+        ext = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp'}[mime]
+        data = base64.b64decode(b64)
+        return put('assets/img/%s.%s.%s' % (stem, h(data), ext), data)
+    IMG2 = {k: {'img': dataurl_to_file(v['img'], k)} for k, v in IMG.items()}
+    html = html.replace(json.dumps(IMG), json.dumps(IMG2))
+    LOG2 = {k: dict(v, src=dataurl_to_file(v['src'], 'logo-' + k)) for k, v in brand['logos'].items()}
+    html = html.replace(json.dumps(brand['logos']), json.dumps(LOG2))
+    pdata = open(os.path.join(base, 'data', 'portrait.jpg'), 'rb').read()
+    html = html.replace('__PORTRAIT__', put('assets/img/portrait.%s.jpg' % h(pdata), pdata))
+    # main script -> external, deferred (three.js deferred before it, so order is kept)
+    three = '<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>'
+    i = html.index(three); j = html.index('<script>', i) + len('<script>'); k = html.index('</script>', j)
+    js = html[j:k].encode()
+    rel = put('assets/app.%s.js' % h(js), js)
+    html = html[:i] + three.replace('<script ', '<script defer ') + '\n<script defer src="%s"></script>' % rel + html[k + len('</script>'):]
+    # proper document head
+    hs = html.index('</style>') + len('</style>')
+    head, body = html[:hs], html[hs:]
+    head = head.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', '')
+    doc = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+           '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
+           '<meta name="theme-color" content="#000000">\n'
+           '<meta name="description" content="Carlos Serrano (Cayé): media artist and technical director in Berlin. Real-time visuals, immersive worlds and live A/V.">\n'
+           '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n' + preload + head + '\n</head>\n<body>\n' + body + '\n</body>\n</html>\n')
+    open(os.path.join(SITE, 'index.html'), 'w').write(doc)
+    open(os.path.join(SITE, '.nojekyll'), 'w').write('')
+    tot = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(SITE) for f in fs)
+    print('index.html', len(doc)//1024, 'KB · site total', tot//1024, 'KB')

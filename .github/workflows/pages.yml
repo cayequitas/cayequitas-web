@@ -25,11 +25,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build prototype
+      - name: Build site
         run: |
-          mkdir -p _site
-          python3 prototype/build.py --public --out _site/index.html
-          touch _site/.nojekyll
+          pip install fonttools brotli
+          python3 prototype/build.py --public --site _site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

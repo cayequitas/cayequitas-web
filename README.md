@@ -17,8 +17,12 @@ Phase 0: clickable prototype. The production app (Next.js + Payload CMS + Postgr
 
 ```
 python3 prototype/build.py            # prototype with review notes and TBC markers
-python3 prototype/build.py --public   # clean review build (what GitHub Pages deploys)
+python3 prototype/build.py --public   # clean single-file review build
+pip install fonttools brotli
+python3 prototype/build.py --public --site _site   # what GitHub Pages deploys
 ```
+
+`--site` writes a split, mobile-ready site: a small `index.html` with a viewport tag, plus hashed `assets/` (woff2 fonts, images, `app.js`) that browsers cache.
 
 ### Fonts
 
