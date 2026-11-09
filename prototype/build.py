@@ -122,13 +122,15 @@ if PUBLIC:
     P, SHOWS = P2, S2
     html = re.sub(r'<p class="[^"]*\bpnote\b[^"]*"[^>]*>.*?</p>', '', html, flags=re.S)
     html = html.replace('__TITLE__', 'Carlos Serrano · Portfolio')
-    html = html.replace('__RIBBON__', '<span class="mono">Website portfolio from Carlos Serrano</span><a class="mono ig" href="https://www.instagram.com/cayequitas/" target="_blank" rel="noopener">@cayequitas ↗</a>')
+    VENUES = ['Biennale Danza Venezia', 'Berlin Atonal', 'Roskilde', 'Primavera Sound', 'Zeiss-Großplanetarium', 'Parookaville', 'Art Basel Miami Beach', 'Red Dot']
+    tick = ''.join('<span>%s</span>' % v for v in VENUES * 2)
+    html = html.replace('__RIBBON__', '<div class="tick mono" aria-label="Selected venues"><div class="track">%s</div></div><a class="mono ig" href="https://www.instagram.com/cayequitas/" target="_blank" rel="noopener">@cayequitas ↗</a>' % tick)
     html = html.replace('<main', '<script>document.documentElement.classList.add("public")</script><main', 1)
     html = html.replace('const P = ', 'const PUBLIC = true;\nconst P = ', 1)
     out = sys.argv[sys.argv.index('--out') + 1] if '--out' in sys.argv else os.path.join(base, 'site.html')
 else:
     html = html.replace('__TITLE__', 'Cayé Site Prototype')
-    html = html.replace('__RIBBON__', '<span class="mono">Prototype v0.9 · look and structure only</span><span class="mono">Heuvel Grotesk + Hogisogi · real logos</span>')
+    html = html.replace('__RIBBON__', '<div class="tick mono"><div class="track"><span>Prototype v1.0 · look and structure only</span><span>Heuvel Grotesk + Hogisogi · real logos</span><span>Prototype v1.0 · look and structure only</span><span>Heuvel Grotesk + Hogisogi · real logos</span></div></div>')
     html = html.replace('const P = ', 'const PUBLIC = false;\nconst P = ', 1)
     out = os.path.join(base, 'cayequitas-prototype.html')
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
