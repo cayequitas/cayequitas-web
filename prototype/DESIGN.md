@@ -25,7 +25,7 @@ Studied the pacing of monogrid.com, then rebuilt it in this brand rather than co
 
 - Hero: the particle-fluid mark, with mono typewriter captions and block cursors scattered over it.
 - `{ Selected works }`: nine projects in three columns that scroll at different speeds. Cards tilt with scroll speed, carry lime chips and light titles, and sit over a lime halftone glow. On phones they collapse to one column with no parallax.
-- Manifesto: a full-bleed lime band with a halftone. Its uppercase statement fills in word by word as you scroll, and the header turns lime-on-black while over it.
+- Manifesto: a full-bleed lime band with a halftone. Its uppercase statement fills in word by word as you scroll, and the header turns lime with black type while over it.
 - Lab block: a big still with a `Enter [▶] Lab` square-icon button.
 - The contact footer closes the home page too.
 - The mark steps aside and dims once you scroll past the hero.
