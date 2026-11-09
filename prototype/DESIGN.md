@@ -1,14 +1,15 @@
-# Design direction: "scan sheet" (v1.2)
+# Design direction: "scan sheet" (v1.3)
 
 Carlos captures the physical world with scans and rebuilds it live, so the site reads like his capture notebook:
 a technical drawing sheet with his work on it, measured and annotated, with lime used as a highlighter.
 
 ## Rules
 - **Two grounds, one object.** Night (black) for Home and Lab, white paper for Projects, a project, Shows and About.
-  What connects them is one fixed 3D layer: the Cayé mark as a point cloud. On Home it is light points scanned by the lime laser;
-  on the paper pages the same cloud steps aside and is drawn as black ink with an olive scan line that follows the scroll.
-  Fast scrolling scatters it, hovering a project or changing a filter nudges it, page changes burst it under the lime wipe.
-  (v1.1 tried all-black pages; dropped because it lost the fun of the paper.)
+  What connects them is one fixed 3D layer: the Cayé mark as a particle fluid. A GPU simulation (position and velocity
+  textures) springs every particle back to the mark while a flow field keeps it moving. Move or swipe to stir it, click or tap
+  to blast it, hold to make a vortex; fast scrolling adds turbulence and page changes burst it under the lime wipe.
+  Fast particles turn lime, so every gesture leaves a wake. On the paper pages the same fluid steps aside and is drawn as black
+  ink with an olive scan line that follows the scroll. Needs WebGL2; without it the pages work with no 3D.
 - **Type.** Heuvel Grotesk Black, uppercase, cropped big for page heads (15vw+). Heuvel Light for contrast inside a headline.
   Hogisogi only for small labels, numbers and the count superscripts.
 - **Lime is flat.** #D1FB46 as a block behind black text (nav state, filters, hover rows, stickers, the page wipe). No gradients, no glow, no text sheen.
