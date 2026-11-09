@@ -1,4 +1,4 @@
-# Design direction: "scan sheet" (v1.3)
+# Design direction: "scan sheet" (v1.5)
 
 Carlos captures the physical world with scans and rebuilds it live, so the site reads like his capture notebook:
 a technical drawing sheet with his work on it, measured and annotated, with lime used as a highlighter.
@@ -18,6 +18,17 @@ a technical drawing sheet with his work on it, measured and annotated, with lime
   the home has one between the two voices (Carlos Serrano / Cayé).
 - **Stickers.** One tilted lime sticker per screen at most ("feel" on home, "Cayé" on art projects).
 - **Motion.** A lime sheet with the Cayé mark wipes between pages. Projects keeps its "Something cool in every project" intro, on lime.
+
+## Home as one long scroll (v1.5)
+
+Studied the pacing of monogrid.com, then rebuilt it in this brand rather than copying it:
+
+- Hero: the particle-fluid mark, with mono typewriter captions and block cursors scattered over it.
+- `{ Selected works }`: nine projects in three columns that scroll at different speeds. Cards tilt with scroll speed, carry lime chips and light titles, and sit over a lime halftone glow. On phones they collapse to one column with no parallax.
+- Manifesto: a full-bleed lime band with a halftone. Its uppercase statement fills in word by word as you scroll, and the header turns lime-on-black while over it.
+- Lab block: a big still with a `Enter [▶] Lab` square-icon button.
+- The contact footer closes the home page too.
+- The mark steps aside and dims once you scroll past the hero.
 
 ## Removed on purpose
 Glassmorphism cards, pill chips, glow blobs, noise overlay, gradient text, HUD brackets, fake FPS/clock/coordinates,

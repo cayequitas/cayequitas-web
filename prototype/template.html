@@ -38,6 +38,9 @@ body.paper :focus-visible{outline-color:var(--black)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:16px}
 body.paper header{background:var(--bg);border-bottom:1px solid var(--rule)}
+body[data-view="home"].past header{background:linear-gradient(#000 40%,rgba(0,0,0,0));transition:background-color .3s}
+body.onlime header{background:var(--lime)!important;--logo:var(--black)}
+body.onlime header,body.onlime header a,body.onlime header .voice{color:var(--black)!important}
 header .brand{display:flex;align-items:center;gap:14px;text-decoration:none}
 .logo{display:block;background:var(--logo);-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
 .logo.cs{height:38px;aspect-ratio:var(--ar)}
@@ -81,7 +84,53 @@ section.view.on{display:block}
 .pagehead .sub p{margin:0;max-width:46ch;font-size:clamp(17px,1.5vw,21px);line-height:1.3}
 
 /* ---------- HOME ---------- */
-#home{padding:0;position:relative;height:100vh;height:100svh;min-height:620px;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+#home{padding:0;position:relative}
+#home .hero{position:relative;height:100vh;height:100svh;min-height:620px;overflow:hidden;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+/* typewriter captions with a block cursor, scattered over the 3D */
+.tw{position:absolute;left:var(--x);top:var(--y);z-index:3;font-size:11px;color:var(--grey2);white-space:nowrap;pointer-events:none}
+.tw::after,.cur{content:"";display:inline-block;width:.62em;height:1.05em;margin-left:3px;vertical-align:-.15em;background:currentColor;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+/* selected works: three columns that scroll at different speeds, cards tilt with scroll speed */
+.works{position:relative;z-index:2;padding-top:120px;padding-bottom:140px}
+.works::before{content:"";position:absolute;left:30%;right:30%;top:8%;bottom:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(209,251,70,.22) 1px,transparent 1.5px);background-size:7px 7px;
+  -webkit-mask:radial-gradient(closest-side,#000,transparent);mask:radial-gradient(closest-side,#000,transparent)}
+.wh{display:flex;justify-content:center;align-items:center;font-size:14px;margin-bottom:96px;color:var(--white)}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;align-items:start}
+.col{display:grid;gap:88px;will-change:transform}
+.col:nth-child(2){margin-top:140px}
+.wcard{display:grid;gap:12px;text-align:left;color:var(--white);cursor:pointer;text-decoration:none}
+.wcard .ph{aspect-ratio:var(--ar,4/3);overflow:hidden;transform:perspective(900px) rotateX(var(--tilt,0deg)) skewY(calc(var(--tilt,0deg) * -.15));transform-origin:50% 50%;background:#111}
+.wcard img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1s var(--ease),filter .4s}
+.wcard:hover img{transform:scale(1.05)}
+.wcard .chips{display:flex;flex-wrap:wrap;gap:4px}
+.wcard .chips span{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;background:var(--lime);color:var(--black);padding:1px 5px}
+.wcard .chips span.o{background:none;color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}
+.wcard h3{margin:0;font-weight:300;font-size:clamp(22px,1.9vw,30px);line-height:1.08;letter-spacing:-.02em}
+.wcard p{margin:0;color:#a8a8a8;font-size:15px;line-height:1.4;max-width:46ch}
+.wcard .go{display:inline-block;margin-left:.3em;font-size:.6em;vertical-align:.5em;color:var(--lime);transition:transform .3s var(--ease)}
+.wcard:hover .go{transform:translate(4px,-4px)}
+.wcard:hover h3{color:var(--lime)}
+.wfoot{display:flex;justify-content:center;margin-top:120px}
+/* square-icon button: word [icon] word */
+.sq{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--white);font-size:12px}
+.sq i{font-style:normal;display:grid;place-items:center;width:42px;height:42px;border:1px solid currentColor;transition:background-color .2s,color .2s,transform .4s var(--ease)}
+.sq:hover i{background:var(--lime);color:var(--black);border-color:var(--lime);transform:rotate(-8deg)}
+.sq.dark{color:var(--black)}.sq.dark:hover i{background:var(--black);color:var(--lime);border-color:var(--black)}
+/* manifesto: full-bleed lime with a halftone, words fill in as you scroll */
+.mani{position:relative;z-index:2;background:var(--lime);color:var(--black);min-height:100vh;display:grid;place-items:center;align-content:center;gap:56px;padding-block:120px;overflow:hidden}
+.mani::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(0,0,0,.2) 1px,transparent 1.6px);background-size:6px 6px;
+  -webkit-mask:radial-gradient(60% 55% at 50% 50%,#000,transparent);mask:radial-gradient(60% 55% at 50% 50%,#000,transparent)}
+.mani-t{position:relative;margin:0;max-width:1200px;text-align:center;text-transform:uppercase;font-weight:400;font-size:clamp(34px,5.4vw,92px);line-height:.98;letter-spacing:-.035em;text-wrap:balance}
+.mani-t .w{opacity:.18;transition:opacity .35s}
+.mani-t .w.on{opacity:1}
+/* reel block */
+.reel{position:relative;z-index:2;padding-block:120px 140px;background:var(--black)}
+.reel .tw{z-index:4}
+.reel-box{position:relative;display:block;max-width:1000px;margin:0 auto;aspect-ratio:16/9;overflow:hidden;background:#111}
+.reel-box img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.3) contrast(1.05);transition:transform 1.2s var(--ease),filter .5s}
+.reel-box:hover img{transform:scale(1.04);filter:none}
+.reel-box .sq{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .hint-touch{display:none}
 @media (hover:none){.hint-touch{display:inline}}
 #home .fig .hint-hover,#home .fig .hint-touch{color:var(--lime)}
@@ -286,6 +335,11 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
   #home .fig{top:calc(env(safe-area-inset-top,0px) + 74px)}
   .featcard{flex:1 1 100%;max-width:none}
   #home .fig .pc{display:none}
+  .cols{grid-template-columns:1fr;gap:56px}.col{gap:56px}.col:nth-child(2){margin-top:0}
+  .wcard .ph{aspect-ratio:4/3}.wcard p{font-size:14px}
+  .works{padding-top:88px}.wh{margin-bottom:56px}
+  .tw{font-size:10px}
+  .mani{min-height:80vh}
   .dimline em{display:none}
   .dimline .lg{display:none}
   .lab-prog{display:none}
@@ -320,6 +374,10 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
 <div id="pIntro" aria-hidden="true"><h2 class="pi-t"></h2><span class="pi-skip mono">Click to skip</span></div>
 <main>
 <section class="view" id="home" aria-label="Home">
+ <div class="hero">
+  <div class="tw mono" style="--x:22%;--y:24%" data-tw="0" aria-hidden="true"></div>
+  <div class="tw mono" style="--x:58%;--y:16%" data-tw="1" aria-hidden="true"></div>
+  <div class="tw mono" style="--x:64%;--y:56%" data-tw="2" aria-hidden="true"></div>
   <div class="fig mono" aria-hidden="true"><b>Fig. 01</b> Cayé mark as a particle fluid<span class="pc"> · <span id="hudPts">—</span></span><br><span class="hint-hover">Move to stir · click to blast · hold to swirl</span><span class="hint-touch">Swipe to stir · tap to blast · hold to swirl</span></div>
   <div class="copy wrap">
     <div class="top">
@@ -333,6 +391,21 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
     <div class="dimline mono" aria-hidden="true"><span>Carlos Serrano<span class="lg"> · technical direction</span></span><em>Berlin ⟷ worldwide</em><span>Cayé<span class="lg"> · real-time art</span></span></div>
     <h1><span class="b">Pixels</span> <span class="l">you can</span> <span class="stk">feel</span></h1>
   </div>
+ </div>
+ <div class="works wrap" id="works">
+  <div class="wh mono"><span>{ Selected works }</span><i class="cur"></i></div>
+  <div class="cols" id="cols"><div class="col" data-sp="0"></div><div class="col" data-sp=".14"></div><div class="col" data-sp="-.06"></div></div>
+  <div class="wfoot"><a class="sq mono" href="#projects"><span>All</span><i>↗</i><span>projects</span></a></div>
+ </div>
+ <div class="mani" id="mani">
+  <p class="mani-t wrap" id="maniT">I scan the physical world and rebuild it as living worlds for stages, domes, screens and the people inside them.</p>
+  <a class="sq mono dark" href="#about"><span>Meet</span><i>⏻</i><span>Carlos</span></a>
+ </div>
+ <div class="reel wrap">
+  <div class="tw mono" style="--x:4%;--y:78%" data-tw="3" aria-hidden="true"></div>
+  <div class="tw mono" style="--x:70%;--y:52%" data-tw="4" aria-hidden="true"></div>
+  <a class="reel-box" href="#lab"><img id="reelImg" alt="Point-cloud still from the Lab"><span class="sq mono"><span>Enter</span><i>▶</i><span>Lab</span></span></a>
+ </div>
 </section>
 
 <section class="view wrap" id="projects" aria-label="Projects">
@@ -466,8 +539,7 @@ function route(){
   if (target==="project" && slug) renderProject(slug);
   document.body.dataset.view = target;
   document.body.classList.toggle("paper", !["home","lab"].includes(target));
-  $("footer").style.display = target==="home" ? "none" : "";
-  Lab.stop();
+  Lab.stop(); if(target==="home") Home.start(); else Home.stop();
   if (target==="lab") { World.stop(); Lab.start(); } else World.set(target==="home"?"home":target==="about"?"about":"page");
   if (target!=="home") window.scrollTo(0,0);
   if (target==="projects" && lastTarget!=="project") ProjIntro.play(); else if (target!=="projects") ProjIntro.stop();
@@ -579,6 +651,45 @@ function showFeat(i){
   $("#featIdx").textContent=String(i+1).padStart(2,"0"); $("#featCard").onclick=()=>location.hash="p-"+p.slug;
   featT0=performance.now();
 }
+/* ---------- HOME long scroll: typewriter captions, parallax works, manifesto fill ---------- */
+const Home=(function(){
+  const WORKS=["danny-ocean-2025-tour","on-the-other-earth","h-m-virtual-showroom","wackyschak-stage","penumbra","hyperverbena","vogue-business-metaverse-atelier","spectral-lures","nftism"].filter(s=>bySlug[s]);
+  const AR=["4/5","4/3","1/1","3/4","16/10","4/5","4/3","1/1","3/4"];
+  const PH=[["Scanning the room","Point cloud loaded","Particles: alive"],["Real time, no render farm","Unreal · TouchDesigner · Houdini"],["Berlin ⟷ worldwide","Stages · domes · screens"],
+    ["Rebuilding the world, one point at a time","Bring your own space"],["It's lab time","Experiments in motion"]];
+  const cols=[...document.querySelectorAll("#cols .col")], tws=[...document.querySelectorAll(".tw")];
+  let built=false, raf=0, lastY=scrollY, v=0, on=false, timers=[];
+  function build(){ if(built) return; built=true;
+    WORKS.forEach((slug,i)=>{const p=bySlug[slug], L=LANES[p.lane];
+      const a=document.createElement("a"); a.className="wcard"; a.href="#p-"+slug; a.style.setProperty("--ar",AR[i]);
+      a.innerHTML=`<div class="ph"><img loading="lazy" alt="" src="${IMG[slug].img}"></div>
+        <div class="chips">${L?`<span>${esc(L.name)}</span>`:""}<span class="o">${p.voice==="cay"?"Cayé":"Carlos Serrano"}</span></div>
+        <h3>${esc(p.title)}<span class="go mono">↗</span></h3><p>${esc(p.line||p.role||"")}</p>`;
+      (innerWidth<820?cols[0]:cols[i%3]).appendChild(a);});
+    const m=$("#maniT"); m.innerHTML=m.textContent.split(" ").map(w=>`<span class="w">${esc(w)}</span>`).join(" ");
+    const r=bySlug["on-the-other-earth"]||P[0]; $("#reelImg").src=IMG[r.slug].img;
+  }
+  function type(el,list){let k=0;
+    const run=()=>{const txt=list[k%list.length]; let n=0; el.textContent="";
+      const add=()=>{if(!on)return; el.textContent=txt.slice(0,++n); if(n<txt.length) timers.push(setTimeout(add,38+Math.random()*50)); else timers.push(setTimeout(()=>{k++;run()},2400+Math.random()*1600));};
+      add();};
+    run();}
+  function fx(){ raf=0; const y=scrollY, d=y-lastY; lastY=y; v+=(d-v)*.2;
+    const tilt=REDUCED?0:Math.max(-9,Math.min(9,v*.35));
+    for(const c of cols){const r=c.getBoundingClientRect(), sp=+c.dataset.sp; c.style.transform=REDUCED||innerWidth<820?"":`translate3d(0,${(r.top+r.height/2-innerHeight/2)*sp*-1}px,0)`;
+      c.style.setProperty("--tilt",tilt.toFixed(2)+"deg");}
+    const ws=document.querySelectorAll("#maniT .w"), mr=$("#maniT").getBoundingClientRect();
+    const f=Math.max(0,Math.min(1,(innerHeight*.85-mr.top)/(mr.height+innerHeight*.35)));
+    const n=Math.round(f*ws.length); ws.forEach((w,i)=>w.classList.toggle("on",i<n));
+    const mb=$("#mani").getBoundingClientRect(), hh=$("header").offsetHeight;
+    document.body.classList.toggle("onlime",mb.top<hh&&mb.bottom>hh/2); document.body.classList.toggle("past",y>innerHeight*.6);
+    if(Math.abs(v)>.05||Math.abs(d)>0) raf=requestAnimationFrame(fx); else cols.forEach(c=>c.style.setProperty("--tilt","0deg"));
+  }
+  const kick=()=>{if(on&&!raf)raf=requestAnimationFrame(fx)};
+  addEventListener("scroll",kick,{passive:true}); addEventListener("resize",kick);
+  return {start(){build(); if(on)return; on=true; tws.forEach(el=>type(el,PH[+el.dataset.tw]||PH[0])); lastY=scrollY; kick();},
+          stop(){on=false; timers.forEach(clearTimeout); timers=[]; document.body.classList.remove("onlime","past");}};
+})();
 /* ---------- WORLD: the Cayé mark as a particle fluid, one 3D layer behind every page ----------
    A GPU simulation (position + velocity textures, ping-pong) runs every particle:
    a spring pulls it home to the mark, a swirling flow field keeps it alive, the cursor drags it like a hand in water.
@@ -720,6 +831,8 @@ const World = (function(){
     sy+=(scrollY-sy)*.12; vel+=(Math.abs(scrollY-lastY)-vel)*.15; lastY=scrollY;
     const bt=Math.min(1,(now-burstT)/700), burst=bt<1?Math.pow(1-bt,3):0;
     SIM.uBurst.value=burst*amp; SIM.uFlow.value=Math.min(1,vel*.02);
+    if(mode==="home"){const hp=Math.max(0,Math.min(1,scrollY/innerHeight)), e=hp*hp*(3-2*hp);
+      tgt.x=e*(nar?.2:1.9); tgt.y=(nar?1.25:.38)+e*(nar?1.4:-.1); tgt.z=-e*1.1; tgt.s=1-e*.2; tgt.dim=1-e*.62;}
     U.uDim.value=cur.dim;
     if(mode==="home") scan=((t*.42)%3.6)-1.8; else scan+=((-1.8+3.6*Math.min(1,sy/max))-scan)*.1;
     U.uScan.value=scan; laser.position.x=scan;
