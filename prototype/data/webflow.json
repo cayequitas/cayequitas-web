@@ -1,0 +1,1416 @@
+{
+ "danny-ocean-2025-tour": {
+  "category": "Live shows",
+  "subtitle": "Video Design & Live Camera Treatments",
+  "hero": {
+   "src": "danny-ocean-2025-tour/01.webp",
+   "w": 1024,
+   "h": 455
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "danny-ocean-2025-tour/02.webp",
+    "w": 1600,
+    "h": 771,
+    "cap": "World development for different songs"
+   }
+  ],
+  "gallery": [
+   {
+    "src": "danny-ocean-2025-tour/03.webp",
+    "w": 1600,
+    "h": 813
+   },
+   {
+    "src": "danny-ocean-2025-tour/04.webp",
+    "w": 1024,
+    "h": 619
+   },
+   {
+    "src": "danny-ocean-2025-tour/05.webp",
+    "w": 1600,
+    "h": 813
+   },
+   {
+    "src": "danny-ocean-2025-tour/06.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/07.webp",
+    "w": 1600,
+    "h": 1083
+   },
+   {
+    "src": "danny-ocean-2025-tour/08.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/09.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/10.webp",
+    "w": 1540,
+    "h": 1098
+   },
+   {
+    "src": "danny-ocean-2025-tour/11.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/12.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/13.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/14.webp",
+    "w": 1600,
+    "h": 890
+   },
+   {
+    "src": "danny-ocean-2025-tour/15.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/16.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "danny-ocean-2025-tour/17.webp",
+    "w": 1215,
+    "h": 809
+   },
+   {
+    "src": "danny-ocean-2025-tour/18.webp",
+    "w": 1600,
+    "h": 900
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "Danny Ocean Babylon Club Arena Tour Credits:"
+   },
+   {
+    "t": "p",
+    "x": "Creative:"
+   },
+   {
+    "t": "p",
+    "x": "Creative Director: Luigi Santella"
+   },
+   {
+    "t": "p",
+    "x": "Lighting Director & Designer: Rafael Imitola"
+   },
+   {
+    "t": "p",
+    "x": "Video Direction & Design: Henrique Ghersi"
+   },
+   {
+    "t": "p",
+    "x": "Henrique Ghersi Studio team: \nUnreal Artists: Carlos Serrano, Rob Heppell, Ross Marshall, Karim Fatatry, Henrique Ghersi\nMotion Designers: Emile Frederick, Helder Ferreira, TOML Studio\nNotch Programming & Video Coordinator: Kyle Reseigh"
+   },
+   {
+    "t": "h",
+    "x": "Management:"
+   },
+   {
+    "t": "p",
+    "x": "Lionfish, Marcos Fernandez"
+   },
+   {
+    "t": "p",
+    "x": "Lionfish Team: Rebeca Leon, Mayte Calzacorta"
+   },
+   {
+    "t": "h",
+    "x": "Production Manager"
+   },
+   {
+    "t": "p",
+    "x": "Miguel Hernandez"
+   },
+   {
+    "t": "h",
+    "x": "Playback:"
+   },
+   {
+    "t": "p",
+    "x": "Alvaro Cadavid"
+   },
+   {
+    "t": "p",
+    "x": "Photos & Videos by Esteban Congote & Miguel Hernandez"
+   }
+  ]
+ },
+ "framgented-thoughts": {
+  "category": "Live shows",
+  "subtitle": "Live A/V show played in realtime with TouchDesigner and Ableton Live",
+  "hero": {
+   "src": "framgented-thoughts/01.webp",
+   "w": 1259,
+   "h": 830
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "framgented-thoughts/02.webp",
+    "w": 1600,
+    "h": 550
+   },
+   {
+    "t": "img",
+    "src": "framgented-thoughts/03.webp",
+    "w": 1600,
+    "h": 1067
+   },
+   {
+    "t": "img",
+    "src": "framgented-thoughts/04.webp",
+    "w": 1600,
+    "h": 583
+   },
+   {
+    "t": "img",
+    "src": "framgented-thoughts/05.webp",
+    "w": 1600,
+    "h": 897
+   },
+   {
+    "t": "img",
+    "src": "framgented-thoughts/06.webp",
+    "w": 1600,
+    "h": 287
+   },
+   {
+    "t": "img",
+    "src": "framgented-thoughts/07.webp",
+    "w": 1600,
+    "h": 818
+   }
+  ],
+  "gallery": [
+   {
+    "src": "framgented-thoughts/08.webp",
+    "w": 1265,
+    "h": 1435
+   },
+   {
+    "src": "framgented-thoughts/09.webp",
+    "w": 1600,
+    "h": 2400
+   },
+   {
+    "src": "framgented-thoughts/10.webp",
+    "w": 1600,
+    "h": 899
+   }
+  ],
+  "credits": []
+ },
+ "h-m-virtual-showroom": {
+  "category": "Digital Experiences",
+  "subtitle": "Innovation Metaverse Design Story",
+  "hero": {
+   "src": "h-m-virtual-showroom/01.webp",
+   "w": 1600,
+   "h": 900
+  },
+  "body": [
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/mw0fcYFc74Q"
+   },
+   {
+    "t": "img",
+    "src": "h-m-virtual-showroom/02.webp",
+    "w": 1600,
+    "h": 897
+   },
+   {
+    "t": "img",
+    "src": "h-m-virtual-showroom/03.webp",
+    "w": 1600,
+    "h": 899
+   },
+   {
+    "t": "img",
+    "src": "h-m-virtual-showroom/04.webp",
+    "w": 1544,
+    "h": 1020
+   },
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/rrrbI_sItVQ"
+   }
+  ],
+  "gallery": [],
+  "credits": []
+ },
+ "hyperverbena": {
+  "category": "Live shows",
+  "subtitle": "Is a direct dive into the raw and the surreal dimensions of sudaka identity, pushing the boundaries of formats through multiple fronts.",
+  "hero": {
+   "src": "hyperverbena/01.webp",
+   "w": 1600,
+   "h": 767
+  },
+  "body": [
+   {
+    "t": "p",
+    "x": "A flashback where sound and image become weapon and witness, responding to a personal and collective urge for liberation and mutation of rancor. This is subliminal journey through the South, defending the uncomfortable history of indiscipline, the archival madness of an entire continent's memory made flesh."
+   },
+   {
+    "t": "p",
+    "x": "Associations and collisions: fire with religion, violence with mysticism, animals with humans. An audiovisual gesture where the pastiche of contrasts acts as identity claim. A metanarrative digging through excess. Mutant gossip, insistent on striking, with and by its own history."
+   }
+  ],
+  "gallery": [
+   {
+    "src": "hyperverbena/02.webp",
+    "w": 1600,
+    "h": 776
+   },
+   {
+    "src": "hyperverbena/03.webp",
+    "w": 1600,
+    "h": 766
+   },
+   {
+    "src": "hyperverbena/04.webp",
+    "w": 1600,
+    "h": 766
+   },
+   {
+    "src": "hyperverbena/05.webp",
+    "w": 1600,
+    "h": 769
+   },
+   {
+    "src": "hyperverbena/06.webp",
+    "w": 1600,
+    "h": 767
+   },
+   {
+    "src": "hyperverbena/07.webp",
+    "w": 1600,
+    "h": 730
+   },
+   {
+    "src": "hyperverbena/08.webp",
+    "w": 1600,
+    "h": 777
+   },
+   {
+    "src": "hyperverbena/09.webp",
+    "w": 1600,
+    "h": 762
+   },
+   {
+    "src": "hyperverbena/10.webp",
+    "w": 1600,
+    "h": 793
+   },
+   {
+    "src": "hyperverbena/11.webp",
+    "w": 1600,
+    "h": 753
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "Commissioned by Mira, the vision of Lechuga Zafiro and Verraco will be brought to life by PROXIMA, in collaboration with visual artists Cayequitas and Chepe. A full-on LATAM collision, a 60-minute AV show that cuts through unprecedented territories."
+   }
+  ]
+ },
+ "inner-code-alchemy": {
+  "category": "Digital Experiences",
+  "subtitle": "African calendar game experience",
+  "hero": {
+   "src": "inner-code-alchemy/01.webp",
+   "w": 1600,
+   "h": 1000
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "inner-code-alchemy/02.webp",
+    "w": 1600,
+    "h": 982
+   },
+   {
+    "t": "video",
+    "src": "https://player.vimeo.com/video/1105895448?dnt=1"
+   },
+   {
+    "t": "img",
+    "src": "inner-code-alchemy/03.webp",
+    "w": 1600,
+    "h": 896
+   }
+  ],
+  "gallery": [
+   {
+    "src": "inner-code-alchemy/04.webp",
+    "w": 1600,
+    "h": 978
+   }
+  ],
+  "credits": []
+ },
+ "memor-ia-s": {
+  "category": "Digital Experiences",
+  "subtitle": "What a dream means to a computational device, that is not trained and controlled by a human anymore?",
+  "hero": {
+   "src": "memor-ia-s/01.webp",
+   "w": 1600,
+   "h": 842
+  },
+  "body": [
+   {
+    "t": "h",
+    "x": "Memor[ia]s is an immersive audio-visual installation which is based on the deep relationships between dreams - reality, nature - simulation, and intelligence - artiﬁcial intelligence."
+   },
+   {
+    "t": "video",
+    "src": "https://player.vimeo.com/video/387698128?dnt=1"
+   },
+   {
+    "t": "h",
+    "x": "The aim is to demonstrate an immersive trip to the depths of a machine’s dream. Throughout the dream, we get immersed into his intimate hard drives, interact with bits, zero’s and one’s and get in touch with its electronic guts in the lowest levels. In the end, we come out by admiring the analog spaces in a digital manner. How the evolution of the machine at that point demonstrates how it processes memories and guides us to see what a dream means to a computational device that is not trained and controlled by a human anymore."
+   },
+   {
+    "t": "img",
+    "src": "memor-ia-s/02.webp",
+    "w": 1600,
+    "h": 708
+   },
+   {
+    "t": "img",
+    "src": "memor-ia-s/03.webp",
+    "w": 1600,
+    "h": 900
+   }
+  ],
+  "gallery": [
+   {
+    "src": "memor-ia-s/04.webp",
+    "w": 1600,
+    "h": 752
+   },
+   {
+    "src": "memor-ia-s/05.webp",
+    "w": 1422,
+    "h": 887
+   },
+   {
+    "src": "memor-ia-s/06.webp",
+    "w": 1600,
+    "h": 870
+   }
+  ],
+  "credits": []
+ },
+ "meta-festival": {
+  "category": "Digital Experiences",
+  "subtitle": "The world first 24 hour Metaverse festival",
+  "hero": {
+   "src": "meta-festival/01.webp",
+   "w": 1600,
+   "h": 952
+  },
+  "body": [
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/JWm9dGrh97c"
+   }
+  ],
+  "gallery": [
+   {
+    "src": "meta-festival/02.webp",
+    "w": 1600,
+    "h": 953
+   },
+   {
+    "src": "meta-festival/03.webp",
+    "w": 1600,
+    "h": 953
+   }
+  ],
+  "credits": []
+ },
+ "my-emotions": {
+  "category": "Digital Experiences",
+  "subtitle": "it is a Real Time experience focused on reading the user emotions and letting them interact with their emotions alter ego translated into digital characters created in 3D.",
+  "hero": {
+   "src": "my-emotions/01.webp",
+   "w": 1277,
+   "h": 808
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "my-emotions/02.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "t": "img",
+    "src": "my-emotions/03.webp",
+    "w": 1495,
+    "h": 822
+   },
+   {
+    "t": "img",
+    "src": "my-emotions/04.webp",
+    "w": 1600,
+    "h": 707
+   },
+   {
+    "t": "img",
+    "src": "my-emotions/05.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "t": "img",
+    "src": "my-emotions/06.webp",
+    "w": 1341,
+    "h": 788
+   }
+  ],
+  "gallery": [
+   {
+    "src": "my-emotions/07.webp",
+    "w": 1270,
+    "h": 820
+   },
+   {
+    "src": "my-emotions/08.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "src": "my-emotions/09.webp",
+    "w": 1404,
+    "h": 803
+   },
+   {
+    "src": "my-emotions/10.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "src": "my-emotions/11.webp",
+    "w": 1080,
+    "h": 577
+   }
+  ],
+  "credits": [
+   {
+    "t": "h",
+    "x": "The results were rocket-ish"
+   }
+  ]
+ },
+ "nftism": {
+  "category": "Digital Experiences",
+  "subtitle": "Virtual gallery exploring social interaction with art on the metaverse.",
+  "hero": {
+   "src": "nftism/01.webp",
+   "w": 1600,
+   "h": 900
+  },
+  "body": [
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/zz5RRqlUDXE"
+   },
+   {
+    "t": "p",
+    "x": "Nagel Draxler is one of the galleries that present and promote artists working with blockchain technologies and NFTs. Nagel Draxler is also known for their collaboration with media artist, art critic and curator Kenny Schachter: In early 2021, Kenny Schachter curated the exhibition “Breadcrumbs: Art in the Age of NFTism” at Nagel Draxler’s gallery in Cologne. At Art Cologne 2021 Nagel Draxler’s booth featured Schachter’s NFT piece “The Last Soldier”."
+   },
+   {
+    "t": "p",
+    "x": "Now at Art Basel Miami Beach 2021, Nagel Draxler presents an LED wall presentation of an interactive gallery space located in the metaverse. The virtual environment was designed by Zaha Hadid Architects and hosted by Journee. It features works by Kenny Schachter, Zaha Hadid, Kevin Abosch, Olive Allen, Sarah Friend, Rhea Myers, Theo Triantafyllidis, Reeps100 & Trung Bao, Martin Welker, and the Meta Watch Association."
+   },
+   {
+    "t": "p",
+    "x": "Kenny Schachter: NFTism. Presented by Galerie Nagel Draxler at Art Basel Miami Beach 2021. Metaverse, December 1, 2021."
+   }
+  ],
+  "gallery": [
+   {
+    "src": "nftism/02.webp",
+    "w": 1600,
+    "h": 711
+   },
+   {
+    "src": "nftism/03.webp",
+    "w": 1600,
+    "h": 711
+   },
+   {
+    "src": "nftism/04.webp",
+    "w": 1600,
+    "h": 880
+   },
+   {
+    "src": "nftism/05.webp",
+    "w": 1600,
+    "h": 880
+   },
+   {
+    "src": "nftism/06.webp",
+    "w": 1600,
+    "h": 880
+   },
+   {
+    "src": "nftism/07.webp",
+    "w": 1600,
+    "h": 900
+   }
+  ],
+  "credits": []
+ },
+ "on-the-other-earth": {
+  "category": "Digital Experiences",
+  "subtitle": "post-cinematic choreographic installation produced by Studio Wayne McGregor.",
+  "hero": {
+   "src": "on-the-other-earth/01.webp",
+   "w": 1207,
+   "h": 674
+  },
+  "body": [
+   {
+    "t": "p",
+    "x": "On The Other Earth, the world's first post-cinematic choreographic installation, refracts, evolves and reimagines dance performance in a startlingly original new form of experience. Breaks the fourth wall as visitors are invited into the heart of the dance, connecting in close contact with the hyperreal dancers of Company Wayne McGregor and the Hong Kong Ballet in a physicalised sound environment designed by Invisible Mountain. Never encountered in the same way twice, groups of up to 20 people will experience On The Other Earth’s visual and sonic landscapes unfolding before them in a series of thought-provoking otherworldly encounters and intimate interplay, upending our perceptions of performance and the future of entertainment."
+   },
+   {
+    "t": "p",
+    "x": "A radically immersive choreographic installation displayed on a 360° 3D screen, refracting, evolving, and reimagining dance performance in a startlingly original new form."
+   },
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/BOhPWreVAAM"
+   }
+  ],
+  "gallery": [
+   {
+    "src": "on-the-other-earth/02.webp",
+    "w": 1600,
+    "h": 557
+   },
+   {
+    "src": "on-the-other-earth/03.webp",
+    "w": 1600,
+    "h": 1104
+   },
+   {
+    "src": "on-the-other-earth/04.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "src": "on-the-other-earth/05.webp",
+    "w": 1600,
+    "h": 1014
+   },
+   {
+    "src": "on-the-other-earth/06.webp",
+    "w": 1600,
+    "h": 863
+   },
+   {
+    "src": "on-the-other-earth/07.webp",
+    "w": 1600,
+    "h": 938
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "Wayne McGregor: ON THE OTHER EARTH\n2025"
+   },
+   {
+    "t": "p",
+    "x": "On The Other Earth will be presented as part of the Infinite Body exhibition at Somerset House, and will be staged at Stone Nest in London."
+   },
+   {
+    "t": "p",
+    "x": "DIRECTION and CHOREOGRAPHY\nWayne McGregor"
+   },
+   {
+    "t": "p",
+    "x": "nVis 360 3D EMBODIED VISUALIZATION CONCEPTS AND TECHNOLOGIES\nJeffrey Shaw, Sarah Kenderdine"
+   },
+   {
+    "t": "p",
+    "x": "CINEMATIC DESIGN 3D 360 ANIMATION and EDITING\nRavi Deepres, Theresa Baumgartner, Jeffrey Shaw\nwith Luke Unsworth, Paul Bourke, J.Him, Paul Nichola, Chris Parks, Carlos Serrano, Chris Stephens, and Nice Monster.tv"
+   },
+   {
+    "t": "p",
+    "x": "SOUND COMPOSITION by INVISIBLE MOUNTAIN (Powered by Bronze)\nFoley Artist: Grégory Vincent"
+   },
+   {
+    "t": "p",
+    "x": "nVis 3D 360 TECHNOLOGIES RESEARCH and DEVELOPMENT HONG KONG BAPTIST UNIVERSITY\nJeffrey Shaw, Sarah Kenderdine\nVack Cheung, Davor Vincze, Ching Lee, Charisse So, Sum Wong, Alejandro Rodriguez, Paul Bethge, Leoson Cheong, Marlen Runz, Joseph Chan, Jeff Zhang, Victor Wong, Eman Tse"
+   },
+   {
+    "t": "p",
+    "x": "PRODUCTION\nRebecca Marshall, Svet Lapcheva, Tobias Tang"
+   }
+  ]
+ },
+ "otro-lago-en-el-cielo": {
+  "category": "Realtime",
+  "subtitle": "Video clip Colombian Drone Mafia + Gibrana Cervantes",
+  "hero": {
+   "src": "otro-lago-en-el-cielo/01.webp",
+   "w": 1600,
+   "h": 939
+  },
+  "body": [
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/_W0PcKXcrHs"
+   }
+  ],
+  "gallery": [
+   {
+    "src": "otro-lago-en-el-cielo/02.webp",
+    "w": 1600,
+    "h": 898
+   },
+   {
+    "src": "otro-lago-en-el-cielo/03.webp",
+    "w": 1600,
+    "h": 898
+   },
+   {
+    "src": "otro-lago-en-el-cielo/04.webp",
+    "w": 1600,
+    "h": 899
+   }
+  ],
+  "credits": []
+ },
+ "penumbra": {
+  "category": "Realtime",
+  "subtitle": "A real-time fulldome experience in Collaboration with Carlos P. Villamizar.",
+  "hero": {
+   "src": "penumbra/01.webp",
+   "w": 1571,
+   "h": 798
+  },
+  "body": [
+   {
+    "t": "h",
+    "x": "PENUMBRA is based on the idea of how the outside world can be seen from the inside of a machine. The philosophy behind is shaped by the synthesis of souls of spaces, living-off landscapes and the camera of the future."
+   },
+   {
+    "t": "img",
+    "src": "penumbra/02.webp",
+    "w": 1600,
+    "h": 752
+   },
+   {
+    "t": "h",
+    "x": "A landscape is more than only mountain tops or seascapes. When descended to its depths, a landscape is subjectively the synthesis of emotions, inspirations, light and its illusions, details and textures. It is where the souls are being surrounded to tell the memories of our living lands. In short, it is an intense and comprehensive overall spatial experience to the existing world."
+   },
+   {
+    "t": "video",
+    "src": "https://player.vimeo.com/video/346849935?dnt=1"
+   },
+   {
+    "t": "h",
+    "x": "PENUMBRA is designed to demonstrate an immersive trip to the souls of the landscapes, get inside them to interact with its particles, and coming out by admiring the analog spaces in a digital manner. This audiovisual, live act installation is created specifically for a fulldome environment to make people see the living lands through a machine by floating around their dynamic data."
+   },
+   {
+    "t": "img",
+    "src": "penumbra/03.webp",
+    "w": 1481,
+    "h": 846
+   },
+   {
+    "t": "img",
+    "src": "penumbra/04.webp",
+    "w": 1552,
+    "h": 742
+   }
+  ],
+  "gallery": [
+   {
+    "src": "penumbra/05.webp",
+    "w": 1576,
+    "h": 750
+   },
+   {
+    "src": "penumbra/06.webp",
+    "w": 1572,
+    "h": 766
+   },
+   {
+    "src": "penumbra/07.webp",
+    "w": 1558,
+    "h": 728
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "Direction and Real-time graphics: Carlos Serrano"
+   },
+   {
+    "t": "p",
+    "x": "Sound Design: Carlos P. Villamizar"
+   }
+  ]
+ },
+ "puntos-en-la-nube": {
+  "category": "Digital Experiences",
+  "subtitle": "photogrammetry & VR",
+  "hero": {
+   "src": "puntos-en-la-nube/01.webp",
+   "w": 1250,
+   "h": 938
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "puntos-en-la-nube/02.webp",
+    "w": 1600,
+    "h": 800
+   },
+   {
+    "t": "img",
+    "src": "puntos-en-la-nube/03.webp",
+    "w": 1600,
+    "h": 900
+   }
+  ],
+  "gallery": [
+   {
+    "src": "puntos-en-la-nube/04.webp",
+    "w": 1000,
+    "h": 750
+   },
+   {
+    "src": "puntos-en-la-nube/05.webp",
+    "w": 1000,
+    "h": 750
+   }
+  ],
+  "credits": []
+ },
+ "reminiscent-delusions": {
+  "category": "Live shows",
+  "subtitle": "A trip into the beauty of the Aurora Borealis.",
+  "hero": {
+   "src": "reminiscent-delusions/01.webp",
+   "w": 1600,
+   "h": 679
+  },
+  "body": [
+   {
+    "t": "h",
+    "x": "The Aurora Borealis"
+   },
+   {
+    "t": "p",
+    "x": "Is not just a visual marvel; `it is a beacon of hope for a future where technology and nature coexist harmoniously. It invites us to dream boldly, to innovate with purpose, and to create a world that reflects the beauty of the cosmos. In this society, we harness technology to illuminate our paths, much like the aurora illuminates the Arctic skies, guiding us toward a sustainable and interconnected future. As we dream of such a society, we envision a community united by the awe of the Aurora. People gather to witness this natural spectacle, sharing stories and experiences, transcending the isolation that technology sometimes brings. In the glow of the lights, we are reminded of our shared humanity, fostering a culture of collaboration and creativity."
+   },
+   {
+    "t": "img",
+    "src": "reminiscent-delusions/02.webp",
+    "w": 1600,
+    "h": 592
+   },
+   {
+    "t": "p",
+    "x": "In a technology-based society, the aurora becomes a symbol of the convergence between nature and innovation. As we harness the power of artificial intelligence, renewable energy, and advanced communication, we find ourselves at a crossroads where the digital and the organic intertwine. The lights of the aurora mirror the glow of our screens, illuminating our aspirations for a future where technology enhances the human experience rather than detracts from it. Imagine a world where cities are designed with sustainability at their core, reflecting the colors of the aurora in their architecture. Smart buildings, draped in solar panels, mimic the ethereal glow of the northern lights, while vertical gardens breathe life into urban landscapes. Here, technology serves as a bridge to nature, allowing us to reconnect with the environment even as we advance into the digital age."
+   },
+   {
+    "t": "img",
+    "src": "reminiscent-delusions/03.webp",
+    "w": 1600,
+    "h": 856
+   }
+  ],
+  "gallery": [
+   {
+    "src": "reminiscent-delusions/04.webp",
+    "w": 1600,
+    "h": 775
+   },
+   {
+    "src": "reminiscent-delusions/05.webp",
+    "w": 1080,
+    "h": 534
+   },
+   {
+    "src": "reminiscent-delusions/06.webp",
+    "w": 1600,
+    "h": 652
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "This Immersive FullDome experience was design entirely in TouchDesigner, Ableton Live and Reaktor to give the spectator a complete immersion into the topic and enhance the experience of traditional FullDome content. It can be played back as a movie or be performed in real-time."
+   },
+   {
+    "t": "p",
+    "x": "The aurora borealis is not just a visual marvel; it is a beacon of hope for a future where technology and nature coexist harmoniously. It invites us to dream boldly, to innovate with purpose, and to create a world that reflects the beauty of the cosmos. In this society, we harness technology to illuminate our paths, much like the aurora illuminates the Arctic skies, guiding us toward a sustainable and interconnected future."
+   },
+   {
+    "t": "p",
+    "x": "Interactive & Real Time artist: Carlos Serrano\nSound Artist: Carlos P. Villamizar\nSoftware Used: TouchDesigner, Ableton Live, Reaktor."
+   }
+  ]
+ },
+ "social-capsule": {
+  "category": "Digital Experiences",
+  "subtitle": "A project by Theresa Riewer",
+  "hero": {
+   "src": "social-capsule/01.webp",
+   "w": 1092,
+   "h": 781
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "social-capsule/02.webp",
+    "w": 1600,
+    "h": 1200,
+    "cap": "technical production realtime pointclouds"
+   },
+   {
+    "t": "p",
+    "x": "SOCIAL CAPSULE is the feelgood living of tomorrow. Soothing, empathetic and above all: mobile! In friendly coexistence with the in-house Artificial Intelligence and an Augmented Reality roommate, the personal comfort zone transforms into a meeting place that offers genuine togetherness and stimulation without strain."
+   },
+   {
+    "t": "p",
+    "x": "The novel togetherness is made to counteract and even prevent all consequences of every-day social distancing. The futuristic home with its intelligent voice operating system serves as a new best friend that also teaches optimal healthy-living in digital realms: Feelings on demand!"
+   }
+  ],
+  "gallery": [
+   {
+    "src": "social-capsule/03.webp",
+    "w": 734,
+    "h": 1031
+   },
+   {
+    "src": "social-capsule/04.webp",
+    "w": 733,
+    "h": 1030
+   },
+   {
+    "src": "social-capsule/05.webp",
+    "w": 992,
+    "h": 662
+   },
+   {
+    "src": "social-capsule/06.webp",
+    "w": 1094,
+    "h": 780
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "Konzept / Text / Regie / Bühnenbild / Video: Theresa ReiwerTechn."
+   },
+   {
+    "t": "p",
+    "x": "Konzept / T. Leitung / Lichtdesign: David EggerMitarbeit"
+   },
+   {
+    "t": "p",
+    "x": "Text / Dramaturgie: Miriam Schmidtke"
+   },
+   {
+    "t": "p",
+    "x": "Video / AR-Technik: Carlos A. Serrano"
+   },
+   {
+    "t": "p",
+    "x": "AR-Umsetzung: Bitteschoen.tv"
+   },
+   {
+    "t": "p",
+    "x": "Musik / Sounddesign: Kenji Tanaka"
+   },
+   {
+    "t": "p",
+    "x": "Sprecherin: Lilja LöfflerBauleitung"
+   },
+   {
+    "t": "p",
+    "x": "Tiny House: Julius Single"
+   },
+   {
+    "t": "p",
+    "x": "Assistenz Bau: José Alarcón"
+   },
+   {
+    "t": "p",
+    "x": "Grafikdesign: Studio Sara Cristina Moser"
+   },
+   {
+    "t": "p",
+    "x": "Bühnenbildhospitanz: Prapatsorn Sukkaset"
+   },
+   {
+    "t": "p",
+    "x": "Support Innenausbau: Jens Hugel, Birke Schings, Anna SchröderProduktionsleitung: Miriam Schmidtke"
+   }
+  ]
+ },
+ "spectral-lures": {
+  "category": "Live shows",
+  "subtitle": "An audiovisual live performance by Carlos.exe",
+  "hero": {
+   "src": "spectral-lures/01.webp",
+   "w": 1600,
+   "h": 631
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "spectral-lures/02.webp",
+    "w": 1280,
+    "h": 350
+   },
+   {
+    "t": "h",
+    "x": "Is an experimental audiovisual performance that drifts across the borders of illusion and perception. It unfolds as a live act where sound and image are conjured together, shimmering like mirages that seduce the senses before dissolving into instability."
+   },
+   {
+    "t": "h",
+    "x": "The music is built from spectral tones, fractured pulses, and synthetic textures—compositions that hover between resonance and rupture, between the organic and the digital. Each gesture acts as a lure, guiding the audience into uncertain territories where memory, delusion, and imagination intertwine."
+   },
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/_F1qOQATaVA"
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/03.webp",
+    "w": 1600,
+    "h": 627
+   },
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/HLOeoYEUsDQ"
+   },
+   {
+    "t": "h",
+    "x": "Simultaneously, visuals are generated in real time using 3D software, creating transient architectures and virtual landscapes. These are not static projections but living simulations: spectral terrains, impossible geometries, and ghostly environments that emerge only to collapse again."
+   },
+   {
+    "t": "h",
+    "x": "Neither concert nor film, Spectral Lures becomes an immersion—an act of drifting through unstable realities, where sound and light entwine into shifting horizons. It is a performance of synthetic seduction, where perception itself is caught in the play of lures."
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/04.webp",
+    "w": 1524,
+    "h": 772,
+    "cap": "Live setup with Unreal Engine, TouchDesigner and Ableton Live"
+   },
+   {
+    "t": "h",
+    "x": "On screen, dynamic visual environments emerge and collapse—shifting architectures, virtual landscapes, and abstract geometries. These visuals are not pre-rendered but created live, turning the performance into an evolving exploration of digital reality and its fragile illusions."
+   },
+   {
+    "t": "h",
+    "x": "Spectral Lures invites audiences to lose orientation and immerse themselves in a world where perception is constantly rewritten, a journey through the shimmering interplay of sound, vision, and synthetic imagination."
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/05.webp",
+    "w": 1600,
+    "h": 577
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/06.webp",
+    "w": 1600,
+    "h": 359
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/07.webp",
+    "w": 1600,
+    "h": 1205
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/08.webp",
+    "w": 1600,
+    "h": 852,
+    "cap": "Previz of the show and screen dimensions"
+   },
+   {
+    "t": "img",
+    "src": "spectral-lures/09.webp",
+    "w": 1600,
+    "h": 362
+   }
+  ],
+  "gallery": [
+   {
+    "src": "spectral-lures/10.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "src": "spectral-lures/11.webp",
+    "w": 1600,
+    "h": 1205
+   },
+   {
+    "src": "spectral-lures/12.webp",
+    "w": 1600,
+    "h": 1205
+   },
+   {
+    "src": "spectral-lures/13.webp",
+    "w": 1080,
+    "h": 864
+   },
+   {
+    "src": "spectral-lures/14.webp",
+    "w": 1080,
+    "h": 721
+   },
+   {
+    "src": "spectral-lures/15.webp",
+    "w": 1080,
+    "h": 864
+   }
+  ],
+  "credits": []
+ },
+ "transmissive-resemblance": {
+  "category": "Live shows",
+  "subtitle": "Immersive AV show",
+  "hero": {
+   "src": "transmissive-resemblance/01.webp",
+   "w": 1600,
+   "h": 1200
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "transmissive-resemblance/02.webp",
+    "w": 1600,
+    "h": 1200
+   },
+   {
+    "t": "img",
+    "src": "transmissive-resemblance/03.webp",
+    "w": 1600,
+    "h": 288
+   },
+   {
+    "t": "img",
+    "src": "transmissive-resemblance/04.webp",
+    "w": 1600,
+    "h": 300
+   },
+   {
+    "t": "img",
+    "src": "transmissive-resemblance/05.webp",
+    "w": 1600,
+    "h": 638
+   },
+   {
+    "t": "img",
+    "src": "transmissive-resemblance/06.webp",
+    "w": 1322,
+    "h": 743
+   }
+  ],
+  "gallery": [
+   {
+    "src": "transmissive-resemblance/07.webp",
+    "w": 1600,
+    "h": 1200
+   }
+  ],
+  "credits": [
+   {
+    "t": "p",
+    "x": "AV show by The nent + cayequtias"
+   }
+  ]
+ },
+ "vogue-business-metaverse-atelier": {
+  "category": "Digital Experiences",
+  "subtitle": "Designing Digital Fashion with Epic Games",
+  "hero": {
+   "src": "vogue-business-metaverse-atelier/01.webp",
+   "w": 1600,
+   "h": 900
+  },
+  "body": [
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/-F52O5IUiDA"
+   },
+   {
+    "t": "img",
+    "src": "vogue-business-metaverse-atelier/02.webp",
+    "w": 1600,
+    "h": 880
+   },
+   {
+    "t": "video",
+    "src": "https://www.youtube-nocookie.com/embed/b75c0Zbr_Yw"
+   },
+   {
+    "t": "img",
+    "src": "vogue-business-metaverse-atelier/03.webp",
+    "w": 1600,
+    "h": 900
+   }
+  ],
+  "gallery": [
+   {
+    "src": "vogue-business-metaverse-atelier/04.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "vogue-business-metaverse-atelier/05.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "vogue-business-metaverse-atelier/06.webp",
+    "w": 1600,
+    "h": 880
+   },
+   {
+    "src": "vogue-business-metaverse-atelier/07.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "vogue-business-metaverse-atelier/08.webp",
+    "w": 1600,
+    "h": 898
+   },
+   {
+    "src": "vogue-business-metaverse-atelier/09.webp",
+    "w": 1600,
+    "h": 900
+   },
+   {
+    "src": "vogue-business-metaverse-atelier/10.webp",
+    "w": 1600,
+    "h": 900
+   }
+  ],
+  "credits": []
+ },
+ "wackyschak-stage": {
+  "category": "Live shows",
+  "subtitle": "Stage and content Design at Parookaville 2024",
+  "hero": {
+   "src": "wackyschak-stage/01.webp",
+   "w": 1255,
+   "h": 705
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "wackyschak-stage/02.webp",
+    "w": 1256,
+    "h": 645,
+    "cap": "TouchDesigner and Unreal Engine Workflow Previz"
+   },
+   {
+    "t": "img",
+    "src": "wackyschak-stage/03.webp",
+    "w": 1256,
+    "h": 760,
+    "cap": "Motion Capture avatar animation"
+   },
+   {
+    "t": "img",
+    "src": "wackyschak-stage/04.webp",
+    "w": 1280,
+    "h": 533,
+    "cap": "Integrating Faciand and Body Motion Capture"
+   },
+   {
+    "t": "img",
+    "src": "wackyschak-stage/05.webp",
+    "w": 1600,
+    "h": 900,
+    "cap": "Custom Avatar Creation"
+   }
+  ],
+  "gallery": [
+   {
+    "src": "wackyschak-stage/06.webp",
+    "w": 1257,
+    "h": 782
+   },
+   {
+    "src": "wackyschak-stage/07.webp",
+    "w": 1257,
+    "h": 812
+   },
+   {
+    "src": "wackyschak-stage/08.webp",
+    "w": 1254,
+    "h": 861
+   },
+   {
+    "src": "wackyschak-stage/09.webp",
+    "w": 1253,
+    "h": 858
+   },
+   {
+    "src": "wackyschak-stage/10.webp",
+    "w": 719,
+    "h": 576
+   },
+   {
+    "src": "wackyschak-stage/11.webp",
+    "w": 1257,
+    "h": 800
+   },
+   {
+    "src": "wackyschak-stage/12.webp",
+    "w": 1252,
+    "h": 700
+   }
+  ],
+  "credits": [
+   {
+    "t": "h",
+    "x": "Cool results."
+   },
+   {
+    "t": "p",
+    "x": "Real Time Stage Show & Immersive Stage Design\n\nCreative Lead: Lois KainhuberProject"
+   },
+   {
+    "t": "p",
+    "x": "Lead: David Leroy"
+   },
+   {
+    "t": "p",
+    "x": "Art Director: Nino Matthey"
+   },
+   {
+    "t": "p",
+    "x": "Visual Artists: Itaru Yasuda, Carlos Serrano"
+   },
+   {
+    "t": "p",
+    "x": "Event Technology: DEKOR Event"
+   }
+  ]
+ },
+ "we-power-joy-together": {
+  "category": "Digital Experiences",
+  "subtitle": "Brand activation and Car configurator",
+  "hero": {
+   "src": "we-power-joy-together/01.webp",
+   "w": 1600,
+   "h": 900
+  },
+  "body": [
+   {
+    "t": "img",
+    "src": "we-power-joy-together/02.webp",
+    "w": 1600,
+    "h": 770
+   },
+   {
+    "t": "img",
+    "src": "we-power-joy-together/03.webp",
+    "w": 1600,
+    "h": 770
+   },
+   {
+    "t": "img",
+    "src": "we-power-joy-together/04.webp",
+    "w": 1600,
+    "h": 780
+   },
+   {
+    "t": "img",
+    "src": "we-power-joy-together/05.webp",
+    "w": 1600,
+    "h": 772
+   }
+  ],
+  "gallery": [
+   {
+    "src": "we-power-joy-together/06.webp",
+    "w": 1600,
+    "h": 777
+   }
+  ],
+  "credits": [
+   {
+    "t": "h",
+    "x": "Creative Director: Lois Kainhuber"
+   },
+   {
+    "t": "h",
+    "x": "Technical Project Lead: David Leroy / MONOMANGO"
+   },
+   {
+    "t": "h",
+    "x": "Architecture & Interior Design: Andreas Müller/ AMU Architekten"
+   },
+   {
+    "t": "h",
+    "x": "Unreal Artists: Nino Matthey, Carlos Serrano / MONOMANGO"
+   },
+   {
+    "t": "h",
+    "x": "Fabrication & Installation: EWOS GmbH"
+   },
+   {
+    "t": "h",
+    "x": "Software Engineers: Wieland Hilker, Manuel Bossard, Gero Doll / MONOMANGO"
+   },
+   {
+    "t": "h",
+    "x": "Spatial & Product Design: Simon Heidenreich / MONOMANGO, Julian Franzen/ AMU Architekten"
+   },
+   {
+    "t": "h",
+    "x": "UI & UX Design: Alan Alves / MONOMANGO"
+   },
+   {
+    "t": "h",
+    "x": "Footage Documentation: Cellophane Films GmbH"
+   }
+  ]
+ }
+}

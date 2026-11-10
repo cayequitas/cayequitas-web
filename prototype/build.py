@@ -102,6 +102,12 @@ for k, src in brand['fonts'].items():
     name = 'Heuvel Grotesk' if fam == 'heuvel' else 'Hogisogi'
     ff += '@font-face{font-family:"%s";src:url(%s) format("opentype");font-weight:%s;font-display:swap}\n' % (name, src, w)
 html = html.replace('__FONTFACE__', ff).replace('__LOGOS__', json.dumps(brand['logos']))
+# project pages: full texts, images and videos imported from the Webflow site (data/webflow.json, images in media/)
+WF = json.load(open(os.path.join(base, 'data', 'webflow.json')))
+for p in P:
+    w = WF.get(p['slug'])
+    if not w: continue
+    p['media'] = {'hero': w['hero'], 'body': w['body'], 'gallery': w['gallery'], 'credits': w['credits']}
 PUBLIC = '--public' in sys.argv
 if PUBLIC:
     # Review build for GitHub Pages: no prototype notes, placeholders or TBC markers.
@@ -131,6 +137,7 @@ else:
     html = html.replace('__RIBBON__', '<span class="mono">Prototype v0.9 · look and structure only</span><span class="mono">Heuvel Grotesk + Hogisogi · real logos</span>')
     html = html.replace('const P = ', 'const PUBLIC = false;\nconst P = ', 1)
     out = os.path.join(base, 'cayequitas-prototype.html')
+html = html.replace('__MEDIA__', 'assets/media/' if '--site' in sys.argv else 'media/')
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
 import base64
 SITE = sys.argv[sys.argv.index('--site') + 1] if '--site' in sys.argv else None
@@ -192,6 +199,7 @@ else:
            '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n' + preload + head + '\n</head>\n<body>\n' + body + '\n</body>\n</html>\n')
     open(os.path.join(SITE, 'index.html'), 'w').write(doc)
     open(os.path.join(SITE, '.nojekyll'), 'w').write('')
+    shutil.copytree(os.path.join(base, 'media'), os.path.join(SITE, 'assets', 'media'), dirs_exist_ok=True)
     shutil.copy(os.path.join(base, 'data', 'favicon.ico'), os.path.join(SITE, 'favicon.ico'))  # browsers also ask for /favicon.ico
     tot = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(SITE) for f in fs)
     print('index.html', len(doc)//1024, 'KB · site total', tot//1024, 'KB')
