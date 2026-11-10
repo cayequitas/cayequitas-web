@@ -1,4 +1,5 @@
 <title>__TITLE__</title>
+<link rel="icon" type="image/png" sizes="32x32" href="__FAVICON__">
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 __FONTFACE__
@@ -627,6 +628,73 @@ function stopLoop(){ activeLoop=null; if(loopRaf){cancelAnimationFrame(loopRaf);
 const mouse = {x:0,y:0,nx:0,ny:0};
 addEventListener("pointermove",e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.nx=e.clientX/innerWidth*2-1;mouse.ny=-(e.clientY/innerHeight*2-1)});
 
+/* ---------- FLUID: GPU particle fluid shared by the home mark and the about portrait ----------
+   Each particle lives in a position + velocity texture pair (ping-pong). Every frame a spring pulls it home,
+   a swirling flow field keeps it alive and the pointer pushes it like a hand in water.
+   move = stir · click/tap = blast · hold = vortex. Fast particles light up lime. Needs WebGL2. */
+let lastMove=-1e9; addEventListener("pointermove",()=>{lastMove=performance.now()},{passive:true});
+function Fluid(renderer, base, o){
+  o=Object.assign({spring:5.5,springR:3.,flow:.18,fall:7.,drag:9.,vortex:14.,blast:70.,blastR:3.,damp:2.6,vmax:9.,scatter:2.,scatterR:2.5},o);
+  const f=n=>Number(n).toFixed(4);
+  const N=base.length/4, TW=LITE?128:256, TH=Math.ceil(N/TW);
+  const data=new Float32Array(TW*TH*4); data.set(base);
+  for(let i=N;i<TW*TH;i++){data[i*4]=99;data[i*4+3]=.5;}
+  const tOrigin=new THREE.DataTexture(data,TW,TH,THREE.RGBAFormat,THREE.FloatType); tOrigin.needsUpdate=true;
+  const SIM={tPos:{value:null},tVel:{value:null},tOrigin:{value:tOrigin},uTime:{value:0},uDt:{value:.016},uFlow:{value:0},
+    uMouse:{value:new THREE.Vector3(99,99,0)},uMouseVel:{value:new THREE.Vector3()},uHover:{value:0},uDown:{value:0},uBlast:{value:new THREE.Vector3(99,99,0)},uBlastAge:{value:9}};
+  const T={tPos:{value:null},tVel:{value:null}};
+  const mk=()=>new THREE.WebGLRenderTarget(TW,TH,{type:THREE.HalfFloatType,format:THREE.RGBAFormat,minFilter:THREE.NearestFilter,magFilter:THREE.NearestFilter,depthBuffer:false,stencilBuffer:false});
+  const rt={pos:[mk(),mk()],vel:[mk(),mk()]}; let flip=0;
+  const scene=new THREE.Scene(), cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1), quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2)); scene.add(quad);
+  const VQ=`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`;
+  const HASH=`vec3 hash3(vec2 p){vec3 q=vec3(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)),dot(p,vec2(419.2,371.9)));return fract(sin(q)*43758.5453)*2.-1.;}`;
+  const FLOW=`vec3 flow(vec3 p,float t){return vec3(sin(p.y*2.1+t*.7)*cos(p.z*1.7+t*.3)+sin(p.z*3.3-t*.5)*.5,
+    sin(p.z*2.3+t*.5)*cos(p.x*1.9-t*.4)+sin(p.x*3.1+t*.6)*.5, sin(p.x*1.7-t*.6)*cos(p.y*2.5+t*.2)+sin(p.y*2.9-t*.3)*.5);}`;
+  const init=new THREE.ShaderMaterial({uniforms:SIM,vertexShader:VQ,fragmentShader:`uniform sampler2D tOrigin;varying vec2 vUv;${HASH}
+    void main(){vec4 o=texture2D(tOrigin,vUv);vec3 d=hash3(vUv*913.7);gl_FragColor=vec4(o.xyz+(o.w<1.?normalize(d+.0001)*(${f(o.scatter)}+fract(o.w*91.)*${f(o.scatterR)}):vec3(0.)),o.w);}`});
+  const zero=new THREE.ShaderMaterial({vertexShader:VQ,fragmentShader:`void main(){gl_FragColor=vec4(0.);}`});
+  const vel=new THREE.ShaderMaterial({uniforms:SIM,vertexShader:VQ,fragmentShader:`uniform sampler2D tPos,tVel,tOrigin;uniform float uTime,uDt,uFlow,uHover,uDown,uBlastAge;uniform vec3 uMouse,uMouseVel,uBlast;varying vec2 vUv;${FLOW}${HASH}
+    void main(){vec3 p=texture2D(tPos,vUv).xyz;vec3 v=texture2D(tVel,vUv).xyz;vec4 O=texture2D(tOrigin,vUv);float deb=step(1.,O.w);float r=fract(O.w*7.31);
+      vec3 f=(O.xyz-p)*mix(${f(o.spring)}+r*${f(o.springR)},.5,deb);
+      f+=flow(p*1.25+r*.3,uTime*.6)*(${f(o.flow)}+uFlow+deb*.25);
+      vec2 dm=p.xy-uMouse.xy;float fall=exp(-dot(dm,dm)*${f(o.fall)});
+      f+=uMouseVel*fall*uHover*${f(o.drag)};
+      f+=normalize(vec3(-dm.y,dm.x,0.)+.0001)*fall*uDown*${f(o.vortex)};
+      f+=vec3(-dm*fall*uDown*${f(o.vortex*.43)},0.);
+      vec3 bd=p-uBlast;float bl=exp(-dot(bd,bd)*${f(o.blastR)})*max(0.,1.-uBlastAge*2.2);
+      f+=normalize(bd+hash3(vUv*77.)*.3)*bl*${f(o.blast)};
+      v+=f*uDt;v*=exp(-uDt*(${f(o.damp)}+deb));
+      float s=length(v);if(s>${f(o.vmax)})v*=${f(o.vmax)}/s;
+      gl_FragColor=vec4(v,1.);}`});
+  const pos=new THREE.ShaderMaterial({uniforms:SIM,vertexShader:VQ,fragmentShader:`uniform sampler2D tPos,tVel;uniform float uDt;varying vec2 vUv;
+    void main(){vec4 P=texture2D(tPos,vUv);gl_FragColor=vec4(P.xyz+texture2D(tVel,vUv).xyz*uDt,P.w);}`});
+  function pass(m,target){quad.material=m;renderer.setRenderTarget(target);renderer.render(scene,cam);renderer.setRenderTarget(null);}
+  pass(init,rt.pos[0]);pass(init,rt.pos[1]);pass(zero,rt.vel[0]);pass(zero,rt.vel[1]);
+  T.tPos.value=rt.pos[0].texture;T.tVel.value=rt.vel[0].texture;
+  const ref=new Float32Array(N*2);for(let i=0;i<N;i++){ref[i*2]=(i%TW+.5)/TW;ref[i*2+1]=(Math.floor(i/TW)+.5)/TH;}
+  const mPrev=new THREE.Vector3(99,99,0), mVel=new THREE.Vector3();
+  let down=false, downT=0, blastAt=-1e9, last=0;
+  return {N,T,SIM,ref,
+    press(){down=true;downT=performance.now();lastMove=downT;},
+    release(){if(down&&performance.now()-downT<260){blastAt=performance.now();SIM.uBlast.value.copy(SIM.uMouse.value);}down=false;},
+    // local: pointer in the particles' local space (or null when away)
+    step(now,local,t){
+      const dt=Math.min(.033,Math.max(.008,(now-last)/1000||.016)); last=now;
+      if(local){mVel.subVectors(local,mPrev).divideScalar(dt);if(mPrev.x>50)mVel.set(0,0,0);if(mVel.length()>30)mVel.setLength(30);mPrev.copy(local);SIM.uMouse.value.copy(local);}
+      else{mVel.set(0,0,0);mPrev.set(99,99,0);SIM.uMouse.value.set(99,99,0);down=false;}
+      SIM.uMouseVel.value.lerp(mVel,.5);
+      SIM.uHover.value+=(((now-lastMove)<220&&local?1:0)-SIM.uHover.value)*.2;
+      SIM.uDown.value+=((down&&now-downT>260?1:0)-SIM.uDown.value)*.1;
+      SIM.uBlastAge.value=(now-blastAt)/1000; SIM.uTime.value=t; SIM.uDt.value=dt;
+      const a=flip,b=1-flip;
+      SIM.tPos.value=rt.pos[a].texture;SIM.tVel.value=rt.vel[a].texture;pass(vel,rt.vel[b]);
+      SIM.tVel.value=rt.vel[b].texture;pass(pos,rt.pos[b]);
+      flip=b;T.tPos.value=rt.pos[b].texture;T.tVel.value=rt.vel[b].texture;},
+    settle(n){for(let i=0;i<n;i++){const now=last+16;this.step(now,null,i*.016);}}
+  };
+}
+const FLUID_OK=(fig)=>!!(fig&&fig.capabilities&&fig.capabilities.isWebGL2);
+
 /* ---------- HOME: 3D point-cloud mark ---------- */
 const FEAT = ["on-the-other-earth","danny-ocean-2025-tour","penumbra","spectral-lures"];
 let fi=0, featT0=0;
@@ -645,7 +713,13 @@ const Home = (function(){
   const camera=new THREE.PerspectiveCamera(48,1,.05,100); camera.position.set(0,.35,4.6);
   const root=new THREE.Group(); scene.add(root);
   const U={uTime:{value:0},uMouse:{value:new THREE.Vector3(9,9,0)},uScan:{value:-2},uPx:{value:1},uIntro:{value:0},uLime:{value:LIME},uLimeD:{value:LIME_D}};
-  let markPts=null, count=0;
+  let markPts=null, count=0, fl=null;
+  const FL=FLUID_OK(renderer);
+  const mLocal=new THREE.Vector3();
+  const homeEl=$("#home"), skip=e=>e.target.closest&&e.target.closest("a,button,input,label,.featcard,nav,header,.ribbon,.chips,.hud-tl");
+  addEventListener("pointerdown",e=>{if(fl&&homeEl.classList.contains("on")&&homeEl.contains(e.target)&&!skip(e))fl.press()},{passive:true});
+  addEventListener("pointerup",()=>{if(fl)fl.release()},{passive:true});
+  addEventListener("pointercancel",()=>{if(fl)fl.release()},{passive:true});
 
   // mark point cloud from logo alpha
   const im=new Image();
@@ -654,6 +728,31 @@ const Home = (function(){
     const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
     const base=[];for(let y=0;y<h;y+=2)for(let x=0;x<w;x+=2){if(d[(y*w+x)*4+3]>128)base.push([x/w-.5,(y/h-.5)/LOGO.mark.ar])}
     const L=6, S=3.4, pos=[], rnd=[], dir=[];
+    if(FL){ // particle fluid: same mark, now simulated on the GPU
+      const b=[];
+      for(const [x,y] of base){ for(let l=0;l<(LITE?4:L);l++){ if(Math.random()<(LITE?.4:.35)) continue;
+        b.push(x*S+(Math.random()-.5)*.012, -y*S+.62, (l/(L-1)-.5)*.34+(Math.random()-.5)*.03, Math.random()*.999); } }
+      for(let i=0;i<(LITE?600:1400);i++) b.push((Math.random()-.5)*6,(Math.random()-.2)*2.6,(Math.random()-.5)*3,1+Math.random()*.4);
+      fl=Fluid(renderer,b,{blast:50.});
+      const geo=new THREE.BufferGeometry();
+      geo.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(fl.N*3),3));
+      geo.setAttribute("aRef",new THREE.Float32BufferAttribute(fl.ref,2));
+      geo.setAttribute("aRand",new THREE.Float32BufferAttribute(b.filter((_,i)=>i%4===3),1));
+      const mat=new THREE.ShaderMaterial({uniforms:Object.assign({},U,fl.T),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+        vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uPx;attribute vec2 aRef;attribute float aRand;varying float vScan,vDeb,vDepth,vSpd;
+        void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);vDeb=step(1.,aRand);float r=fract(aRand*7.31);
+          vSpd=smoothstep(.35,2.6,sp);vScan=smoothstep(.16,0.,abs(p.x-uScan))*(1.-vDeb);
+          vec4 mv=modelViewMatrix*vec4(p,1.);vDepth=-mv.z;gl_Position=projectionMatrix*mv;
+          gl_PointSize=(vDeb>.5?1.4:(1.6+r*2.2+vScan*3.+vSpd*2.2))*uPx*(3.6/-mv.z);}`,
+        fragmentShader:`uniform vec3 uLime,uLimeD;varying float vScan,vDeb,vDepth,vSpd;
+        void main(){vec2 c=gl_PointCoord-.5;float d=length(c);if(d>.5)discard;float a=smoothstep(.5,.0,d);
+          vec3 col=mix(vec3(.82),uLime,clamp(vScan*1.4+vSpd,0.,1.));col=mix(col,uLimeD*.9,vDeb*.6);
+          float fade=clamp(1.6-vDepth*.22,.15,1.);gl_FragColor=vec4(col,a*(vDeb>.5?.35:.75+vSpd*.25)*fade+vScan*.4);}`});
+      markPts=new THREE.Points(geo,mat); markPts.frustumCulled=false; root.add(markPts); count=fl.N;
+      $("#hudPts").textContent="PARTICLES "+count.toLocaleString("en");
+      if(REDUCED){fl.settle(240);renderer.render(scene,camera);}
+      return;
+    }
     for(const [x,y] of base){ for(let l=0;l<L;l++){ if(Math.random()<.35) continue;
       pos.push(x*S+(Math.random()-.5)*.012, -y*S+.62, (l/(L-1)-.5)*.34+(Math.random()-.5)*.03);
       rnd.push(Math.random()); const a=Math.random()*6.283,b=Math.acos(Math.random()*2-1); dir.push(Math.sin(b)*Math.cos(a),Math.sin(b)*Math.sin(a),Math.cos(b)); } }
@@ -729,6 +828,7 @@ const Home = (function(){
     camera.position.x+=(mouse.nx*.55-camera.position.x)*.04; camera.position.y+=(.35+mouse.ny*.3-camera.position.y)*.04; camera.lookAt(0,.3,0);
     mv.set(mouse.nx,mouse.ny); ray.setFromCamera(mv,camera); if(ray.ray.intersectPlane(plane,hit)) U.uMouse.value.copy(hit);
     root.rotation.y=Math.sin(t*.25)*.18;
+    if(fl){root.updateMatrixWorld();mLocal.copy(U.uMouse.value);root.worldToLocal(mLocal);fl.step(now,mLocal,t);}
     ico.rotation.y=t*.04; ico.rotation.x=t*.02; rings.forEach((r,i)=>r.rotation.y=t*(.08+i*.05)*(i%2?-1:1));
     cubes.forEach(c=>{const u=c.userData;const a=u.a+t*u.sp;c.position.set(Math.cos(a)*u.r,u.y+Math.sin(t*.6+u.a)*.12,Math.sin(a)*u.r-.5);c.rotation.x=t*u.rs;c.rotation.y=t*u.rs*.7});
     sats.forEach((s,i)=>{const g=s.userData.ring.geometry.attributes.position;const k=Math.floor(((t*.05+s.userData.off/6.28)%1)*200);const v=new THREE.Vector3().fromBufferAttribute(g,k);s.position.copy(v.applyMatrix4(s.userData.ring.matrixWorld))});
@@ -874,10 +974,33 @@ const Portrait = (function(){
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setClearColor(0x000000,0);
   const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(30,4/5,.1,50); camera.position.set(0,0,4.6);
   const U={uTime:{value:0},uScan:{value:-2},uMouse:{value:new THREE.Vector2(9,9)},uIntro:{value:0},uPx:{value:1},uLime:{value:LIME}};
-  let pts=null, t0=0, ready=false;
+  let pts=null, t0=0, ready=false, fl=null;
+  const FL=FLUID_OK(renderer), mLocal=new THREE.Vector3();
+  fig.addEventListener("pointerdown",()=>{if(fl)fl.press()},{passive:true});
+  addEventListener("pointerup",()=>{if(fl)fl.release()},{passive:true});
+  addEventListener("pointercancel",()=>{if(fl)fl.release()},{passive:true});
   const im=new Image();
   im.onload=()=>{
     const w=300,h=375,c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
+    if(FL){ // the portrait as a particle fluid: same physics as the home mark, tuned to the frame
+      const b=[],lum=[];const SW=1.97,SH=2.46,keep=LITE?.2:.28;
+      for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255; if(L>.92||Math.random()>keep) continue;
+        b.push((x/w-.5)*SW+(Math.random()-.5)*.006,-(y/h-.5)*SH+(Math.random()-.5)*.006,(Math.random()-.5)*.05+(L-.5)*.12,Math.random()*.999);lum.push(L);}
+      fl=Fluid(renderer,b,{spring:7.,springR:3.,flow:.035,fall:16.,drag:5.,vortex:9.,blast:45.,blastR:6.,damp:3.2,vmax:5.,scatter:1.2,scatterR:1.2});
+      const geo=new THREE.BufferGeometry();
+      geo.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(fl.N*3),3));
+      geo.setAttribute("aRef",new THREE.Float32BufferAttribute(fl.ref,2));
+      geo.setAttribute("aL",new THREE.Float32BufferAttribute(lum,1));
+      geo.setAttribute("aR",new THREE.Float32BufferAttribute(b.filter((_,i)=>i%4===3),1));
+      pts=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:Object.assign({},U,fl.T),transparent:true,depthWrite:false,blending:THREE.NormalBlending,
+        vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uPx;attribute vec2 aRef;attribute float aL,aR;varying float vL,vS,vSpd;
+          void main(){vec3 p=texture2D(tPos,aRef).xyz;vL=aL;vSpd=smoothstep(.15,1.4,length(texture2D(tVel,aRef).xyz));
+            vS=smoothstep(.07,0.,abs(p.y-uScan));
+            vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=(1.9+aR*.9+vS*2.+vSpd*1.6)*uPx*(4.6/-mv.z);}`,
+        fragmentShader:`uniform vec3 uLime;varying float vL,vS,vSpd;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
+          float b=.12+pow(smoothstep(.06,.84,vL),.7)*1.1;vec3 col=mix(vec3(b),uLime,clamp(vS*1.3+vSpd,0.,1.));gl_FragColor=vec4(col,smoothstep(.5,0.,d)*(.85+vS*.4));}`}));
+      pts.frustumCulled=false; scene.add(pts); ready=true; if(REDUCED)fl.settle(240); return;
+    }
     const pos=[],lum=[],rnd=[];const SW=1.97,SH=2.46;
     for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255; if(L>.92) continue; // drop the white backdrop
       if(Math.random()>.72) continue;
@@ -906,6 +1029,7 @@ const Portrait = (function(){
       pv.set(((mouse.x-r.left)/r.width)*2-1,-((mouse.y-r.top)/r.height)*2+1);ray.setFromCamera(pv,camera);
       if(Math.abs(pv.x)<1.2&&Math.abs(pv.y)<1.2&&ray.ray.intersectPlane(plane,hit))U.uMouse.value.set(hit.x,hit.y);else U.uMouse.value.set(9,9);
       pts.rotation.y=Math.sin(t*.25)*.06+(pv.x>-1.2&&pv.x<1.2?pv.x*.08:0);
+      if(fl){const inside=U.uMouse.value.x<5;pts.updateMatrixWorld();if(inside){mLocal.set(U.uMouse.value.x,U.uMouse.value.y,0);pts.worldToLocal(mLocal);}fl.step(now,inside?mLocal:null,t);}
       renderer.render(scene,camera);}};
 })();
 
