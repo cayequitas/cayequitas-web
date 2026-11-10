@@ -192,5 +192,6 @@ else:
            '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n' + preload + head + '\n</head>\n<body>\n' + body + '\n</body>\n</html>\n')
     open(os.path.join(SITE, 'index.html'), 'w').write(doc)
     open(os.path.join(SITE, '.nojekyll'), 'w').write('')
+    shutil.copy(os.path.join(base, 'data', 'favicon.ico'), os.path.join(SITE, 'favicon.ico'))  # browsers also ask for /favicon.ico
     tot = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(SITE) for f in fs)
     print('index.html', len(doc)//1024, 'KB · site total', tot//1024, 'KB')
