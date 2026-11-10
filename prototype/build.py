@@ -134,7 +134,9 @@ else:
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
 import base64
 SITE = sys.argv[sys.argv.index('--site') + 1] if '--site' in sys.argv else None
+FAV = open(os.path.join(base, 'data', 'favicon.png'), 'rb').read()
 if not SITE:
+    html = html.replace('__FAVICON__', 'data:image/png;base64,' + base64.b64encode(FAV).decode())
     html = html.replace('__PORTRAIT__', 'data:image/jpeg;base64,' + base64.b64encode(open(os.path.join(base, 'data', 'portrait.jpg'), 'rb').read()).decode())
     open(out, 'w').write(html)
     print(len(html)//1024, 'KB')
@@ -170,6 +172,7 @@ else:
     html = html.replace(json.dumps(IMG), json.dumps(IMG2))
     LOG2 = {k: dict(v, src=dataurl_to_file(v['src'], 'logo-' + k)) for k, v in brand['logos'].items()}
     html = html.replace(json.dumps(brand['logos']), json.dumps(LOG2))
+    html = html.replace('__FAVICON__', put('assets/img/favicon.%s.png' % h(FAV), FAV))
     pdata = open(os.path.join(base, 'data', 'portrait.jpg'), 'rb').read()
     html = html.replace('__PORTRAIT__', put('assets/img/portrait.%s.jpg' % h(pdata), pdata))
     # main script -> external, deferred (three.js deferred before it, so order is kept)
