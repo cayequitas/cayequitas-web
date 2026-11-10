@@ -139,6 +139,29 @@ section.view.on{display:block}
 #project .write p{margin:0 0 1em;max-width:62ch;font-size:18px;line-height:1.55}
 #project .credits{margin-top:28px;border-top:1px solid var(--line);padding-top:18px;display:grid;gap:6px}
 #project .back{margin-bottom:24px;color:var(--ash)}
+#project .write h3{margin:1.4em 0 .5em;font-size:13px;font-family:var(--mono);font-weight:400;text-transform:uppercase;letter-spacing:.04em;color:var(--lime)}
+#project .write h3:first-child{margin-top:0}
+#project .credits b{font-weight:400;color:var(--bone);margin-top:10px}
+#project .pvids{display:grid;gap:16px;margin-top:64px}
+#project .pmedia{columns:2;column-gap:16px;margin-top:16px}
+#project .pvids+.pmedia{margin-top:16px}
+#project .pvids:not(:has(+.pmedia)),#project .cols+.pmedia{margin-top:64px}
+#project .pv{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}
+#project .pv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#project .pi{margin:0 0 16px;break-inside:avoid}
+#project .pi button{display:block;width:100%;padding:0;border:0;background:#0b0b0b;border-radius:16px;overflow:hidden;cursor:zoom-in}
+#project .pi img{display:block;width:100%;height:auto;transition:transform .8s cubic-bezier(.16,1,.3,1)}
+#project .pi button:hover img{transform:scale(1.03)}
+#project .pi figcaption{margin-top:8px;font-size:11px;color:var(--ash)}
+.lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.97);display:none;place-items:center;padding:56px 16px}
+.lb.on{display:grid}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.lb button{position:absolute;background:none;border:0;color:#fff;cursor:pointer;font-size:14px;padding:12px}
+.lb .lb-x{top:10px;right:12px;font-size:12px}
+.lb .lb-p,.lb .lb-n{top:50%;transform:translateY(-50%);font-size:28px}
+.lb .lb-p{left:8px}.lb .lb-n{right:8px}
+.lb .lb-c{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:11px;color:#aaa}
+@media (max-width:720px){#project .pmedia{columns:1}#project .pi{margin-bottom:12px}#project .pvids{margin-top:40px}}
 .todo{color:var(--void);background:var(--lime);padding:1px 6px}
 
 /* SHOWS: zeitguised index */
@@ -485,6 +508,7 @@ section.view.wrap::before{display:none}
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 <script>
 const IMG = __IMGDATA__;
+const MEDIA = "__MEDIA__";
 const LOGO = __LOGOS__;
 document.querySelectorAll(".logo.cs").forEach(el=>{el.style.setProperty("--src",`url(${LOGO.cs.src})`);el.style.setProperty("--ar",LOGO.cs.ar)});
 document.querySelectorAll(".logo.caye").forEach(el=>{el.style.setProperty("--src",`url(${LOGO.caye.src})`);el.style.setProperty("--ar",LOGO.caye.ar)});
@@ -574,16 +598,41 @@ function esc(s){return String(s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">
 function renderProject(slug){
   const p=bySlug[slug]; if(!p){location.hash="projects";return}
   document.documentElement.style.setProperty("--accent",p.accent);
+  const m=p.media;
+  const txt=m?m.body.filter(b=>b.t==="p"||b.t==="h").map(b=>b.t==="h"&&b.x.length>90?{t:"p",x:b.x}:b):[];
+  const vids=m?m.body.filter(b=>b.t==="video"):[];
+  const media=m?[...m.body.filter(b=>b.t==="img"),...m.gallery.map(g=>({t:"img",...g}))]:[];
+  const credits=m&&m.credits.length?m.credits:(p.credits||[]).map(c=>({t:"p",x:c}));
   let rows=[["Year",p.year||'<span class="todo">TBC</span>'],["Client",p.client||'<span class="todo">TBC</span>'],["Role",p.roleShort||p.role],["Venue",p.venue||'<span class="todo">TBC</span>'],["Lane",LANES[p.lane].name],["Tools",p.tools||'<span class="todo">TBC</span>']];
   if(PUBLIC) rows=rows.filter(([k,v])=>v&&!/TBC|to confirm/i.test(v));
   $("#project").innerHTML=`<button class="back mono" type="button" onclick="history.length>1?history.back():location.hash='projects'">← Back</button>
-  <div class="hero"><img alt="${esc(p.title)}" src="${IMG[p.slug].img}"></div>
+  <div class="hero"><img alt="${esc(p.title)}" src="${m?MEDIA+m.hero.src:IMG[p.slug].img}"></div>
   <div class="titlebar"><h2>${esc(p.title)}</h2><div class="roleline">${esc(p.line)}</div></div>
   <div class="cols"><dl class="mono">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
-  <div class="write">${p.text.map(t=>`<p>${esc(t)}</p>`).join("")}
-  ${p.credits?`<div class="credits mono">${p.credits.map(c=>`<span>${esc(c)}</span>`).join("")}</div>`:""}
-  <p class="mono pnote" style="color:var(--ash);margin-top:24px">Process captures, video loops and audience numbers go here.</p></div></div>`;
+  <div class="write">${txt.some(b=>b.t==="p")?txt.map(b=>b.t==="h"?`<h3>${esc(b.x)}</h3>`:`<p>${esc(b.x)}</p>`).join(""):p.text.map(t=>`<p>${esc(t)}</p>`).join("")}
+  ${credits.length?`<div class="credits mono">${credits.map(c=>c.t==="h"?`<b>${esc(c.x)}</b>`:`<span>${esc(c.x).replace(/\n/g,"<br>")}</span>`).join("")}</div>`:""}
+  <p class="mono pnote" style="color:var(--ash);margin-top:24px">Process captures, video loops and audience numbers go here.</p></div></div>
+  ${vids.length?`<div class="pvids">${vids.map(b=>`<div class="pv"><iframe loading="lazy" src="${b.src}" title="${esc(p.title)} video" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>`).join("")}</div>`:""}
+  ${media.length?`<div class="pmedia">${media.map((b,i)=>`<figure class="pi"><button type="button" data-i="${i}" aria-label="Open image"><img loading="lazy" decoding="async" alt="" src="${MEDIA+b.src}" width="${b.w}" height="${b.h}"></button>${b.cap?`<figcaption class="mono">${esc(b.cap)}</figcaption>`:""}</figure>`).join("")}</div>`:""}`;
+  const imgs=media.map(b=>MEDIA+b.src);
+  $("#project").querySelectorAll(".pi button").forEach(bt=>bt.onclick=()=>Lightbox.open(imgs,+bt.dataset.i));
 }
+/* ---------- lightbox for project images ---------- */
+const Lightbox=(function(){
+  const box=document.createElement("div");box.className="lb";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");
+  box.innerHTML=`<img alt=""><button class="lb-x mono" type="button" aria-label="Close">Close ✕</button><button class="lb-p" type="button" aria-label="Previous">←</button><button class="lb-n" type="button" aria-label="Next">→</button><span class="lb-c mono"></span>`;
+  document.body.appendChild(box);
+  let list=[],i=0;const img=box.querySelector("img");
+  const show=()=>{img.src=list[i];box.querySelector(".lb-c").textContent=String(i+1).padStart(2,"0")+" / "+String(list.length).padStart(2,"0");};
+  const go=d=>{i=(i+d+list.length)%list.length;show()};
+  const close=()=>{box.classList.remove("on");document.body.style.overflow=""};
+  box.querySelector(".lb-x").onclick=close;box.querySelector(".lb-p").onclick=()=>go(-1);box.querySelector(".lb-n").onclick=()=>go(1);
+  box.addEventListener("click",e=>{if(e.target===box)close()});
+  addEventListener("keydown",e=>{if(!box.classList.contains("on"))return;if(e.key==="Escape")close();if(e.key==="ArrowRight")go(1);if(e.key==="ArrowLeft")go(-1)});
+  let sx=0;box.addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});box.addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>50)go(d<0?1:-1)},{passive:true});
+  addEventListener("hashchange",close);
+  return {open(l,k){list=l;i=Math.max(0,k);show();box.classList.add("on");document.body.style.overflow="hidden";box.querySelector(".lb-x").focus()}};
+})();
 
 /* ---------- shows ---------- */
 (function(){
