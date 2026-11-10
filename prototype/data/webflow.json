@@ -232,10 +232,6 @@
   },
   "body": [
    {
-    "t": "video",
-    "src": "https://www.youtube-nocookie.com/embed/mw0fcYFc74Q"
-   },
-   {
     "t": "img",
     "src": "h-m-virtual-showroom/02.webp",
     "w": 1600,
@@ -252,10 +248,6 @@
     "src": "h-m-virtual-showroom/04.webp",
     "w": 1544,
     "h": 1020
-   },
-   {
-    "t": "video",
-    "src": "https://www.youtube-nocookie.com/embed/rrrbI_sItVQ"
    }
   ],
   "gallery": [],
@@ -434,12 +426,7 @@
    "w": 1600,
    "h": 952
   },
-  "body": [
-   {
-    "t": "video",
-    "src": "https://www.youtube-nocookie.com/embed/JWm9dGrh97c"
-   }
-  ],
+  "body": [],
   "gallery": [
    {
     "src": "meta-festival/02.webp",
@@ -537,10 +524,6 @@
    "h": 900
   },
   "body": [
-   {
-    "t": "video",
-    "src": "https://www.youtube-nocookie.com/embed/zz5RRqlUDXE"
-   },
    {
     "t": "p",
     "x": "Nagel Draxler is one of the galleries that present and promote artists working with blockchain technologies and NFTs. Nagel Draxler is also known for their collaboration with media artist, art critic and curator Kenny Schachter: In early 2021, Kenny Schachter curated the exhibition “Breadcrumbs: Art in the Age of NFTism” at Nagel Draxler’s gallery in Cologne. At Art Cologne 2021 Nagel Draxler’s booth featured Schachter’s NFT piece “The Last Soldier”."
@@ -1171,10 +1154,6 @@
    "h": 900
   },
   "body": [
-   {
-    "t": "video",
-    "src": "https://www.youtube-nocookie.com/embed/-F52O5IUiDA"
-   },
    {
     "t": "img",
     "src": "vogue-business-metaverse-atelier/02.webp",
