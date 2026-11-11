@@ -1136,5 +1136,8 @@ addEventListener("hashchange",()=>document.body.classList.remove("choosing"));
 /* ---------- reveal on scroll ---------- */
 const revealIO=("IntersectionObserver" in window)?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");revealIO.unobserve(e.target)}}),{rootMargin:"0px 0px -6% 0px"}):null;
 document.querySelectorAll("#collage .item,#mosaic .tile,#about .card").forEach((el,i)=>{el.classList.add("rv");el.style.setProperty("--d",(i%3)*80+"ms");revealIO?revealIO.observe(el):el.classList.add("in")});
+// tidy the address bar: drop tracking tags that Instagram/Facebook add (utm_*, fbclid, igshid...)
+try{const u=new URL(location.href);const k=[...u.searchParams.keys()].filter(x=>/^(utm_|fbclid$|gclid$|igshid$|mc_|ref$)/.test(x));
+  if(k.length){k.forEach(x=>u.searchParams.delete(x));history.replaceState(null,"",u.pathname+(u.searchParams.toString()?"?"+u.searchParams:"")+u.hash);}}catch(e){}
 route();
 </script>
