@@ -960,8 +960,8 @@ const World = (function(){
         float lit=clamp(pool+sc,0.,1.6);
         float tex=.9+.1*hh(floor(vP*90.));
         vec3 col=vec3(.19,.195,.2)*spot*tex*mix(.10,1.,sh);                 // lit floor, darkened by the shadow
-        col+=vec3(.5)*g*.07*spot;                                         // faint grid
-        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);for(int i=0;i<9;i++){vec2 bd=vP-uBars[i].xy;col+=mix(vec3(.9),uLime,.35)*uBars[i].z*uSI*(.05+g*.05)*exp(-dot(bd,bd)*.7)*tex*mix(.3,1.,sh);}
+        col+=vec3(.5)*g*.035*spot;                                         // faint grid
+        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);for(int i=0;i<2;i++){float dx=vP.x-(i==0?-uBars[0].x:uBars[0].x);float h=uBars[0].y;float r2=dx*dx+h*h;col+=vec3(.9,.91,.88)*uSI*.085*tex*(h/sqrt(r2))/(r2*.55+sqrt(r2)*.5+.1)*mix(.35,1.,sh);}
         gl_FragColor=vec4(col*fog*uDim,1.);}`}));
   floor.material.extensions={derivatives:true};
   floor.rotation.x=-Math.PI/2; floor.position.y=FLOOR; floor.renderOrder=-2; root.add(floor);
@@ -981,28 +981,47 @@ const World = (function(){
   for(let i=0;i<NB;i++){const o={i,ms:[],I:1};
     for(const [halo,mir] of [[0,0],[1,0],[0,1],[1,1]]){const m=new THREE.Mesh(bgeo,barMat(halo,mir)); m.renderOrder=mir?-1:1; root.add(m); o.ms.push(m);}
     bars.push(o);}
-  // walls: dark slats that catch the poster's light
-  const wallMat=()=>new THREE.ShaderMaterial({uniforms:{uLime:U.uLime,uDim:U.uDim,uP:{value:new THREE.Vector3(0,1.4,PZ_)}},
-    vertexShader:`varying vec3 vL;varying float vD;void main(){vec4 w=modelMatrix*vec4(position,1.);vL=position;vec4 mv=viewMatrix*w;vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`uniform vec3 uLime,uP;uniform float uDim;varying vec3 vL;varying float vD;
-      void main(){float sl=smoothstep(.0,.06,abs(fract(vL.x*2.2)-.5)-.18);float hz=smoothstep(.0,.02,abs(fract(vL.y*.55)-.5)-.47);
-        vec2 d=vec2(max(abs(vL.x-uP.x)-3.4,0.),max(abs(vL.y-uP.y)-1.2,0.));float lit=exp(-dot(d,d)*.55);
-        vec3 c=vec3(.012)+uLime*lit*(.018+.04*sl)*(1.-hz*.5)+vec3(.02)*sl*exp(-abs(vL.y-3.2)*.8);
-        gl_FragColor=vec4(c*exp(-max(vD-6.,0.)*.08)*uDim,1.);}`});
-  const back=new THREE.Mesh(new THREE.PlaneGeometry(30,10),wallMat()); root.add(back);
-  const sideL=new THREE.Mesh(new THREE.PlaneGeometry(14,10),wallMat()), sideR=new THREE.Mesh(new THREE.PlaneGeometry(14,10),wallMat()); root.add(sideL,sideR);
-  const stripMat=new THREE.ShaderMaterial({uniforms:U,vertexShader:`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uDim,uSI;void main(){gl_FragColor=vec4(vec3(3.2,3.3,3.1)*uDim*uSI,1.);}`});
-  const strips=[]; for(let i=0;i<18;i++){const t=new THREE.Mesh(new THREE.BoxGeometry(.06,.04,1.05),stripMat);root.add(t);strips.push(t)}
-  function layoutRoom(nar){const hw=nar?3.1:5.2, span=nar?2.2:3.6, y=FLOOR+1.6;
+  // the room: smooth charcoal walls and ceiling, lit only by two recessed linear lights that run from the back wall
+  // toward the camera. The light on every surface is the analytic falloff of a line light, so it reads as real.
+  const LU={uLX:{value:2.4},uLY:{value:3},uLime:U.uLime,uDim:U.uDim,uSI:U.uSI};
+  const roomMat=(n)=>new THREE.ShaderMaterial({uniforms:{...LU,uM:{value:new THREE.Matrix4()},uN:{value:new THREE.Vector3(...n)}},
+    vertexShader:`uniform mat4 uM;varying vec3 vR;varying float vD;void main(){vR=(uM*vec4(position,1.)).xyz;vec4 mv=modelViewMatrix*vec4(position,1.);vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`uniform vec3 uLime,uN;uniform float uDim,uSI,uLX,uLY;varying vec3 vR;varying float vD;
+      float hh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      void main(){float E=0.;
+        for(int i=0;i<2;i++){vec2 l=vec2(i==0?-uLX:uLX,uLY-.06);vec2 d=l-vR.xy;float r=length(d);
+          float c=max(dot(uN.xy,d/max(r,1e-3)),0.)+abs(uN.z)*.45;E+=(c*.85+.10)/(r*r*.55+r*.5+.10);}
+        float gr=(hh(floor(vR.xy*240.)+floor(vR.z*240.))-.5)*.012;
+        vec3 c=vec3(.26,.265,.27)*E*uSI*mix(vec3(1.),uLime,.05)+vec3(.0035)+gr*E*.3;
+        gl_FragColor=vec4(c*exp(-max(vD-5.,0.)*.05)*uDim,1.);}`});
+  const back=new THREE.Mesh(new THREE.PlaneGeometry(30,12),roomMat([0,0,1])); root.add(back);
+  const sideL=new THREE.Mesh(new THREE.PlaneGeometry(16,12),roomMat([1,0,0])), sideR=new THREE.Mesh(new THREE.PlaneGeometry(16,12),roomMat([-1,0,0])); root.add(sideL,sideR);
+  const ceil=new THREE.Mesh(new THREE.PlaneGeometry(30,16),roomMat([0,-1,0])); root.add(ceil);
+  // the lights themselves: a thin diffuser with a soft profile across its width, set in a dark slot
+  const LLEN=11;
+  const stripMat=new THREE.ShaderMaterial({uniforms:LU,vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`uniform float uDim,uSI;varying vec2 vUv;void main(){float x=abs(vUv.x-.5)*2.;float core=smoothstep(1.,.55,x);
+      gl_FragColor=vec4(vec3(1.02,1.03,1.)*(.35+1.25*core)*uDim*uSI,1.);}`});
+  const slotMat=new THREE.MeshBasicMaterial({color:0x000000});
+  const reflMat=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:LU,
+    vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`uniform float uDim,uSI;varying vec2 vUv;void main(){float x=(vUv.x-.5)*2.;float a=exp(-x*x*7.)*.035+exp(-x*x*60.)*.05;
+      a*=smoothstep(0.,.25,vUv.y)*smoothstep(1.,.6,vUv.y);gl_FragColor=vec4(vec3(a)*uDim*uSI,1.);}`});
+  const strips=[],slots=[],refls=[]; for(let i=0;i<2;i++){
+    const t=new THREE.Mesh(new THREE.PlaneGeometry(.045,LLEN),stripMat), sl=new THREE.Mesh(new THREE.PlaneGeometry(.11,LLEN),slotMat), r=new THREE.Mesh(new THREE.PlaneGeometry(.9,LLEN),reflMat);
+    r.renderOrder=-1; root.add(sl,t,r); strips.push(t); slots.push(sl); refls.push(r);}
+  function layoutRoom(nar){const hw=nar?2.6:4.6, lx=nar?1.25:2.35, H=nar?3.3:2.45, ly=FLOOR+H, zb=PZ_-1.6, zm=zb+LLEN/2;
     bars.forEach(o=>o.ms.forEach(m=>m.visible=false));
-    back.position.set(0,FLOOR+5,PZ_-1.6); back.material.uniforms.uP.value.set(0,y-(FLOOR+5),0);
-    sideL.position.set(-hw,FLOOR+5,PZ_-1.6+7); sideL.rotation.y=Math.PI/2; sideL.material.uniforms.uP.value.set(-8.6,y-(FLOOR+5),0);
-    sideR.position.set(hw,FLOOR+5,PZ_-1.6+7); sideR.rotation.y=-Math.PI/2; sideR.material.uniforms.uP.value.set(8.6,y-(FLOOR+5),0);
-    // ceiling strips: on each side an inner and an outer row running from the back wall toward the camera
-    const pools=[]; strips.forEach((t,i)=>{const side=i%2?1:-1, j=Math.floor(i/2), col=j%3, k=Math.floor(j/3);   // 3 columns x 3 depths per side
-      const x=side*((nar?.75:1.55)+col*(nar?.62:1.05)), z=PZ_+.5+k*1.45+col*.25, yy=FLOOR+(nar?3.0:2.3)+col*.22+k*.1;
-      t.position.set(x,yy,z); t.rotation.set(0, side*.95, side*-.3); if(col<2||k===1) pools.push([x,z]);});
-    for(let i=0;i<NB;i++){const q=pools[i%pools.length]; BU.uBars.value[i].set(q[0],q[1],i<pools.length?1:0);}}
+    LU.uLX.value=lx; LU.uLY.value=ly; BU.uBars.value[0].set(lx,H,1);
+    back.position.set(0,FLOOR+6,zb);
+    sideL.position.set(-hw,FLOOR+6,zb+8); sideL.rotation.y=Math.PI/2;
+    sideR.position.set(hw,FLOOR+6,zb+8); sideR.rotation.y=-Math.PI/2;
+    ceil.position.set(0,ly,zb+8); ceil.rotation.x=Math.PI/2;
+    [back,sideL,sideR,ceil].forEach(m=>{m.updateMatrix();m.material.uniforms.uM.value.copy(m.matrix)});
+    for(let i=0;i<2;i++){const x=(i?1:-1)*lx;
+      slots[i].position.set(x,ly-.02,zm); slots[i].rotation.x=Math.PI/2;
+      strips[i].position.set(x,ly-.035,zm); strips[i].rotation.x=Math.PI/2;
+      refls[i].position.set(x,FLOOR+.002,zm); refls[i].rotation.x=-Math.PI/2;}}
 
   // the organic glass form used on every page: a torus and a few lumps, melted together and then bent three times.
   // No two bulges alike, with a hole through it.

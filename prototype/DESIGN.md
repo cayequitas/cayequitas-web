@@ -88,3 +88,8 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 
 - Home: the scan line is gone. The LED bars moved to the ceiling: 18 short white strips in three angled columns per side, receding to the back wall, each casting a soft pool on the floor.
 - About: portrait particles are black and grey only (no lime). Where the pointer stirs them they shrink instead of changing colour.
+
+## v2.3 — minimal room
+
+- Home: the slatted walls and scattered strips are replaced by a plain charcoal room with a ceiling and two recessed linear lights running from the back wall toward the camera.
+- Walls, ceiling and floor are lit by the analytic falloff of those two line lights, with a soft glossy streak on the floor.
