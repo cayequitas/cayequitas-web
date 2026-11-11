@@ -1,4 +1,4 @@
-# Design direction: "scan sheet" (v1.5)
+# Design direction: "scan sheet" (v1.6)
 
 Carlos captures the physical world with scans and rebuilds it live, so the site reads like his capture notebook:
 a technical drawing sheet with his work on it, measured and annotated, with lime used as a highlighter.
@@ -19,7 +19,17 @@ a technical drawing sheet with his work on it, measured and annotated, with lime
 - **Stickers.** One tilted lime sticker per screen at most ("feel" on home, "Cayé" on art projects).
 - **Motion.** A lime sheet with the Cayé mark wipes between pages. Projects keeps its "Something cool in every project" intro, on lime.
 
-## Home as one long scroll (v1.5)
+## One page, one 3D room (v1.6)
+
+The long scroll was dropped again: home is a single screen. What changed instead is the space the mark sits in.
+
+- A floor grid runs into fog under the mark, and the particles reflect in it.
+- Depth of field: particles away from the focal plane get larger and dimmer. The camera orbits slowly.
+- Bloom and lit haze: the lime (fast or scanned) particles are blurred and added back, and the wide blur is multiplied by drifting noise so it reads as light in fog. Stirring, blasting or swirling the fluid raises an energy value that also lights a pool on the floor.
+- Paper pages keep the same room in ink: grey grid, soft ink bleed in place of glow, reflection as a contact shadow.
+- The featured project card holds each project for 9 seconds, pauses on hover or focus, and has previous/next arrows.
+
+## Home as one long scroll (v1.5, dropped)
 
 Studied the pacing of monogrid.com, then rebuilt it in this brand rather than copying it:
 

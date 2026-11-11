@@ -40,9 +40,6 @@ body.paper :focus-visible{outline-color:var(--black)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:16px}
 body.paper header{background:var(--bg);border-bottom:1px solid var(--rule)}
-body[data-view="home"].past header{background:linear-gradient(#000 40%,rgba(0,0,0,0));transition:background-color .3s}
-body.onlime header{background:var(--lime)!important;--logo:var(--black)}
-body.onlime header,body.onlime header a,body.onlime header .voice{color:var(--black)!important}
 header .brand{display:flex;align-items:center;gap:14px;text-decoration:none}
 .logo{display:block;background:var(--logo);-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
 .logo.cs{height:38px;aspect-ratio:var(--ar)}
@@ -86,53 +83,13 @@ section.view.on{display:block}
 .pagehead .sub p{margin:0;max-width:46ch;font-size:clamp(17px,1.5vw,21px);line-height:1.3}
 
 /* ---------- HOME ---------- */
-#home{padding:0;position:relative}
+#home{padding:0;position:relative;height:100vh;height:100svh;min-height:620px;overflow:hidden}
+body[data-view="home"] footer{display:none}
 #home .hero{position:relative;height:100vh;height:100svh;min-height:620px;overflow:hidden;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 /* typewriter captions with a block cursor, scattered over the 3D */
 .tw{position:absolute;left:var(--x);top:var(--y);z-index:3;font-size:11px;color:var(--grey2);white-space:nowrap;pointer-events:none}
 .tw::after,.cur{content:"";display:inline-block;width:.62em;height:1.05em;margin-left:3px;vertical-align:-.15em;background:currentColor;animation:blink 1s steps(2) infinite}
 @keyframes blink{50%{opacity:0}}
-/* selected works: three columns that scroll at different speeds, cards tilt with scroll speed */
-.works{position:relative;z-index:2;padding-top:120px;padding-bottom:140px}
-.works::before{content:"";position:absolute;left:30%;right:30%;top:8%;bottom:0;z-index:-1;pointer-events:none;
-  background-image:radial-gradient(rgba(209,251,70,.22) 1px,transparent 1.5px);background-size:7px 7px;
-  -webkit-mask:radial-gradient(closest-side,#000,transparent);mask:radial-gradient(closest-side,#000,transparent)}
-.wh{display:flex;justify-content:center;align-items:center;font-size:14px;margin-bottom:96px;color:var(--white)}
-.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;align-items:start}
-.col{display:grid;gap:88px;will-change:transform}
-.col:nth-child(2){margin-top:140px}
-.wcard{display:grid;gap:12px;text-align:left;color:var(--white);cursor:pointer;text-decoration:none}
-.wcard .ph{aspect-ratio:var(--ar,4/3);overflow:hidden;transform:perspective(900px) rotateX(var(--tilt,0deg)) skewY(calc(var(--tilt,0deg) * -.15));transform-origin:50% 50%;background:#111}
-.wcard img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1s var(--ease),filter .4s}
-.wcard:hover img{transform:scale(1.05)}
-.wcard .chips{display:flex;flex-wrap:wrap;gap:4px}
-.wcard .chips span{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;background:var(--lime);color:var(--black);padding:1px 5px}
-.wcard .chips span.o{background:none;color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}
-.wcard h3{margin:0;font-weight:300;font-size:clamp(22px,1.9vw,30px);line-height:1.08;letter-spacing:-.02em}
-.wcard p{margin:0;color:#a8a8a8;font-size:15px;line-height:1.4;max-width:46ch}
-.wcard .go{display:inline-block;margin-left:.3em;font-size:.6em;vertical-align:.5em;color:var(--lime);transition:transform .3s var(--ease)}
-.wcard:hover .go{transform:translate(4px,-4px)}
-.wcard:hover h3{color:var(--lime)}
-.wfoot{display:flex;justify-content:center;margin-top:120px}
-/* square-icon button: word [icon] word */
-.sq{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--white);font-size:12px}
-.sq i{font-style:normal;display:grid;place-items:center;width:42px;height:42px;border:1px solid currentColor;transition:background-color .2s,color .2s,transform .4s var(--ease)}
-.sq:hover i{background:var(--lime);color:var(--black);border-color:var(--lime);transform:rotate(-8deg)}
-.sq.dark{color:var(--black)}.sq.dark:hover i{background:var(--black);color:var(--lime);border-color:var(--black)}
-/* manifesto: full-bleed lime with a halftone, words fill in as you scroll */
-.mani{position:relative;z-index:2;background:var(--lime);color:var(--black);min-height:100vh;display:grid;place-items:center;align-content:center;gap:56px;padding-block:120px;overflow:hidden}
-.mani::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(0,0,0,.2) 1px,transparent 1.6px);background-size:6px 6px;
-  -webkit-mask:radial-gradient(60% 55% at 50% 50%,#000,transparent);mask:radial-gradient(60% 55% at 50% 50%,#000,transparent)}
-.mani-t{position:relative;margin:0;max-width:1200px;text-align:center;text-transform:uppercase;font-weight:400;font-size:clamp(34px,5.4vw,92px);line-height:.98;letter-spacing:-.035em;text-wrap:balance}
-.mani-t .w{opacity:.18;transition:opacity .35s}
-.mani-t .w.on{opacity:1}
-/* reel block */
-.reel{position:relative;z-index:2;padding-block:120px 140px;background:var(--black)}
-.reel .tw{z-index:4}
-.reel-box{position:relative;display:block;max-width:1000px;margin:0 auto;aspect-ratio:16/9;overflow:hidden;background:#111}
-.reel-box img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.3) contrast(1.05);transition:transform 1.2s var(--ease),filter .5s}
-.reel-box:hover img{transform:scale(1.04);filter:none}
-.reel-box .sq{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .hint-touch{display:none}
 @media (hover:none){.hint-touch{display:inline}}
 #home .fig .hint-hover,#home .fig .hint-touch{color:var(--lime)}
@@ -156,7 +113,13 @@ section.view.on{display:block}
 #home h1 .l{font-weight:300;letter-spacing:-.04em}
 #home h1 .stk{margin-left:.06em;letter-spacing:-.02em;padding:.02em .1em 0;animation:stamp 1s var(--ease) .5s both}
 @keyframes stamp{0%{transform:rotate(-14deg) scale(1.5);opacity:0}60%{opacity:1}100%{transform:rotate(-3deg) scale(1)}}
-.featcard{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center;text-align:left;max-width:380px;flex:0 1 380px;position:relative;cursor:pointer;color:var(--white)}
+.feat{display:flex;align-items:center;gap:14px;flex:0 1 440px;max-width:440px;min-width:0}
+.featcard{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center;text-align:left;flex:1 1 auto;min-width:0;position:relative;cursor:pointer;color:var(--white)}
+.fc-nav{display:flex;gap:4px;flex:none}
+.fc-nav button{width:34px;height:34px;border:1px solid rgba(255,255,255,.3);color:var(--white);display:grid;place-items:center;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s}
+.fc-nav button:hover{background:var(--lime);border-color:var(--lime);color:var(--black)}
+.feat.paused .fc-bar i{background:var(--white)}
+.featcard .thumb img{transition:filter .4s,opacity .35s}.feat.swap .fc-txt,.feat.swap .thumb img{opacity:0}.fc-txt{transition:opacity .35s}
 .featcard .thumb{width:92px;height:62px;overflow:hidden;display:block;background:#111}
 .featcard img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.1);transition:filter .4s}
 .featcard:hover img{filter:none}
@@ -359,13 +322,9 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
   #home h1{white-space:normal;font-size:19.5vw;line-height:.8}
   #home .copy{bottom:44px;gap:12px}
   #home .fig{top:calc(env(safe-area-inset-top,0px) + 74px)}
-  .featcard{flex:1 1 100%;max-width:none}
+  .feat{flex:1 1 100%;max-width:none}
   #home .fig .pc{display:none}
-  .cols{grid-template-columns:1fr;gap:56px}.col{gap:56px}.col:nth-child(2){margin-top:0}
-  .wcard .ph{aspect-ratio:4/3}.wcard p{font-size:14px}
-  .works{padding-top:88px}.wh{margin-bottom:56px}
   .tw{font-size:10px}
-  .mani{min-height:80vh}
   .dimline em{display:none}
   .dimline .lg{display:none}
   .lab-prog{display:none}
@@ -408,29 +367,18 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
   <div class="copy wrap">
     <div class="top">
       <p class="lede"><b>Carlos Serrano</b> scans the physical world with photogrammetry and volumetric video, and rebuilds it as living, reactive systems for stages, domes and spaces.</p>
-      <button class="featcard" id="featCard" type="button">
-        <span class="thumb"><img id="featImg" alt=""></span>
-        <span class="fc-txt"><span class="mono fc-k">Now showing · <span id="featIdx">01</span>/04</span><span class="fc-t" id="featTitle"></span><span class="mono fc-r" id="featRole"></span></span>
-        <span class="fc-bar"><i id="featBar"></i></span>
-      </button>
+      <div class="feat" id="feat">
+        <button class="featcard" id="featCard" type="button">
+          <span class="thumb"><img id="featImg" alt=""></span>
+          <span class="fc-txt"><span class="mono fc-k">Now showing · <span id="featIdx">01</span>/<span id="featN">04</span></span><span class="fc-t" id="featTitle"></span><span class="mono fc-r" id="featRole"></span></span>
+          <span class="fc-bar"><i id="featBar"></i></span>
+        </button>
+        <span class="fc-nav mono"><button type="button" id="featPrev" aria-label="Previous project">←</button><button type="button" id="featNext" aria-label="Next project">→</button></span>
+      </div>
     </div>
     <div class="dimline mono" aria-hidden="true"><span>Carlos Serrano<span class="lg"> · technical direction</span></span><em>Berlin ⟷ worldwide</em><span>Cayé<span class="lg"> · real-time art</span></span></div>
     <h1><span class="b">Pixels</span> <span class="l">you can</span> <span class="stk">feel</span></h1>
   </div>
- </div>
- <div class="works wrap" id="works">
-  <div class="wh mono"><span>{ Selected works }</span><i class="cur"></i></div>
-  <div class="cols" id="cols"><div class="col" data-sp="0"></div><div class="col" data-sp=".14"></div><div class="col" data-sp="-.06"></div></div>
-  <div class="wfoot"><a class="sq mono" href="#projects"><span>All</span><i>↗</i><span>projects</span></a></div>
- </div>
- <div class="mani" id="mani">
-  <p class="mani-t wrap" id="maniT">I scan the physical world and rebuild it as living worlds for stages, domes, screens and the people inside them.</p>
-  <a class="sq mono dark" href="#about"><span>Meet</span><i>⏻</i><span>Carlos</span></a>
- </div>
- <div class="reel wrap">
-  <div class="tw mono" style="--x:4%;--y:78%" data-tw="3" aria-hidden="true"></div>
-  <div class="tw mono" style="--x:70%;--y:52%" data-tw="4" aria-hidden="true"></div>
-  <a class="reel-box" href="#lab"><img id="reelImg" alt="Point-cloud still from the Lab"><span class="sq mono"><span>Enter</span><i>▶</i><span>Lab</span></span></a>
  </div>
 </section>
 
@@ -695,52 +643,35 @@ const mouse = {x:0,y:0,nx:0,ny:0};
 addEventListener("pointermove",e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.nx=e.clientX/innerWidth*2-1;mouse.ny=-(e.clientY/innerHeight*2-1)});
 
 /* ---------- HOME: 3D point-cloud mark ---------- */
-const FEAT = ["on-the-other-earth","danny-ocean-2025-tour","penumbra","spectral-lures"];
-let fi=0, featT0=0;
+const FEAT = ["on-the-other-earth","danny-ocean-2025-tour","penumbra","spectral-lures","hyperverbena","wackyschak-stage"].filter(s=>bySlug[s]);
+// the featured card: 9 s per project, pauses while hovered or focused, arrows step through
+const FEAT_MS=9000;
+let fi=0, featT0=0, featHold=false, featAcc=0, featLast=0;
 function showFeat(i){
-  const p=bySlug[FEAT[i]];
-  $("#featImg").src=IMG[p.slug].img; $("#featTitle").textContent=p.title; $("#featRole").textContent=p.role;
-  $("#featIdx").textContent=String(i+1).padStart(2,"0"); $("#featCard").onclick=()=>location.hash="p-"+p.slug;
-  featT0=performance.now();
+  const p=bySlug[FEAT[i]], box=$("#feat");
+  const put=()=>{$("#featImg").src=IMG[p.slug].img; $("#featTitle").textContent=p.title; $("#featRole").textContent=p.role;
+    $("#featIdx").textContent=String(i+1).padStart(2,"0"); $("#featN").textContent=String(FEAT.length).padStart(2,"0"); $("#featCard").onclick=()=>location.hash="p-"+p.slug; box.classList.remove("swap");};
+  if($("#featTitle").textContent&&!REDUCED){box.classList.add("swap");setTimeout(put,300)}else put();
+  featAcc=0; featT0=performance.now();
 }
-/* ---------- HOME long scroll: typewriter captions, parallax works, manifesto fill ---------- */
+function featTick(now){ const dt=Math.min(100,now-(featLast||now)); featLast=now; if(!featHold) featAcc+=dt;
+  $("#featBar").style.width=Math.min(100,featAcc/FEAT_MS*100)+"%"; if(featAcc>=FEAT_MS){fi=(fi+1)%FEAT.length;showFeat(fi)} }
+(function(){const box=$("#feat"), hold=v=>{featHold=v;box.classList.toggle("paused",v)};
+  box.addEventListener("pointerenter",()=>hold(true)); box.addEventListener("pointerleave",()=>hold(false));
+  box.addEventListener("focusin",()=>hold(true)); box.addEventListener("focusout",()=>hold(false));
+  $("#featPrev").onclick=()=>{fi=(fi-1+FEAT.length)%FEAT.length;showFeat(fi)}; $("#featNext").onclick=()=>{fi=(fi+1)%FEAT.length;showFeat(fi)};
+})();
+/* ---------- HOME: typewriter captions over the 3D ---------- */
 const Home=(function(){
-  const WORKS=["danny-ocean-2025-tour","on-the-other-earth","h-m-virtual-showroom","wackyschak-stage","penumbra","hyperverbena","vogue-business-metaverse-atelier","spectral-lures","nftism"].filter(s=>bySlug[s]);
-  const AR=["4/5","4/3","1/1","3/4","16/10","4/5","4/3","1/1","3/4"];
-  const PH=[["Scanning the room","Point cloud loaded","Particles: alive"],["Real time, no render farm","Unreal · TouchDesigner · Houdini"],["Berlin ⟷ worldwide","Stages · domes · screens"],
-    ["Rebuilding the world, one point at a time","Bring your own space"],["It's lab time","Experiments in motion"]];
-  const cols=[...document.querySelectorAll("#cols .col")], tws=[...document.querySelectorAll(".tw")];
-  let built=false, raf=0, lastY=scrollY, v=0, on=false, timers=[];
-  function build(){ if(built) return; built=true;
-    WORKS.forEach((slug,i)=>{const p=bySlug[slug], L=LANES[p.lane];
-      const a=document.createElement("a"); a.className="wcard"; a.href="#p-"+slug; a.style.setProperty("--ar",AR[i]);
-      a.innerHTML=`<div class="ph"><img loading="lazy" alt="" src="${IMG[slug].img}"></div>
-        <div class="chips">${L?`<span>${esc(L.name)}</span>`:""}<span class="o">${p.voice==="cay"?"Cayé":"Carlos Serrano"}</span></div>
-        <h3>${esc(p.title)}<span class="go mono">↗</span></h3><p>${esc(p.line||p.role||"")}</p>`;
-      (innerWidth<820?cols[0]:cols[i%3]).appendChild(a);});
-    const m=$("#maniT"); m.innerHTML=m.textContent.split(" ").map(w=>`<span class="w">${esc(w)}</span>`).join(" ");
-    const r=bySlug["on-the-other-earth"]||P[0]; $("#reelImg").src=IMG[r.slug].img;
-  }
+  const PH=[["Scanning the room","Point cloud loaded","Particles: alive"],["Real time, no render farm","Unreal · TouchDesigner · Houdini"],["Berlin ⟷ worldwide","Stages · domes · screens"]];
+  const tws=[...document.querySelectorAll("#home .tw")]; let on=false, timers=[];
   function type(el,list){let k=0;
     const run=()=>{const txt=list[k%list.length]; let n=0; el.textContent="";
       const add=()=>{if(!on)return; el.textContent=txt.slice(0,++n); if(n<txt.length) timers.push(setTimeout(add,38+Math.random()*50)); else timers.push(setTimeout(()=>{k++;run()},2400+Math.random()*1600));};
       add();};
     run();}
-  function fx(){ raf=0; const y=scrollY, d=y-lastY; lastY=y; v+=(d-v)*.2;
-    const tilt=REDUCED?0:Math.max(-9,Math.min(9,v*.35));
-    for(const c of cols){const r=c.getBoundingClientRect(), sp=+c.dataset.sp; c.style.transform=REDUCED||innerWidth<820?"":`translate3d(0,${(r.top+r.height/2-innerHeight/2)*sp*-1}px,0)`;
-      c.style.setProperty("--tilt",tilt.toFixed(2)+"deg");}
-    const ws=document.querySelectorAll("#maniT .w"), mr=$("#maniT").getBoundingClientRect();
-    const f=Math.max(0,Math.min(1,(innerHeight*.85-mr.top)/(mr.height+innerHeight*.35)));
-    const n=Math.round(f*ws.length); ws.forEach((w,i)=>w.classList.toggle("on",i<n));
-    const mb=$("#mani").getBoundingClientRect(), hh=$("header").offsetHeight;
-    document.body.classList.toggle("onlime",mb.top<hh&&mb.bottom>hh/2); document.body.classList.toggle("past",y>innerHeight*.6);
-    if(Math.abs(v)>.05||Math.abs(d)>0) raf=requestAnimationFrame(fx); else cols.forEach(c=>c.style.setProperty("--tilt","0deg"));
-  }
-  const kick=()=>{if(on&&!raf)raf=requestAnimationFrame(fx)};
-  addEventListener("scroll",kick,{passive:true}); addEventListener("resize",kick);
-  return {start(){build(); if(on)return; on=true; tws.forEach(el=>type(el,PH[+el.dataset.tw]||PH[0])); lastY=scrollY; kick();},
-          stop(){on=false; timers.forEach(clearTimeout); timers=[]; document.body.classList.remove("onlime","past");}};
+  return {start(){if(on)return; on=true; if(!REDUCED) tws.forEach(el=>type(el,PH[+el.dataset.tw]||PH[0]));},
+          stop(){on=false; timers.forEach(clearTimeout); timers=[];}};
 })();
 /* ---------- WORLD: the Cayé mark as a particle fluid, one 3D layer behind every page ----------
    A GPU simulation (position + velocity textures, ping-pong) runs every particle:
@@ -758,7 +689,8 @@ const World = (function(){
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(48,1,.05,100); camera.position.set(0,.35,4.6);
   const root=new THREE.Group(); scene.add(root);
-  const U={uTime:{value:0},uScan:{value:-2},uPx:{value:1},uDim:{value:1},uInk:{value:0},uLime:{value:LIME},uLimeD:{value:LIME_D},tPos:{value:null},tVel:{value:null}};
+  const FLOOR=-.2;
+  const U={uFloor:{value:FLOOR},uFocus:{value:4.6},uEnergy:{value:0},uLight:{value:new THREE.Vector2(0,0)},uTime:{value:0},uScan:{value:-2},uPx:{value:1},uDim:{value:1},uInk:{value:0},uLime:{value:LIME},uLimeD:{value:LIME_D},tPos:{value:null},tVel:{value:null}};
   const SIM={tPos:{value:null},tVel:{value:null},tOrigin:{value:null},uTime:{value:0},uDt:{value:.016},uFlow:{value:0},uBurst:{value:0},
     uMouse:{value:new THREE.Vector3(9,9,0)},uMouseVel:{value:new THREE.Vector3()},uHover:{value:0},uDown:{value:0},uBlast:{value:new THREE.Vector3(9,9,0)},uBlastAge:{value:9}};
   let mats=[], count=0, ready=false, TW=256, TH=1, rt=null, flip=0, simScene=null, simCam=null, quad=null, velMat=null, posMat=null;
@@ -805,21 +737,31 @@ const World = (function(){
     geo.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(N*3),3));
     geo.setAttribute("aRef",new THREE.Float32BufferAttribute(ref,2));
     geo.setAttribute("aRand",new THREE.Float32BufferAttribute(rnd,1));
-    const mat=new THREE.ShaderMaterial({uniforms:U,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
-      vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uPx;attribute vec2 aRef;attribute float aRand;varying float vScan,vDeb,vDepth,vSpd;
+    // one material for the cloud, one for its reflection in the floor
+    const mkMat=(mir)=>new THREE.ShaderMaterial({uniforms:Object.assign({},U,{uMirror:{value:mir}}),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+      vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uPx,uMirror,uFloor,uFocus;attribute vec2 aRef;attribute float aRand;varying float vScan,vDeb,vDepth,vSpd,vCoc,vH;
       void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);vDeb=step(1.,aRand);float r=fract(aRand*7.31);
         vSpd=smoothstep(.35,2.6,sp);
         vScan=smoothstep(.16,0.,abs(p.x-uScan))*(1.-vDeb);
+        vH=p.y-uFloor; if(uMirror>.5) p.y=uFloor-vH;
         vec4 mv=modelViewMatrix*vec4(p,1.);vDepth=-mv.z;gl_Position=projectionMatrix*mv;
-        gl_PointSize=(vDeb>.5?1.4:(1.5+r*2.1+vScan*3.+vSpd*2.2))*uPx*(3.6/-mv.z);}`,
-      fragmentShader:`uniform vec3 uLime,uLimeD;uniform float uDim,uInk;varying float vScan,vDeb,vDepth,vSpd;
+        vCoc=abs(vDepth-uFocus);                                         // distance from the focal plane: soft, bigger, dimmer
+        float size=(vDeb>.5?1.4:(1.5+r*2.1+vScan*3.+vSpd*2.6))+vCoc*vCoc*3.2+uMirror*1.5;
+        gl_PointSize=min(size,22.)*uPx*(3.6/-mv.z);}`,
+      fragmentShader:`uniform vec3 uLime,uLimeD;uniform float uDim,uInk,uMirror,uFocus;varying float vScan,vDeb,vDepth,vSpd,vCoc,vH;
       void main(){vec2 c=gl_PointCoord-.5;float d=length(c);if(d>.5)discard;float a=smoothstep(.5,.0,d);
+        if(uMirror>.5&&(vDeb>.5||vH<0.))discard;
         float hot=clamp(vScan*1.4+vSpd,0.,1.);
         vec3 col=mix(vec3(.82),uLime,hot);col=mix(col,uLimeD*.9,vDeb*.6);
         col=mix(col,mix(mix(vec3(.05),uLimeD,hot),vec3(.45),vDeb),uInk);
-        float fade=clamp(1.6-vDepth*.22,.15,1.);
-        gl_FragColor=vec4(col,min(1.,(a*(vDeb>.5?.35:.75+vSpd*.25)*fade+vScan*.4)*uDim*(1.+uInk*.9)));}`});
-    const pts=new THREE.Points(geo,mat); pts.frustumCulled=false; root.add(pts); mats.push(mat); setInk();
+        float fade=clamp(1.-(vDepth-uFocus)*.3,.15,1.2)/(1.+vCoc*vCoc*2.4);
+        float al=(a*(vDeb>.5?.35:.75+vSpd*.25)*fade+vScan*.4*(1.-uMirror))*uDim*(1.+uInk*.9);
+        al*=mix(1.,(.16+hot*.5)*exp(-vH*1.5)*(1.-uInk*.45),uMirror);     // reflection: fades with height, hot particles reflect brighter
+        gl_FragColor=vec4(col,min(1.,al));}`});
+    const mat=mkMat(0), mmat=mkMat(1);
+    const mirror=new THREE.Points(geo,mmat); mirror.frustumCulled=false; mirror.renderOrder=-1; root.add(mirror);
+    const pts=new THREE.Points(geo,mat); pts.frustumCulled=false; root.add(pts); mats.push(mat,mmat); setInk();
+    initPost();
     count=N; ready=true;
   }
   function pass(m,target){quad.material=m;renderer.setRenderTarget(target);renderer.render(simScene,simCam);renderer.setRenderTarget(null);}
@@ -838,7 +780,7 @@ const World = (function(){
     const pts=[];for(let y=0;y<h;y+=2)for(let x=0;x<w;x+=2){if(d[(y*w+x)*4+3]>128)pts.push([x/w-.5,(y/h-.5)/LOGO.mark.ar])}
     const L=LITE?4:6, S=3.4, keep=LITE?.6:.65, base=[];
     for(const [x,y] of pts){ for(let l=0;l<L;l++){ if(Math.random()>keep) continue;
-      base.push(x*S+(Math.random()-.5)*.012, -y*S+.62, (l/(L-1)-.5)*.34+(Math.random()-.5)*.03, Math.random()*.999); } }
+      base.push(x*S+(Math.random()-.5)*.012, -y*S+.62, (l/(L-1)-.5)*.62+(Math.random()-.5)*.05, Math.random()*.999); } }
     for(let i=0;i<(LITE?500:1400);i++) base.push((Math.random()-.5)*6,(Math.random()-.2)*2.6,(Math.random()-.5)*3,1+Math.random()*.4);
     build(base);
     $("#hudPts").textContent=count.toLocaleString("en")+" particles";
@@ -852,6 +794,70 @@ const World = (function(){
   // on the white pages the same fluid is drawn as ink: normal blending, dark particles, olive wake
   function setInk(){const ink=mode!=="home"&&mode!=="";U.uInk.value=ink?1:0;mats.forEach(m=>{const b=ink?THREE.NormalBlending:THREE.AdditiveBlending;if(m.blending!==b){m.blending=b;m.needsUpdate=true;}});}
   laser.position.set(0,.55,.25); root.add(laser);
+
+  // the floor: a faint grid running into fog. The fluid lights it: a lime pool under the cursor that grows with the energy of the gesture.
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(44,44),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:U,
+    vertexShader:`varying vec2 vP;varying float vD;void main(){vP=vec2(position.x,-position.y);vec4 mv=modelViewMatrix*vec4(position,1.);vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`uniform vec3 uLime,uLimeD;uniform float uDim,uInk,uEnergy,uScan,uTime;uniform vec2 uLight;varying vec2 vP;varying float vD;
+      float ln(float v){float f=abs(fract(v)-.5);float w=fwidth(v)*1.2;return 1.-smoothstep(0.,w,f);}
+      void main(){float fog=exp(-max(vD-2.5,0.)*.22)*exp(-length(vP)*.12);
+        float g=max(ln(vP.x*1.5),ln(vP.y*1.5));
+        vec2 dl=vP-uLight;float pool=exp(-dot(dl,dl)*.55)*uEnergy;
+        float sx=(vP.x-uScan)*5.;float sc=exp(-sx*sx)*exp(-abs(vP.y)*.55)*.55;
+        float lit=clamp(pool+sc,0.,1.6);
+        float base=exp(-dot(vP,vP)*.16)*.05;                             // soft pool of light under the mark
+        vec3 colD=mix(vec3(.55),uLime,clamp(lit,0.,1.));
+        float aD=(g*(.10+lit*.55)+lit*.20+base)*fog;
+        vec3 colI=mix(vec3(0.),uLimeD,clamp(lit*1.4,0.,1.));
+        float aI=(g*(.20+lit*.5)+lit*.16+base*1.6)*fog;
+        gl_FragColor=vec4(mix(colD,colI,uInk),mix(aD,aI,uInk)*uDim);}`}));
+  floor.material.extensions={derivatives:true};
+  floor.rotation.x=-Math.PI/2; floor.position.y=FLOOR; floor.renderOrder=-2; root.add(floor); mats.push(floor.material);
+
+  // post: bloom + lit haze. The scene is drawn to a texture, its bright (lime, fast) parts are blurred twice,
+  // and the wide blur is multiplied by drifting noise so the glow reads as light scattering in fog.
+  let post=null;
+  function initPost(){
+    const mkrt=()=>new THREE.WebGLRenderTarget(4,4,{type:THREE.HalfFloatType,format:THREE.RGBAFormat,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false,stencilBuffer:false});
+    const PU={tA:{value:null},tB:{value:null},tC:{value:null},uDir:{value:new THREE.Vector2()},uInk:U.uInk,uTime:U.uTime,uAspect:{value:1},uEnergy:U.uEnergy,uLimeD:U.uLimeD,uDim:U.uDim};
+    const m=(fs)=>new THREE.ShaderMaterial({uniforms:PU,vertexShader:VQ,fragmentShader:fs,depthTest:false,depthWrite:false,blending:THREE.NoBlending});
+    post={S:mkrt(),A:mkrt(),B:mkrt(),C:mkrt(),D:mkrt(),PU,
+      bright:m(`uniform sampler2D tA;uniform float uInk;varying vec2 vUv;void main(){vec4 c=texture2D(tA,vUv);float lim=clamp((c.g-c.b)*1.7,0.,1.);
+        vec3 b=c.rgb*(.07+lim*1.25);b=b/(1.+max(b.r,max(b.g,b.b))*.55);gl_FragColor=mix(vec4(b,c.a),c,uInk);}`),
+      blur:m(`uniform sampler2D tA;uniform vec2 uDir;varying vec2 vUv;void main(){vec4 c=texture2D(tA,vUv)*.227;
+        c+=(texture2D(tA,vUv+uDir*1.385)+texture2D(tA,vUv-uDir*1.385))*.316;c+=(texture2D(tA,vUv+uDir*3.231)+texture2D(tA,vUv-uDir*3.231))*.0703;gl_FragColor=c;}`),
+      comp:m(`uniform sampler2D tA,tB,tC;uniform float uInk,uTime,uAspect,uEnergy,uDim;uniform vec3 uLimeD;varying vec2 vUv;
+        float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+        float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+        float fbm(vec2 p){return n(p)*.5+n(p*2.03+7.1)*.3+n(p*4.1+3.3)*.2;}
+        void main(){vec4 s=texture2D(tA,vUv),g1=texture2D(tB,vUv),g2=texture2D(tC,vUv);
+          vec2 q=vec2(vUv.x*uAspect,vUv.y);float f=fbm(q*2.6+vec2(uTime*.035,-uTime*.02))*fbm(q*1.3-vec2(uTime*.02,0.));
+          float grain=(h(vUv*913.+uTime)-.5)*.012;
+          // dark: light adds. the haze is brightest where the wide glow is, so moving fluid lights the room
+          vec3 glow=g1.rgb*.55+g2.rgb*(.45+f*3.2);glow=1.-exp(-glow*1.15);
+          vec3 amb=uLimeD*(.035+uEnergy*.05)*f*smoothstep(1.,.25,vUv.y)*uDim;
+          vec3 sc=s.rgb/(1.+max(s.r,max(s.g,s.b))*.22);vec3 cd=sc+glow+amb+grain;float ad=clamp(max(s.a,max(cd.r,max(cd.g,cd.b))),0.,1.);
+          // paper: the same blur becomes soft ink bleed and contact shadow
+          vec4 halo=(g1*.35+g2*(.35+f*.9));vec4 ci=s+halo*(1.-s.a);
+          gl_FragColor=mix(vec4(cd,ad),ci,uInk);}`)};
+    sizePost();
+  }
+  function sizePost(){ if(!post) return; const v=renderer.getDrawingBufferSize(new THREE.Vector2()), w=v.x, h=v.y, q=LITE?5:4;
+    post.S.setSize(w,h); post.A.setSize(Math.ceil(w/q),Math.ceil(h/q)); post.B.setSize(Math.ceil(w/q),Math.ceil(h/q));
+    post.C.setSize(Math.ceil(w/q/2.5),Math.ceil(h/q/2.5)); post.D.setSize(Math.ceil(w/q/2.5),Math.ceil(h/q/2.5)); post.PU.uAspect.value=w/h; }
+  function draw(){
+    if(!post){renderer.render(scene,camera);return}
+    const {S,A,B,C,D,PU}=post;
+    renderer.setRenderTarget(S); renderer.render(scene,camera);
+    PU.tA.value=S.texture; pass(post.bright,A);
+    PU.tA.value=A.texture; PU.uDir.value.set(1/A.width,0); pass(post.blur,B);
+    PU.tA.value=B.texture; PU.uDir.value.set(0,1/A.height); pass(post.blur,A);
+    PU.tA.value=A.texture; PU.uDir.value.set(1.6/C.width,0); pass(post.blur,C);
+    PU.tA.value=C.texture; PU.uDir.value.set(0,1.6/C.height); pass(post.blur,D);
+    PU.tA.value=D.texture; PU.uDir.value.set(2.4/C.width,0); pass(post.blur,C);
+    PU.tA.value=C.texture; PU.uDir.value.set(0,2.4/C.height); pass(post.blur,D);
+    PU.tA.value=S.texture; PU.tB.value=A.texture; PU.tC.value=D.texture; pass(post.comp,null);
+  }
 
   // input: stir, blast, vortex (mouse, pen and touch)
   const ray=new THREE.Raycaster(), plane=new THREE.Plane(new THREE.Vector3(0,0,1),0), hit=new THREE.Vector3(), mv=new THREE.Vector2();
@@ -871,8 +877,8 @@ const World = (function(){
     else if(nar) Object.assign(tgt,{x:.2,y:2.2,z:-1.2,s:.85,dim:.5});
     else Object.assign(tgt,{x:1.75,y:.15,z:-.8,s:.82,dim:.7});
   }
-  function resize(){const pr=DPR(LITE?1.25:(mode==="home"?2:1.5));renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;
-    camera.position.z=innerWidth<820?8.2:4.6;camera.updateProjectionMatrix();U.uPx.value=pr*(innerHeight/900);targets();}
+  function resize(){const pr=DPR(LITE?1.25:1.5);renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;
+    camera.position.z=innerWidth<820?8.2:4.6;camera.updateProjectionMatrix();U.uPx.value=pr*(innerHeight/900);targets();sizePost();}
   addEventListener("resize",()=>{if(mode)resize()});
   function frame(now){
     const t=(now-t0)/1000, dt=Math.min(.033,Math.max(.008,(now-last)/1000||.016)); last=now;
@@ -883,14 +889,14 @@ const World = (function(){
     sy+=(scrollY-sy)*.12; vel+=(Math.abs(scrollY-lastY)-vel)*.15; lastY=scrollY;
     const bt=Math.min(1,(now-burstT)/700), burst=bt<1?Math.pow(1-bt,3):0;
     SIM.uBurst.value=burst*amp; SIM.uFlow.value=Math.min(1,vel*.02);
-    if(mode==="home"){const hp=Math.max(0,Math.min(1,scrollY/innerHeight)), e=hp*hp*(3-2*hp);
-      tgt.x=e*(nar?.2:1.9); tgt.y=(nar?1.25:.38)+e*(nar?1.4:-.1); tgt.z=-e*1.1; tgt.s=1-e*.2; tgt.dim=1-e*.62;}
     U.uDim.value=cur.dim;
     if(mode==="home") scan=((t*.42)%3.6)-1.8; else scan+=((-1.8+3.6*Math.min(1,sy/max))-scan)*.1;
     U.uScan.value=scan; laser.position.x=scan;
     // slow orbit for depth, plus cursor parallax
-    const orb=Math.sin(t*.18)*.35;
-    camera.position.x+=(mouse.nx*.6+orb-camera.position.x)*.04; camera.position.y+=(.35+mouse.ny*.32-camera.position.y)*.04; camera.lookAt(0,.3,0);
+    const orb=Math.sin(t*.16)*.75, baseZ=innerWidth<820?8.2:4.6;
+    camera.position.x+=(mouse.nx*.9+orb-camera.position.x)*.035; camera.position.y+=(.55+mouse.ny*.45+Math.sin(t*.11)*.12-camera.position.y)*.035;
+    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,.3,0);
+    U.uFocus.value=camera.position.distanceTo(root.position)-.05;
     root.rotation.y=Math.sin(t*.25)*.22+(mode==="home"?0:-.35*(nar?0:1));
     root.updateMatrixWorld();
     mv.set(mouse.nx,mouse.ny); ray.setFromCamera(mv,camera);
@@ -900,15 +906,19 @@ const World = (function(){
     SIM.uHover.value+=(((now-lastMove)<220?1:0)-SIM.uHover.value)*.2;
     SIM.uDown.value+=((down&&now-downT>260?1:0)-SIM.uDown.value)*.1;
     SIM.uBlastAge.value=(now-blastAt)/1000;
+    // how much the fluid is being moved right now: drives the light on the floor and in the haze
+    const bl=Math.max(0,1-(now-blastAt)/900);
+    const e=Math.min(1.6,SIM.uHover.value*Math.min(1,mVel.length()/9)+SIM.uDown.value*.9+bl*bl*1.6+burst*.8);
+    U.uEnergy.value+=(e-U.uEnergy.value)*(e>U.uEnergy.value?.25:.035); U.uLight.value.set(mLocal.x,0);
     if(ready){step(dt);}
-    renderer.render(scene,camera);
-    if(mode==="home"){const fp=(now-featT0)/5200; $("#featBar").style.width=Math.min(100,fp*100)+"%"; if(fp>=1){fi=(fi+1)%FEAT.length;showFeat(fi)}}
+    draw();
+    if(mode==="home") featTick(now);
     if(mode==="about") Portrait.render(now);
   }
   return {
     set(m){const first=!mode; mode=m; setInk(); canvas.classList.add("on"); resize(); if(first){Object.assign(cur,tgt);t0=performance.now();last=t0;}
       if(m==="home") showFeat(fi); if(m==="about") Portrait.start();
-      if(REDUCED){Object.assign(cur,tgt);const settle=()=>{if(!ready)return setTimeout(settle,100);for(let i=0;i<240;i++)step(.016);renderer.render(scene,camera);};settle();return}
+      if(REDUCED){Object.assign(cur,tgt);const settle=()=>{if(!ready)return setTimeout(settle,100);for(let i=0;i<240;i++)step(.016);draw();};settle();return}
       runLoop(frame,(m==="home"||!LITE)?60:30);},
     stop(){mode="";canvas.classList.remove("on");stopLoop()},
     burst(){burstT=performance.now();amp=1},
