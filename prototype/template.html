@@ -640,7 +640,8 @@ const Lightbox=(function(){
 /* ---------- shared ---------- */
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const HAS_GL = (()=>{try{const c=document.createElement("canvas");return !!(window.THREE && (c.getContext("webgl2")||c.getContext("webgl")))}catch(e){return false}})();
-const LIME = new THREE.Color("#D1FB46"), LIME_D = new THREE.Color("#86A80C");
+// brand colours as raw values: the shaders write straight to the screen, so no colour-space conversion may touch them
+const LIME = new THREE.Color().setRGB(0xD1/255,0xFB/255,0x46/255), LIME_D = new THREE.Color().setRGB(0x86/255,0xA8/255,0x0C/255);
 // phones and small tablets get lighter scenes: lower pixel ratio, fewer particles, 30 fps for ambient layers
 const LITE = matchMedia("(max-width:820px), (pointer:coarse)").matches;
 const DPR = (cap)=>Math.min(cap, devicePixelRatio||1);
@@ -844,7 +845,7 @@ const World = (function(){
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(44,1,.05,100); camera.position.set(0,1.1,4.9);
   const root=new THREE.Group(); scene.add(root);
-  const FLOOR=.62-2.6*.5/LOGO.mark.ar-.12;                   // just under the mark, so it stands on its own shadow
+  const FLOOR=.62-3.1*.5/LOGO.mark.ar-.12;                   // just under the mark, so it stands on its own shadow
   const U={uFloor:{value:FLOOR},uFocus:{value:4.6},uEnergy:{value:0},uLight:{value:new THREE.Vector2(0,0)},uTime:{value:0},uScan:{value:-2},uPx:{value:1},uDim:{value:1},uLime:{value:LIME},uLimeD:{value:LIME_D},tPos:{value:null},tVel:{value:null},
     uTube:{value:-1.9},uBack:{value:0},tShadow:{value:null},uShadowM:{value:new THREE.Matrix4()},uShR:{value:.004},uBias:{value:.004}};
   const SIM={tPos:{value:null},tVel:{value:null},tOrigin:{value:null},uTime:{value:0},uDt:{value:.016},uFlow:{value:0},uBurst:{value:0},
@@ -897,7 +898,7 @@ const World = (function(){
     geo.setAttribute("aRef",new THREE.Float32BufferAttribute(ref,2));
     geo.setAttribute("aRand",new THREE.Float32BufferAttribute(rnd,1));
     geo.setAttribute("aCol",new THREE.Float32BufferAttribute(col,1));
-    cloud=LitCloud(renderer,geo,U,{radius:LITE?.0105:.0077,ao:[-.2,.2],extent:2.7,range:9,floor:FLOOR,mirror:true,back:1,light:new THREE.Vector3(-.42,.85,.38)});
+    cloud=LitCloud(renderer,geo,U,{radius:LITE?.0125:.009,ao:[-.2,.2],extent:2.7,range:9,floor:FLOOR,mirror:true,back:1,light:new THREE.Vector3(-.42,.85,.38)});
     U.tShadow.value=cloud.U.tShadow.value; U.uShadowM.value=cloud.U.uShadowM.value; U.uShR.value=cloud.U.uShR.value*3.2;
     cloud.U.uScan=U.uScan; cloud.pts.material.uniforms.uScan=U.uScan; cloud.mirror.material.uniforms.uScan=U.uScan;
     cloud.pts.material.uniforms.uDim=U.uDim; cloud.mirror.material.uniforms.uDim=U.uDim;
@@ -928,7 +929,7 @@ const World = (function(){
     const w=360,h=Math.round(w/LOGO.mark.ar),c=document.createElement("canvas");c.width=w;c.height=h;
     const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
     const sx=LITE?3:2, pts=[];for(let y=0;y<h;y+=sx)for(let x=0;x<w;x+=sx){if(d[(y*w+x)*4+3]>128)pts.push([x/w-.5,(y/h-.5)/LOGO.mark.ar])}
-    const L=LITE?5:6, S=2.6, keep=LITE?.8:.84, base=[], max=(LITE?128:256)*(LITE?128:240);
+    const L=LITE?5:6, S=3.1, keep=LITE?.8:.84, base=[], max=(LITE?128:256)*(LITE?128:240);
     for(const [x,y] of pts){ for(let l=0;l<L;l++){ if(Math.random()>keep||base.length/4>max) continue;
       base.push(x*S+(Math.random()-.5)*.008, -y*S+.62+(Math.random()-.5)*.008, (l/(L-1)-.5)*.36+(Math.random()-.5)*.02, Math.random()*.999); } }
     for(let i=0;i<(LITE?300:900);i++) base.push((Math.random()-.5)*6,(Math.random()-.1)*2.6,(Math.random()-.5)*3.4,1+Math.random()*.4);
@@ -946,7 +947,7 @@ const World = (function(){
   // The fluid lights it too: a lime pool under the cursor that grows with the energy of the gesture.
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(44,44),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:U,
     vertexShader:`uniform mat4 uShadowM;varying vec2 vP;varying float vD;varying vec3 vSh;void main(){vP=vec2(position.x,-position.y);vec4 w=modelMatrix*vec4(position,1.);vSh=(uShadowM*w).xyz*.5+.5;vec4 mv=viewMatrix*w;vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`uniform sampler2D tShadow;uniform vec3 uLime,uLimeD;uniform float uDim,uEnergy,uScan,uTime,uShR,uBias,uTube;uniform vec2 uLight;varying vec2 vP;varying float vD;varying vec3 vSh;${LIT_GLSL}
+    fragmentShader:`uniform sampler2D tShadow;uniform vec3 uLime,uLimeD;uniform float uDim,uEnergy,uScan,uTime,uShR,uBias,uTube;uniform vec2 uLight;uniform vec3 uBars[9];varying vec2 vP;varying float vD;varying vec3 vSh;${LIT_GLSL}
       float ln(float v){float f=abs(fract(v)-.5);float w=fwidth(v)*1.2;return 1.-smoothstep(0.,w,f);}
       float hh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       void main(){float fog=exp(-max(vD-3.,0.)*.16);
@@ -960,71 +961,47 @@ const World = (function(){
         float tex=.9+.1*hh(floor(vP*90.));
         vec3 col=vec3(.19,.195,.2)*spot*tex*mix(.10,1.,sh);                 // lit floor, darkened by the shadow
         col+=vec3(.5)*g*.07*spot;                                         // faint grid
-        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);float pz=vP.y-uTube;float pxx=max(abs(vP.x)-.95,0.);col+=uLime*(.15+g*.10)*exp(-(pxx*pxx*.55+pz*pz*.11))*step(0.,pz)*tex*mix(.25,1.,sh);vec2 tb=vec2(abs(vP.x)-uTube,vP.y+.9);                         // light from the moving fluid
+        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);for(int i=0;i<9;i++){vec2 bd=vP-uBars[i].xy;bd.y*=.55;col+=uLime*uBars[i].z*(.075+g*.07)*exp(-dot(bd,bd)*1.5)*tex*mix(.3,1.,sh);}
         gl_FragColor=vec4(col*fog*uDim,1.);}`}));
   floor.material.extensions={derivatives:true};
   floor.rotation.x=-Math.PI/2; floor.position.y=FLOOR; floor.renderOrder=-2; root.add(floor);
 
-  // the hall: a dark room with one thing glowing in it, a lime poster screen that shows the featured project.
-  // It lights the floor, the walls and the back of every particle. Ceiling strips give the room its perspective.
-  const PW_=1.9, PH_=2.58, PZ_=-2.4, pc=document.createElement("canvas"); pc.width=750; pc.height=1020;
-  const ptex=new THREE.CanvasTexture(pc); ptex.minFilter=THREE.LinearFilter; ptex.generateMipmaps=false;
-  const pimg={}, tintC=document.createElement("canvas");
-  function inkLogo(g,L,x,y,w){const im=inkLogo[L.src]||(inkLogo[L.src]=Object.assign(new Image(),{src:L.src,onload:()=>{posterFor=-1}})); if(!im.complete||!im.naturalWidth)return;
-    const h=w/L.ar; tintC.width=Math.ceil(w); tintC.height=Math.ceil(h); const t=tintC.getContext("2d"); t.drawImage(im,0,0,w,h); t.globalCompositeOperation="source-in"; t.fillStyle="#000"; t.fillRect(0,0,w,h); g.drawImage(tintC,x,y);}
-  let posterFor=-1;
-  function drawPoster(i){const p=bySlug[FEAT[i]], g=pc.getContext("2d"), W=pc.width, H=pc.height, m=46; if(!p) return;
-    g.fillStyle="#D1FB46"; g.fillRect(0,0,W,H);
-    g.strokeStyle="rgba(0,0,0,.5)"; g.lineWidth=1.5; const hl=(y,x0=m,x1=W-m)=>{g.beginPath();g.moveTo(x0,y);g.lineTo(x1,y);g.stroke()}, vl=(x,y0=m,y1=H-m)=>{g.beginPath();g.moveTo(x,y0);g.lineTo(x,y1);g.stroke()};
-    vl(m);vl(W-m);hl(m,0,W);hl(H-m,0,W);hl(200);hl(452);hl(488);hl(820);hl(928);
-    g.fillStyle="#000"; g.fillRect(0,0,m,m); g.fillRect(W-m-44,452,44,36); g.fillRect(W-m,488,m,150); g.fillRect(0,820,m,108);
-    inkLogo(g,LOGO.cs,m+6,m+26,190);
-    g.font='700 20px "Hogisogi",monospace'; g.textBaseline="alphabetic"; g.textAlign="right"; g.fillText(String(i+1).padStart(2,"0")+" / "+String(FEAT.length).padStart(2,"0"),W-m-6,m+44); g.textAlign="left";
-    // title, as big as fits in three lines
-    const words=p.title.toUpperCase().replace(" — "," ").split(" "); let fs=92, lines=[];
-    for(;fs>40;fs-=4){g.font='900 '+fs+'px "Heuvel Grotesk",Arial,sans-serif'; lines=[]; let cur="";
-      for(const w of words){const t=cur?cur+" "+w:w; if(g.measureText(t).width>W-2*m-12&&cur){lines.push(cur);cur=w}else cur=t} lines.push(cur);
-      if(lines.length<=3&&lines.every(l=>g.measureText(l).width<=W-2*m-12)) break;}
-    lines=lines.slice(0,3); const y0=438-(lines.length-1)*fs*.9; lines.forEach((l,k)=>g.fillText(l,m+4,y0+k*fs*.9));
-    g.font='700 19px "Hogisogi",monospace'; g.fillText(((LANES[p.lane]||{}).name||"").toUpperCase()+(p.year?"  ·  "+p.year:""),m+6,477);
-    const im=pimg[p.slug]||(pimg[p.slug]=Object.assign(new Image(),{src:IMG[p.slug].img,onload:()=>{posterFor=-1}}));
-    const bx=m,by=488,bw=W-2*m,bh=332; g.fillStyle="#111"; g.fillRect(bx,by,bw,bh);
-    if(im.complete&&im.naturalWidth){const ar=im.naturalWidth/im.naturalHeight, br=bw/bh; let sw=im.naturalWidth, sh=im.naturalHeight, sx=0, sy=0; if(ar>br){sw=sh*br;sx=(im.naturalWidth-sw)/2}else{sh=sw/br;sy=(im.naturalHeight-sh)/2} g.drawImage(im,sx,sy,sw,sh,bx,by,bw,bh);}
-    g.fillStyle="#000"; g.font='400 19px "Hogisogi",monospace';
-    const role=(p.role||p.roleShort||"").toUpperCase(); let rl=[],rc=""; for(const w of role.split(" ")){const t=rc?rc+" "+w:w; if(g.measureText(t).width>W-2*m-60&&rc){rl.push(rc);rc=w}else rc=t} rl.push(rc); rl.slice(0,3).forEach((l,k)=>g.fillText(l,m+6,852+k*26));
-    g.font='700 17px "Hogisogi",monospace'; g.fillText("CAYEQUITAS.COM",m+6,H-m-12); g.textAlign="right"; g.fillText("@CAYEQUITAS",W-m-6,H-m-12); g.textAlign="left";
-    inkLogo(g,LOGO.mark,W/2-58,H-m-14-116/LOGO.mark.ar,116);
-    ptex.needsUpdate=true; posterFor=i;}
-  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{posterFor=-1});
-  const posterMat=(mir)=>new THREE.ShaderMaterial({transparent:!!mir,depthWrite:!mir,blending:mir?THREE.AdditiveBlending:THREE.NormalBlending,uniforms:{map:{value:ptex},uMirror:{value:mir},uDim:U.uDim,uTime:U.uTime},
+  // the hall: a dark room lit by a fan of LED bars behind the mark. A slow pulse runs along them and they flare
+  // with the energy of the fluid. Each bar has a soft halo (light in haze), a pool on the floor and a reflection.
+  const NB=9, PZ_=-2.3, bars=[], BU={uBars:{value:[]}}; for(let i=0;i<NB;i++) BU.uBars.value.push(new THREE.Vector3());
+  U.uBars=BU.uBars;
+  const barMat=(halo,mir)=>new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{uI:{value:1},uW:{value:0},uLime:U.uLime,uDim:U.uDim},
     vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-    fragmentShader:`uniform sampler2D map;uniform float uMirror,uDim,uTime;varying vec2 vUv;
-      void main(){vec3 c=texture2D(map,vUv).rgb;c=c*c*1.12;                       // screen: emits what it shows
-        c*=.96+.04*sin(vUv.y*900.)+.015*sin(uTime*3.);
-        gl_FragColor=vec4(c*uDim*mix(1.,.34*smoothstep(.55,0.,vUv.y),uMirror),1.);}`});
-  const sgeo=new THREE.PlaneGeometry(1,1), poster=new THREE.Mesh(sgeo,posterMat(0)), posterR=new THREE.Mesh(sgeo,posterMat(1)); posterR.material.side=THREE.DoubleSide; posterR.renderOrder=-1;
-  const frame_=new THREE.Mesh(new THREE.BoxGeometry(1,1,.12),new THREE.MeshBasicMaterial({color:0x050505}));
-  root.add(poster,posterR,frame_);
+    fragmentShader:`uniform float uI,uW,uDim;uniform vec3 uLime;varying vec2 vUv;
+      void main(){float x=abs(vUv.x-.5)*2.;float ends=smoothstep(0.,.03,vUv.y)*smoothstep(1.,.97,vUv.y);
+        vec3 col=mix(uLime,vec3(1.),uW);
+        ${halo?"float a=(exp(-x*x*9.)*.20+exp(-x*x*90.)*.35)*smoothstep(0.,.12,vUv.y)*smoothstep(1.,.88,vUv.y);":"float a=ends*1.7;col=mix(col,vec3(1.),.35);"}
+        gl_FragColor=vec4(col*a*uI*uDim*${mir?".28*smoothstep(1.,.2,vUv.y)":"1."},1.);}`});
+  const bgeo=new THREE.PlaneGeometry(1,1);
+  for(let i=0;i<NB;i++){const o={i,ms:[],I:1};
+    for(const [halo,mir] of [[0,0],[1,0],[0,1],[1,1]]){const m=new THREE.Mesh(bgeo,barMat(halo,mir)); m.renderOrder=mir?-1:1; root.add(m); o.ms.push(m);}
+    bars.push(o);}
   // walls: dark slats that catch the poster's light
   const wallMat=()=>new THREE.ShaderMaterial({uniforms:{uLime:U.uLime,uDim:U.uDim,uP:{value:new THREE.Vector3(0,1.4,PZ_)}},
     vertexShader:`varying vec3 vL;varying float vD;void main(){vec4 w=modelMatrix*vec4(position,1.);vL=position;vec4 mv=viewMatrix*w;vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
     fragmentShader:`uniform vec3 uLime,uP;uniform float uDim;varying vec3 vL;varying float vD;
       void main(){float sl=smoothstep(.0,.06,abs(fract(vL.x*2.2)-.5)-.18);float hz=smoothstep(.0,.02,abs(fract(vL.y*.55)-.5)-.47);
-        vec2 d=vec2(max(abs(vL.x-uP.x)-.95,0.),max(abs(vL.y-uP.y)-1.3,0.));float lit=exp(-dot(d,d)*.55);
-        vec3 c=vec3(.012)+uLime*lit*(.025+.05*sl)*(1.-hz*.5)+vec3(.02)*sl*exp(-abs(vL.y-3.2)*.8);
+        vec2 d=vec2(max(abs(vL.x-uP.x)-3.4,0.),max(abs(vL.y-uP.y)-1.2,0.));float lit=exp(-dot(d,d)*.55);
+        vec3 c=vec3(.012)+uLime*lit*(.018+.04*sl)*(1.-hz*.5)+vec3(.02)*sl*exp(-abs(vL.y-3.2)*.8);
         gl_FragColor=vec4(c*exp(-max(vD-6.,0.)*.08)*uDim,1.);}`});
   const back=new THREE.Mesh(new THREE.PlaneGeometry(30,10),wallMat()); root.add(back);
   const sideL=new THREE.Mesh(new THREE.PlaneGeometry(14,10),wallMat()), sideR=new THREE.Mesh(new THREE.PlaneGeometry(14,10),wallMat()); root.add(sideL,sideR);
   const stripMat=new THREE.ShaderMaterial({uniforms:U,vertexShader:`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uDim;void main(){gl_FragColor=vec4(vec3(1.5,1.55,1.45)*uDim,1.);}`});
   const strips=[]; for(let i=0;i<8;i++){const t=new THREE.Mesh(new THREE.BoxGeometry(.045,.03,.75),stripMat);root.add(t);strips.push(t)}
-  function layoutRoom(nar){const y=FLOOR+PH_/2+.78, hw=nar?3.1:5.2;
-    poster.position.set(0,y,PZ_); poster.scale.set(PW_,PH_,1); posterR.position.set(0,2*FLOOR-y,PZ_); posterR.scale.set(PW_,-PH_,1);
-    frame_.position.set(0,y,PZ_-.07); frame_.scale.set(PW_+.08,PH_+.08,1);
-    back.position.set(0,FLOOR+5,PZ_-1.3); back.material.uniforms.uP.value.set(0,y-(FLOOR+5),0);
-    sideL.position.set(-hw,FLOOR+5,PZ_-1.3+7); sideL.rotation.y=Math.PI/2; sideL.material.uniforms.uP.value.set(-8.3,y-(FLOOR+5),0);
-    sideR.position.set(hw,FLOOR+5,PZ_-1.3+7); sideR.rotation.y=-Math.PI/2; sideR.material.uniforms.uP.value.set(8.3,y-(FLOOR+5),0);
-    strips.forEach((t,i)=>{const side=i%2?1:-1, k=Math.floor(i/2); t.position.set(side*(hw*.42+k*.34),FLOOR+3.75+k*.12,PZ_+.9+k*1.25); t.rotation.set(.0,side*-.5,side*.25);});
-    U.uTube.value=PZ_;}
+  function layoutRoom(nar){const hw=nar?3.1:5.2, span=nar?2.2:3.6, y=FLOOR+1.6;
+    bars.forEach(o=>{const k=o.i/(NB-1)*2-1, x=k*span, z=PZ_-(1-k*k)*.9+.5, h=(nar?2.2:2.0)+Math.cos(k*Math.PI)*.75+((o.i*37)%5)*.12, w=.035;
+      o.x=x;o.z=z;o.h=h; const white=o.i%4===2?1:0;
+      o.ms.forEach((m,j)=>{const halo=j%2, mir=j>1; m.material.uniforms.uW.value=white; m.scale.set(halo?1.3:w,mir?-h:h,1); m.position.set(x,mir?FLOOR-h/2-.02:FLOOR+h/2+.02,z-(halo?.01:0));});
+      BU.uBars.value[o.i].set(x,z,1);});
+    back.position.set(0,FLOOR+5,PZ_-1.6); back.material.uniforms.uP.value.set(0,y-(FLOOR+5),0);
+    sideL.position.set(-hw,FLOOR+5,PZ_-1.6+7); sideL.rotation.y=Math.PI/2; sideL.material.uniforms.uP.value.set(-8.6,y-(FLOOR+5),0);
+    sideR.position.set(hw,FLOOR+5,PZ_-1.6+7); sideR.rotation.y=-Math.PI/2; sideR.material.uniforms.uP.value.set(8.6,y-(FLOOR+5),0);
+    strips.forEach((t,i)=>{const side=i%2?1:-1, k=Math.floor(i/2); t.position.set(side*(hw*.42+k*.34),FLOOR+3.75+k*.12,PZ_+.9+k*1.25); t.rotation.set(.0,side*-.5,side*.25);});}
 
   // the organic glass form used on every page: a torus and a few lumps, melted together and then bent three times.
   // No two bulges alike, with a hole through it.
@@ -1062,6 +1039,7 @@ const World = (function(){
             vec3 nv=n*uCamR;                                           // world normal to view space
             o=vec4(nv.xy*.5+.5,clamp(ti*.6,0.,1.),1.);}}
         gl_FragColor=o;}`});
+  const noGlass=new THREE.DataTexture(new Uint8Array([128,128,0,0]),1,1,THREE.RGBAFormat); noGlass.needsUpdate=true;
   let post=null;
   function initPost(){
     const mkrt=(depth)=>new THREE.WebGLRenderTarget(4,4,{type:THREE.HalfFloatType,format:THREE.RGBAFormat,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:!!depth,stencilBuffer:false});
@@ -1132,7 +1110,7 @@ const World = (function(){
     const tt=U.uTime.value;
     if(nar){HG.uB1.value.set(1.0,1.55+Math.sin(tt*.2)*.08,.8,.5);HG.uB2.value.set(-.95,3.3+Math.sin(tt*.17+2.)*.08,-.4,.38);}
     else{HG.uB1.value.set(1.15,1.35+Math.sin(tt*.2)*.07,.5,.46);HG.uB2.value.set(-1.3,2.55+Math.sin(tt*.17+2.)*.07,-.7,.34);}
-    pass(hglass,post.G); PU.tG.value=post.G.texture;
+    PU.tG.value=noGlass;
     PU.tA.value=S.texture; PU.tB.value=A.texture; PU.tC.value=D.texture; pass(post.comp,null);
   }
 
@@ -1247,12 +1225,12 @@ const World = (function(){
     const bt=Math.min(1,(now-burstT)/700), burst=bt<1?Math.pow(1-bt,3):0;
     SIM.uBurst.value=burst*amp; SIM.uFlow.value=0;
     U.uDim.value=cur.dim;
-    scan=((t*.36)%3.)-1.5;
+    scan=((t*.4)%3.4)-1.7;
     U.uScan.value=scan; laser.position.x=scan;
     // slow orbit for depth, plus cursor parallax. The camera looks down a little so the floor and its shadows read.
     const orb=Math.sin(t*.16)*.9, baseZ=nar?9.2:4.9;
-    camera.position.x+=(mouse.nx*1.1+orb-camera.position.x)*.035; camera.position.y+=((nar?2.9:1.45)+mouse.ny*.5+Math.sin(t*.11)*.12-camera.position.y)*.035;
-    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?1.3:1.12,0);
+    camera.position.x+=(mouse.nx*1.1+orb-camera.position.x)*.035; camera.position.y+=((nar?2.8:1.35)+mouse.ny*.5+Math.sin(t*.11)*.12-camera.position.y)*.035;
+    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?.9:.72,0);
     U.uFocus.value=camera.position.distanceTo(root.position)-.05;
     root.rotation.y=Math.sin(t*.25)*.2;
     root.updateMatrixWorld();
@@ -1268,7 +1246,9 @@ const World = (function(){
     const e=Math.min(1.6,SIM.uHover.value*Math.min(1,mVel.length()/9)+SIM.uDown.value*.9+bl*bl*1.6+burst*.8);
     U.uEnergy.value+=(e-U.uEnergy.value)*(e>U.uEnergy.value?.25:.035); U.uLight.value.set(mLocal.x,0);
     if(ready){step(dt); cloud.U.uScale.value=cur.s; U.uBias.value=cloud.U.uBias.value; cloud.shadow(wc.set(cur.x,cur.y+.55,cur.z));}
-    if(posterFor!==fi) drawPoster(fi);
+    { const en=U.uEnergy.value; for(const o of bars){ const k=o.i/(NB-1);
+        const pulse=.5+.5*Math.sin(t*.9-k*5.), flick=.5+.5*Math.sin(t*2.3+o.i*1.9);
+        o.I+=((.30+.55*pulse*pulse+.12*flick+en*.9)-o.I)*.12; o.ms.forEach(m=>m.material.uniforms.uI.value=o.I); BU.uBars.value[o.i].z=o.I; } }
     draw();
     featTick(now);
   }
@@ -1427,15 +1407,16 @@ const Portrait = (function(){
     const pts=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:U,transparent:true,depthTest:false,depthWrite:false,blending:THREE.NormalBlending,
       vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uH,uR;attribute vec2 aRef;attribute float aRand,aCol;varying float vHot,vInk;
         void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);
-          vHot=smoothstep(.25,2.,sp);vInk=aCol;
+          vHot=smoothstep(.2,.8,sp);vInk=aCol;
           vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
-          gl_PointSize=max(1.,uR*(.30+aCol*1.12+vHot*4.5)*projectionMatrix[1][1]*uH/-mv.z);}`,
+          gl_PointSize=max(1.,uR*(.30+aCol*1.12+step(.5,vHot)*4.)*projectionMatrix[1][1]*uH/-mv.z);}`,
       fragmentShader:`uniform vec3 uLime;varying float vHot,vInk;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
         // at rest: a hard black dot. moving: a small brand-lime core inside a soft lime glow
-        float hard=smoothstep(.5,.3,d)*(.55+vInk*.45);
-        float core=smoothstep(.16,.08,d),halo=exp(-d*d*22.)*.55;
-        float a=mix(hard,max(core,halo),vHot);
-        gl_FragColor=vec4(mix(vec3(0.),uLime,smoothstep(0.,.35,vHot)),a);}`}));
+        float hard=smoothstep(.5,.3,d);
+        vec3 ink=mix(vec3(.353),vec3(0.),smoothstep(.35,.95,vInk));                 // brand dark grey in the light tones, black in the dark ones
+        float hot=step(.5,vHot);                                                    // no in-between tints: a particle is ink or it is lime
+        float core=smoothstep(.17,.11,d),halo=exp(-d*d*20.)*.5;
+        gl_FragColor=vec4(mix(ink,uLime,hot),mix(hard,max(core,halo),hot));}`}));
     pts.frustumCulled=false; root.add(pts); size(); ready=true;};
   im.src=$("#portraitImg").src;
   function size(){const r=canvas.getBoundingClientRect();if(!r.width)return;const pr=DPR(2);renderer.setPixelRatio(pr);renderer.setSize(r.width,r.height,false);U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
