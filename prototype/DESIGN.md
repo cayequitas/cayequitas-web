@@ -52,3 +52,10 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 - design.how (arla6ka/design.how): one token set instead of stacked override layers.
 - Awwwards-mcp (INSANE0777/Awwwards-mcp): not installed; Carlos's own reference set (CTM, Vinicius Araujo, onformative,
   MONOMANGO, JASZ, Timo Milano, zeitguised) was used as the award-level reference instead.
+
+## v1.7 Realism pass
+
+- **Home and About particles are objects now.** Every particle is shaded as a small polished-metal ball (sphere normal from the point sprite, studio reflection, key-light highlight, Fresnel). A shadow map drawn from the key light lets the balls shade each other and drop a shadow on a lit studio floor. Moving particles still glow lime and feed the bloom. Thrown particles have weight and bounce off the floor.
+- **About portrait** runs the same GPU fluid and the same shading, with the photo's brightness as the metal's tone and as depth relief.
+- **White pages** drop the ink particles. Behind the content is a quiet white room: a grid floor running to the horizon and a few glass spheres that refract it, with soft shadows and caustics. The camera drifts with the cursor and moves forward as the page scrolls.
+- **Lab** is a carousel of screens standing in a dark room with a glossy floor. One piece in front, the rest fanned to the sides. Drag, swipe, wheel, arrow keys, arrow buttons and dots all move one piece. Click the front piece or the button to open it. No page scroll.
