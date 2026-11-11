@@ -32,8 +32,9 @@ jobs:
           pip install fonttools brotli
           python3 prototype/build.py --public --site _site
       # Design previews, served next to the live site so both can be compared online:
-      #   /preview/long-scroll/  latest redesign (branch claude/project-thread-fasidj)
-      #   /preview/fluid/        the earlier particle-fluid iteration of that redesign
+      #   /preview/next/         latest redesign (branch claude/project-thread-fasidj)
+      #   /preview/long-scroll/  the long-scroll iteration of that redesign
+      #   /preview/fluid/        the earlier particle-fluid iteration
       # They are rebuilt on every deploy; to refresh them after pushing the redesign branch,
       # run this workflow by hand (Actions > Deploy prototype to GitHub Pages > Run workflow).
       - name: Build design previews
@@ -45,7 +46,8 @@ jobs:
             # keep previews out of search results
             sed -i 's#<head>#<head>\n<meta name="robots" content="noindex">#' "_site/preview/$1/index.html"
           }
-          preview long-scroll FETCH_HEAD
+          preview next FETCH_HEAD
+          preview long-scroll ace7932
           preview fluid a5afe17
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
