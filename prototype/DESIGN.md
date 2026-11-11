@@ -98,3 +98,8 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 
 - Home: the room (walls, ceiling, lights) and both grids (floor grid and the brand-book hairline overlay) are removed. Only the floor and the particles remain.
 - The camera sits closer (z 3.85 desktop, 7.4 phone) so the mark fills more of the screen. Particle size is unchanged.
+
+## v2.5 — marble floor, soft background
+
+- Home floor: polished dark marble generated in the shader (cloudy black body, long white veins, fine hairlines), so it is sharp at any resolution and costs no download. The mirrored particles are stronger on it.
+- Home background: a linear gradient, black at the bottom to dark grey at the top.

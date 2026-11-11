@@ -738,7 +738,7 @@ function LitCloud(renderer,geo,T,o){
       col+=F0*(nl*sh*uDiff+(uDiff-.3)*.22)*vAO;                                            // a little rough-metal diffuse so the form reads
       col+=uLime*hot*(.7+nv*.9);                                    // moving fluid glows
       col*=uDim;
-      float al=mix(1.,.24*exp(-vH*1.7),uMirror);
+      float al=mix(1.,.40*exp(-vH*1.5),uMirror);
       gl_FragColor=vec4(col,al);}`;
   const mk=(mir)=>new THREE.ShaderMaterial({uniforms:Object.assign({},U,{uMirror:{value:mir}}),vertexShader:VS,fragmentShader:FS,transparent:!!mir,depthWrite:true,depthTest:true,blending:THREE.NormalBlending});
   const pts=new THREE.Points(geo,mk(0)); pts.frustumCulled=false;
@@ -950,7 +950,19 @@ const World = (function(){
     fragmentShader:`uniform sampler2D tShadow;uniform vec3 uLime,uLimeD;uniform float uDim,uEnergy,uScan,uTime,uShR,uBias,uTube,uSI;uniform vec2 uLight;uniform vec3 uBars[9];varying vec2 vP;varying float vD;varying vec3 vSh;${LIT_GLSL}
       float ln(float v){float f=abs(fract(v)-.5);float w=fwidth(v)*1.2;return 1.-smoothstep(0.,w,f);}
       float hh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-      void main(){float fog=exp(-max(vD-3.,0.)*.16);
+      float nz(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);return mix(mix(hh(i),hh(i+vec2(1,0)),f.x),mix(hh(i+vec2(0,1)),hh(i+vec2(1,1)),f.x),f.y);}
+      float fb(vec2 p){float a=.5,v=0.;for(int i=0;i<6;i++){v+=a*nz(p);p=mat2(1.6,1.2,-1.2,1.6)*p+17.3;a*=.5;}return v;}
+      // polished dark marble: a cloudy black body with a few long white veins and a web of fine ones, all procedural
+      // so it stays sharp at any resolution
+      vec3 marble(vec2 p){vec2 w=p*.42+vec2(3.1,7.7);vec2 q=w+vec2(fb(w*1.2),fb(w*1.2+5.2))*1.9;
+        float body=fb(q*1.4);
+        float a=fb(q*.75+1.7);float big=smoothstep(.022,.0,abs(a-.5))*smoothstep(.3,.5,fb(w*.5+9.));
+        float b=fb(q*2.3+11.);float fine=smoothstep(.014,.0,abs(b-.5))*smoothstep(.4,.7,fb(w*1.1+4.));
+        float c=fb(q*5.5+2.);float hair=smoothstep(.010,.0,abs(c-.5))*.35*smoothstep(.45,.7,body);
+        vec3 col=vec3(.105,.108,.112)*(.45+1.1*body);
+        col+=vec3(.75,.76,.74)*(big*1.1+fine*.6+hair*.3);
+        return col;}
+      void main(){float fog=exp(-max(vD-3.,0.)*.13);
         float g=max(ln(vP.x*1.5),ln(vP.y*1.5));
         vec2 sp=vP-vec2(.15,.1);float spot=exp(-dot(sp,sp)*.20)+exp(-dot(sp,sp)*.035)*.25;   // key light pool
         float sh=shadowPCF(tShadow,vSh,uBias*.5,uShR);
@@ -958,8 +970,8 @@ const World = (function(){
         vec2 dl=vP-uLight;float pool=exp(-dot(dl,dl)*.55)*uEnergy;
         float sx=(vP.x-uScan)*5.;float sc=exp(-sx*sx)*exp(-abs(vP.y)*.55)*.4;
         float lit=clamp(pool+sc,0.,1.6);
-        float tex=.9+.1*hh(floor(vP*90.));
-        vec3 col=vec3(.19,.195,.2)*spot*tex*mix(.10,1.,sh);                 // lit floor, darkened by the shadow
+        vec3 mb=marble(vP);
+        vec3 col=mb*(spot*1.3+.26)*mix(.12,1.,sh);col+=vec3(.022,.023,.025)*(1.-exp(-vD*.10));   // lit marble, shadowed, with a grazing sheen                 // lit floor, darkened by the shadow
                                                  // faint grid
         col+=uLime*lit*.2*mix(.55,1.,sh);gl_FragColor=vec4(col*fog*uDim,1.);}`}));
   floor.material.extensions={derivatives:true};
@@ -1080,6 +1092,7 @@ const World = (function(){
           vec4 gl=texture2D(tG,vUv);vec2 gn=(gl.xy*2.-1.)*step(.02,gl.a);float ga=smoothstep(.1,.9,gl.a);
           vec2 off=-gn*(.07+.10*gl.b)*ga*vec2(1./uAspect,1.);
           vec4 s=texture2D(tA,vUv+off);s.r=texture2D(tA,vUv+off*.86).r;s.b=texture2D(tA,vUv+off*1.14).b;
+          s.rgb+=vec3(.060,.061,.064)*smoothstep(.12,1.,vUv.y)*uDim;   // background: black at the bottom easing to dark grey at the top
           vec4 g1=texture2D(tB,vUv+off),g2=texture2D(tC,vUv+off);
           vec2 q=vec2(vUv.x*uAspect,vUv.y);float f=fbm(q*2.6+vec2(uTime*.035,-uTime*.02))*fbm(q*1.3-vec2(uTime*.02,0.));
           float grain=(h(vUv*913.+uTime)-.5)*.014;
