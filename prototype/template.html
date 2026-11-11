@@ -97,6 +97,7 @@ body[data-view="home"] footer{display:none}
 #gl-world.on{opacity:1}
 #home .fig{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 86px);left:var(--padl);color:var(--grey2);line-height:1.7;pointer-events:none}
 #home .fig b{font-weight:700;color:var(--white)}
+#home .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:52%;z-index:2;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.94) 0,rgba(0,0,0,.86) 38%,rgba(0,0,0,0) 100%)}
 #home .copy{position:absolute;left:0;right:0;bottom:54px;z-index:3;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 #home .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 32px;flex-wrap:wrap}
 #home .lede{margin:0;max-width:40ch;font-size:clamp(16px,1.35vw,20px);line-height:1.3;color:var(--white)}
@@ -255,20 +256,21 @@ body[data-view="lab"] footer{display:none}
 .lab-hud button,.lab-hud a{pointer-events:auto}
 .lab-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
 .labtitle{margin:0 0 0 -.04em;font-weight:900;font-size:clamp(44px,7vw,112px);line-height:.8;text-transform:uppercase;letter-spacing:-.042em;color:var(--white)}
-.lab-bottom{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,40px)}
+.lab-bottom{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,40px);opacity:0;transform:translateY(14px);transition:opacity .35s,transform .45s var(--ease);visibility:hidden}
+#lab.focus .lab-bottom{opacity:1;transform:none;visibility:visible}
+#lab.focus .lab-help{opacity:0}
+.lab-help{transition:opacity .3s}
 .lab-now{display:grid;gap:6px;justify-items:center;text-align:center;width:min(520px,62vw)}
-.lab-t{font-weight:900;font-size:clamp(20px,2.4vw,34px);line-height:.98;text-transform:uppercase;letter-spacing:-.03em;min-height:2em;display:flex;align-items:flex-end}
-.lab-open{margin-top:4px;background:var(--lime);color:var(--black);padding:8px 14px;text-decoration:none;transition:transform .2s var(--ease)}
-.lab-open:hover{transform:translateY(-2px)}
-.lab-arrow{width:52px;height:52px;flex:none;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--white);font:inherit;font-size:20px;cursor:pointer;transition:background-color .2s,color .2s,opacity .2s}
+.lab-t{font-weight:900;font-size:clamp(20px,2.4vw,34px);line-height:.98;text-transform:uppercase;letter-spacing:-.03em}
+.lab-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.lab-open{background:var(--lime);color:var(--black);padding:8px 14px;text-decoration:none}
+.lab-close{background:none;border:1px solid rgba(255,255,255,.55);color:var(--white);padding:7px 14px;cursor:pointer;font-size:inherit}
+.lab-close:hover{background:var(--white);color:var(--black)}
+.lab-arrow{width:52px;height:52px;flex:none;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--white);font:inherit;font-size:20px;cursor:pointer;transition:background-color .2s,color .2s}
 .lab-arrow:hover{background:var(--lime);color:var(--black);border-color:var(--lime)}
-.lab-arrow:disabled{opacity:.25;cursor:default;background:none;color:var(--white);border-color:rgba(255,255,255,.55)}
-.lab-dots{display:flex;justify-content:center;gap:2px;flex-wrap:wrap;margin-top:14px}
-.lab-dots button{width:18px;height:22px;padding:0;border:0;background:none;cursor:pointer;position:relative}
-.lab-dots button::after{content:"";position:absolute;left:4px;right:4px;top:10px;height:2px;background:rgba(255,255,255,.3);transition:background-color .2s,transform .2s}
-.lab-dots button:hover::after{background:var(--white)}
-.lab-dots button[aria-current="true"]::after{background:var(--lime);transform:scaleY(2.5)}
-@media(max-width:820px){.lab-arrow{width:44px;height:44px}.lab-top .mono{display:none}.lab-dots button{width:12px}.lab-dots button::after{left:2px;right:2px}}
+.lab-hover{position:absolute;left:var(--padl);bottom:calc(52px + env(safe-area-inset-bottom,0px));background:var(--lime);color:var(--black);padding:4px 8px;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s}
+.lab-hover.on{opacity:1;transform:none}
+@media(max-width:820px){.lab-arrow{width:44px;height:44px}.lab-help{display:none}}
 #lab .lab-hint{color:var(--lime);opacity:0;transition:opacity .3s}
 #lab.focus .lab-hint{opacity:1}
 #lab ~ footer{position:relative;z-index:3}
@@ -297,12 +299,12 @@ a.ext:hover{background:var(--black);color:var(--lime)}
 #about ul{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:17px;line-height:1.3}
 #about .list{display:block;columns:2;column-gap:20px}
 #about .list li{break-inside:avoid;margin-bottom:3px}
-.portrait{position:relative;margin:28px 0 32px;max-width:520px;aspect-ratio:4/5;overflow:hidden;background:var(--black)}
+.portrait{position:relative;margin:28px 0 32px;max-width:520px;aspect-ratio:4/5;overflow:hidden;background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(0,0,0,.14)}
 .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) invert(1) contrast(1.2) brightness(.55);opacity:0;transition:opacity .6s}
 .portrait.nogl img{opacity:1;filter:grayscale(1) contrast(1.05)}
 .portrait canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.portrait figcaption{position:absolute;left:12px;bottom:10px;font-size:10px;color:var(--grey2);z-index:2}
-.portrait::after{content:"FIG. 02";position:absolute;right:10px;top:10px;font-family:var(--mono);font-size:10px;background:var(--lime);color:var(--black);padding:2px 6px}
+.portrait figcaption{position:absolute;left:12px;bottom:10px;font-size:10px;color:var(--grey1);z-index:2}
+.portrait::after{content:none;position:absolute;right:10px;top:10px;font-family:var(--mono);font-size:10px;background:var(--lime);color:var(--black);padding:2px 6px}
 
 /* ---------- footer ---------- */
 footer{position:relative;z-index:1;padding-block:28px 72px;display:grid;grid-template-columns:1fr auto;gap:28px 16px;align-items:end;border-top:1px solid var(--rule);background:var(--bg)}
@@ -369,10 +371,6 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
 <main>
 <section class="view" id="home" aria-label="Home">
  <div class="hero">
-  <div class="tw mono" style="--x:22%;--y:24%" data-tw="0" aria-hidden="true"></div>
-  <div class="tw mono" style="--x:58%;--y:16%" data-tw="1" aria-hidden="true"></div>
-  <div class="tw mono" style="--x:64%;--y:56%" data-tw="2" aria-hidden="true"></div>
-  <div class="fig mono" aria-hidden="true"><b>Fig. 01</b> Cayé mark as a particle fluid<span class="pc"> · <span id="hudPts">—</span></span><br><span class="hint-hover">Move to stir · click to blast · hold to swirl</span><span class="hint-touch">Swipe to stir · tap to blast · hold to swirl</span></div>
   <div class="copy wrap">
     <div class="top">
       <p class="lede"><b>Carlos Serrano</b> scans the physical world with photogrammetry and volumetric video, and rebuilds it as living, reactive systems for stages, domes and spaces.</p>
@@ -413,19 +411,19 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
   <div class="lab-hud wrap">
     <div class="lab-top">
       <h2 class="labtitle">Lab</h2>
-      <span class="mono dim">R&amp;D, captures, simulations<br>Drag, scroll or use the arrows · click the front piece to open it</span>
+      <span class="mono dim lab-help">R&amp;D, captures, process<br>Scroll or drag to fly · click a piece to bring it forward</span>
     </div>
+    <div class="lab-hover mono" id="labHover"></div>
     <div class="lab-bottom">
       <button type="button" class="lab-arrow" id="labPrev" aria-label="Previous piece">←</button>
       <div class="lab-now">
         <span class="mono dim" id="labIdx"></span>
         <span class="lab-t" id="labTitle"></span>
         <span class="mono dim" id="labTools"></span>
-        <a class="lab-open mono" id="labOpen" href="#projects">Open project →</a>
+        <span class="lab-acts"><a class="lab-open mono" id="labOpen" href="#projects">Open project →</a><button type="button" class="lab-close mono" id="labClose">Back to the grid ×</button></span>
       </div>
       <button type="button" class="lab-arrow" id="labNext" aria-label="Next piece">→</button>
     </div>
-    <div class="lab-dots" id="labDots"></div>
   </div>
 </section>
 
@@ -934,7 +932,7 @@ const World = (function(){
       base.push(x*S+(Math.random()-.5)*.008, -y*S+.62+(Math.random()-.5)*.008, (l/(L-1)-.5)*.46+(Math.random()-.5)*.02, Math.random()*.999); } }
     for(let i=0;i<(LITE?300:900);i++) base.push((Math.random()-.5)*6,(Math.random()-.1)*2.6,(Math.random()-.5)*3.4,1+Math.random()*.4);
     build(base);
-    $("#hudPts").textContent=count.toLocaleString("en")+" particles";
+    
   };
   im.src=LOGO.mark.src;
 
@@ -1011,69 +1009,83 @@ const World = (function(){
     PU.tA.value=S.texture; PU.tB.value=A.texture; PU.tC.value=D.texture; pass(post.comp,null);
   }
 
-  /* ----- the white room for the paper pages ----- */
-  const NS=5, GS=[]; for(let i=0;i<NS;i++) GS.push(new THREE.Vector4());
-  const GU={uRes:{value:new THREE.Vector2(1,1)},uTime:{value:0},uCam:{value:new THREE.Vector3(0,1.6,6)},uS:{value:GS},uLime:{value:LIME}};
+  /* ----- the white pages: one organic glass form, yellow tinted, seen through frosted glass -----
+     A smooth blend of drifting spheres (a signed distance field) is ray-marched at low resolution,
+     then blurred and veiled so it stays behind the content. On top: the thin grid from the brand book. */
+  const GU={uRes:{value:new THREE.Vector2(1,1)},uTime:{value:0},uScroll:{value:0},uMouse:{value:new THREE.Vector2()},uC:{value:new THREE.Vector3(1.6,-.2,1)},uLime:{value:LIME},tA:{value:null},uPx:{value:new THREE.Vector2()},uScrollPx:{value:0},uDpr:{value:1}};
+  const blobRT=new THREE.WebGLRenderTarget(4,4,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false,stencilBuffer:false});
+  const blobRT2=blobRT.clone();
   const glass=new THREE.ShaderMaterial({uniforms:GU,vertexShader:VQ,depthTest:false,depthWrite:false,blending:THREE.NoBlending,
-    fragmentShader:`uniform vec2 uRes;uniform float uTime;uniform vec3 uCam,uLime;uniform vec4 uS[${NS}];varying vec2 vUv;
-      const vec3 LD=vec3(-.39,.88,.27);
-      // everything a ray can see that is not glass: white floor with a soft grid, sphere shadows and caustics, bright horizon
-      vec3 room(vec3 ro,vec3 rd){
-        vec3 sky=mix(vec3(.975,.977,.98),vec3(.86,.87,.885),smoothstep(.05,.95,rd.y));
-        sky=mix(sky,vec3(.62,.63,.65),smoothstep(.15,1.,rd.z)*.8);              // the room behind the camera is darker: it shows in the glass rims
-        sky=mix(sky,vec3(1.),exp(-abs(rd.y)*10.)*step(rd.z,.2));
-        if(rd.y>-.002)return sky;
-        float t=-ro.y/rd.y;vec3 p=ro+rd*t;float fog=exp(-t*.055);
-        vec2 gp=p.xz*.5;vec2 g=abs(fract(gp)-.5);float w=.006+t*.0022;
-        float line=(1.-smoothstep(0.,w,min(g.x,g.y)))*exp(-t*.07);
-        vec2 gp2=p.xz*2.;vec2 g2=abs(fract(gp2)-.5);float line2=(1.-smoothstep(0.,w*4.,min(g2.x,g2.y)))*exp(-t*.22)*.35;
-        float shd=0.,cau=0.;
-        for(int i=0;i<${NS};i++){vec4 s=uS[i];vec2 c=s.xz-LD.xz*(s.y/LD.y);vec2 d=p.xz-c;d.y*=.9;float h=max(s.y-s.w,0.);
-          float soft=s.w*(.55+h*.9);float dd=length(d);
-          shd=max(shd,(1.-smoothstep(s.w-soft,s.w+soft,dd))*(.55/(1.+h*1.2)));
-          cau+=exp(-dd*dd/(s.w*s.w*.10))*.5/(1.+h);}
-        vec3 fl=vec3(.955,.957,.96)-line*.11-line2*.05;
-        fl*=1.-shd*.42;fl+=mix(vec3(1.),uLime,.25)*cau*.16;
-        return mix(vec3(1.),fl,fog);}
+    fragmentShader:`uniform vec2 uRes,uMouse;uniform float uTime,uScroll;uniform vec3 uC,uLime;varying vec2 vUv;
+      float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
+      mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+      float map(vec3 p){p-=vec3(uC.xy,0.);p/=uC.z;
+        p.xz*=rot(uTime*.06+uScroll*1.4+uMouse.x*.25);p.xy*=rot(.4+uTime*.045-uMouse.y*.15);
+        float d=length(p)-.62;
+        for(int i=0;i<6;i++){float fi=float(i);
+          vec3 c=vec3(sin(fi*2.4+uTime*.19),cos(fi*1.7+uTime*.15),sin(fi*3.1-uTime*.17))*(.78+.2*sin(fi*1.3));
+          d=smin(d,length(p-c)-(.40+.13*sin(fi*5.)),.42);}
+        d+=sin(p.x*3.1+uTime*.35)*sin(p.y*2.7-uTime*.2)*sin(p.z*2.9)*.075;
+        return d*uC.z*.8;}
+      vec3 nrm(vec3 p){vec2 e=vec2(.004,-.004);return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}
+      vec3 env(vec3 r){float w=sin(r.y*6.+sin(r.x*4.+uTime*.1)*1.6);return vec3(.80)+vec3(.2)*smoothstep(-.2,.9,w)+vec3(.25)*smoothstep(.6,1.,r.y);}
       void main(){vec2 uv=(gl_FragCoord.xy-.5*uRes)/uRes.y;
-        vec3 ro=uCam;vec3 rd=normalize(vec3(uv.x,uv.y-.16,-1.75));
-        vec3 col=room(ro,rd);
-        float best=1e9;int hit=-1;float cov=0.;
-        for(int i=0;i<${NS};i++){vec4 s=uS[i];vec3 oc=ro-s.xyz;float b=dot(oc,rd);float c2=dot(oc,oc)-s.w*s.w;float h=b*b-c2;
-          if(h>0.){float t=-b-sqrt(h);if(t>0.&&t<best){best=t;hit=i;float perp=sqrt(max(dot(oc,oc)-b*b,0.));cov=clamp((s.w-perp)/(t*1.6/uRes.y),0.,1.);}}}
-        if(hit>=0){vec4 s=uS[0];for(int i=0;i<${NS};i++)if(i==hit)s=uS[i];
-          vec3 p=ro+rd*best;vec3 n=normalize(p-s.xyz);float nv=max(dot(n,-rd),0.);
-          float fr=.04+.96*pow(1.-nv,5.);
-          vec3 refl=room(p,reflect(rd,n));
-          vec3 tr=vec3(0.);
-          for(int k=0;k<3;k++){float ior=1.44+float(k)*.022;vec3 r1=refract(rd,n,1./ior);
-            vec3 p2=p+r1*(2.*s.w*dot(r1,-n));vec3 n2=normalize(p2-s.xyz);vec3 r2=refract(r1,-n2,ior);if(dot(r2,r2)<.01)r2=reflect(r1,-n2);
-            vec3 c=room(p2,r2);tr[k]=c[k];}
-          tr*=vec3(.955,.975,.965);                                              // a breath of green in the glass
-          tr*=mix(.70,1.,smoothstep(0.,.6,nv));                                 // thicker, darker toward the rim
-          vec3 g=mix(tr,refl,fr);
-          g+=pow(max(dot(reflect(rd,n),LD),0.),260.)*1.6;                        // light source glint
-          g+=pow(max(dot(reflect(rd,n),normalize(vec3(.6,.5,.62))),0.),40.)*.10; // soft box
-          g=mix(vec3(1.),g,exp(-best*.035));
-          col=mix(col,g,cov);}
-        float n1=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);
-        col+=(n1-.5)*.012;
-        vec2 vq=vUv-.5;col*=1.-dot(vq,vq)*.10;
+        vec3 bg=vec3(.945,.945,.94);
+        vec2 sd=uv-(uC.xy*.36+vec2(-.62,-.10)*uC.z);bg*=1.-.10*exp(-dot(sd*vec2(.8,2.2),sd*vec2(.8,2.2))*2.2/(uC.z*uC.z));   // its soft shadow on the wall
+        vec3 ro=vec3(0.,0.,5.),rd=normalize(vec3(uv,-1.8));
+        float t=2.;bool hit=false;
+        for(int i=0;i<52;i++){float d=map(ro+rd*t);if(d<.004){hit=true;break;}t+=d;if(t>9.)break;}
+        vec3 col=bg;
+        if(hit){vec3 p=ro+rd*t,n=nrm(p);float nv=max(dot(n,-rd),0.);
+          vec3 rf=refract(rd,n,.74);float th=0.;vec3 q=p+rf*.05;
+          for(int i=0;i<12;i++){float d=map(q);th+=step(d,0.)*.14;q+=rf*.14;}              // how much glass the ray crosses
+          vec3 tint=exp(-th*vec3(.16,.05,1.9));                                             // yellow-lime absorption
+          vec3 behind=bg*(.92+.08*sin(q.y*9.+q.x*6.));
+          col=behind*mix(vec3(1.),tint,.9)+vec3(.10,.10,0.)*(1.-tint.b);
+          float fr=.04+.96*pow(1.-nv,4.);
+          col=mix(col,env(reflect(rd,n)),fr*.75);
+          col+=pow(max(dot(reflect(rd,n),normalize(vec3(-.4,.8,.45))),0.),60.)*.6;
+          col+=vec3(.15,.3,.9)*pow(1.-nv,7.)*.35;                                           // blue fringe on the rim
+          col*=.86+.14*smoothstep(0.,.5,nv);}
         gl_FragColor=vec4(col,1.);}`});
-  // where the spheres live: x as a share of the visible half-width (so they stay at the edges on any screen), z depth, radius, hover height, phase
-  const GDEF=[[-.80,-1.5,.8,.25,0],[.86,-4.5,1.2,.35,1.7],[-.55,-9.,1.0,.6,3.1],[.62,1.2,.36,.15,4.4],[.18,-14.,1.6,.9,5.2]];
-  let gcz=6;
+  const blurM=new THREE.ShaderMaterial({uniforms:GU,vertexShader:VQ,depthTest:false,depthWrite:false,blending:THREE.NoBlending,
+    fragmentShader:`uniform sampler2D tA;uniform vec2 uPx;varying vec2 vUv;void main(){vec4 c=texture2D(tA,vUv)*.227;
+      c+=(texture2D(tA,vUv+uPx*1.385)+texture2D(tA,vUv-uPx*1.385))*.316;c+=(texture2D(tA,vUv+uPx*3.231)+texture2D(tA,vUv-uPx*3.231))*.0703;gl_FragColor=c;}`});
+  const frost=new THREE.ShaderMaterial({uniforms:GU,vertexShader:VQ,depthTest:false,depthWrite:false,blending:THREE.NoBlending,
+    fragmentShader:`uniform sampler2D tA;uniform vec2 uRes;uniform float uTime,uScrollPx,uDpr;varying vec2 vUv;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float box(vec2 p,vec2 c,vec2 s){vec2 d=abs(p-c)-s;return step(max(d.x,d.y),0.);}
+      void main(){vec2 px=gl_FragCoord.xy/uDpr;vec2 R=uRes/uDpr;
+        vec2 j=(vec2(h(gl_FragCoord.xy),h(gl_FragCoord.xy+17.))-.5)*.010;                   // frosted: each pixel looks a slightly different way
+        vec3 c=texture2D(tA,vUv+j).rgb;
+        c=mix(c,vec3(.975),.38);                                                            // the pane in front
+        // brand-book grid: hairlines and small blocks, fixed to the screen, the horizontals travel with the scroll
+        float y=R.y-px.y;float xr=R.x-max(28.,R.x*.045);float g=0.;
+        g=max(g,1.-step(.5,abs(px.x-xr)));
+        float per=R.y*.62;float yy=mod(y+uScrollPx*.35,per);
+        float l1=per*.28,l2=per*.80,l3=per*.93;
+        g=max(g,(1.-step(.5,abs(yy-l1)))*step(R.x*.62,px.x));
+        g=max(g,(1.-step(.5,abs(yy-l2)))*step(R.x*.50,px.x));
+        g=max(g,(1.-step(.5,abs(yy-l3)))*step(R.x*.44,px.x));
+        float b=box(vec2(px.x,yy),vec2(xr-7.,l1+18.),vec2(7.,18.))+box(vec2(px.x,yy),vec2(xr-21.,l1+43.),vec2(7.,7.))+box(vec2(px.x,yy),vec2(R.x*.70,l3-7.),vec2(7.,7.));
+        c=mix(c,vec3(.50),g*.55);c=mix(c,vec3(.52),min(b,1.)*.8);
+        c+=(h(gl_FragCoord.xy+uTime)-.5)*.014;
+        gl_FragColor=vec4(c,1.);}`});
   function drawGlass(t){
-    const v=renderer.getDrawingBufferSize(new THREE.Vector2()); GU.uRes.value.copy(v); GU.uTime.value=t;
+    const v=renderer.getDrawingBufferSize(new THREE.Vector2()), q=LITE?5:4, w=Math.ceil(v.x/q), h=Math.ceil(v.y/q);
+    if(blobRT.width!==w||blobRT.height!==h){blobRT.setSize(w,h);blobRT2.setSize(w,h);}
     const asp=v.x/v.y, nar=asp<.8;
-    gcz+=((6-sy*.0016)-gcz)*.08;
-    GU.uCam.value.set(mouse.nx*.35, 1.62+mouse.ny*.12, gcz);
-    for(let i=0;i<NS;i++){const d=GDEF[i], span=26;
-      let z=d[1]; z=gcz-3.2-((((gcz-3.2-z)%span)+span)%span);                    // wrap so there is always glass ahead as you scroll
-      const dist=gcz-z, half=dist/1.75*asp*.5;                                    // half-width of the view at that depth
-      const r=d[2]*(nar?.62:1), x=d[0]*(half*2.+r*.2)*(nar?1.05:1);
-      GS[i].set(x+Math.sin(t*.11+d[4])*.25, r+d[3]*.55+.12+Math.sin(t*.23+d[4]*2.)*.14, z, r);}
-    quad.material=glass; renderer.setRenderTarget(null); renderer.render(simScene,simCam);
+    GU.uTime.value=t; GU.uScroll.value=sy*.0006; GU.uScrollPx.value=sy; GU.uDpr.value=renderer.getPixelRatio();
+    GU.uMouse.value.x+=(mouse.nx-GU.uMouse.value.x)*.04; GU.uMouse.value.y+=(mouse.ny-GU.uMouse.value.y)*.04;
+    // the form sits low on the right, partly off the page, so the content keeps the stage
+    GU.uC.value.set(nar?.55:asp*.98, (nar?-1.05:-.5)+Math.sin(t*.13)*.06+GU.uMouse.value.y*.05, nar?.9:1.3);
+    GU.uRes.value.set(w,h); pass(glass,blobRT);
+    const br=LITE?.7:.9;
+    GU.tA.value=blobRT.texture; GU.uPx.value.set(br/w,0); pass(blurM,blobRT2);
+    GU.tA.value=blobRT2.texture; GU.uPx.value.set(0,br/h); pass(blurM,blobRT);
+    GU.tA.value=blobRT.texture; GU.uPx.value.set(br*1.6/w,0); pass(blurM,blobRT2);
+    GU.tA.value=blobRT2.texture; GU.uPx.value.set(0,br*1.6/h); pass(blurM,blobRT);
+    GU.tA.value=blobRT.texture; GU.uRes.value.copy(v); pass(frost,null);
   }
 
   // input: stir, blast, vortex (mouse, pen and touch)
@@ -1111,7 +1123,7 @@ const World = (function(){
     // slow orbit for depth, plus cursor parallax. The camera looks down a little so the floor and its shadows read.
     const orb=Math.sin(t*.16)*.9, baseZ=nar?9.2:4.9;
     camera.position.x+=(mouse.nx*1.1+orb-camera.position.x)*.035; camera.position.y+=((nar?2.6:1.25)+mouse.ny*.5+Math.sin(t*.11)*.12-camera.position.y)*.035;
-    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?.35:.62,0);
+    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?.2:.3,0);
     U.uFocus.value=camera.position.distanceTo(root.position)-.05;
     root.rotation.y=Math.sin(t*.25)*.2;
     root.updateMatrixWorld();
@@ -1141,159 +1153,174 @@ const World = (function(){
   };
 })();
 
-/* ---------- LAB: a carousel of screens standing in a dark room ----------
-   One piece in front, the rest fanned out to the sides, all reflected in the floor.
-   Drag, swipe, scroll, arrow keys, the two arrow buttons or the dots: they all do the same thing, move one piece. */
+/* ---------- LAB: a grid of pieces receding into depth, and you drift through it ----------
+   Made to hold a lot: every R&D post is a tile, tiles sit on a 3D lattice that repeats forever.
+   It moves on its own. Scroll or drag to fly, point at a tile to light it, click to bring it to the front. */
 const Lab = (function(){
-  const items=P.filter(p=>!p.archive), N=items.length;
-  const elT=$("#labTitle"), elK=$("#labTools"), elI=$("#labIdx"), elO=$("#labOpen"), dots=$("#labDots");
-  let ti=0;
-  function label(){const it=items[ti]; elT.textContent=it.title; elK.textContent=((LANES[it.lane]||{}).name||"")+(it.tools?" · "+it.tools:""); elI.textContent=String(ti+1).padStart(2,"0")+" / "+String(N).padStart(2,"0"); elO.href="#p-"+it.slug;
-    [...dots.children].forEach((d,i)=>d.setAttribute("aria-current",i===ti)); $("#labPrev").disabled=ti===0; $("#labNext").disabled=ti===N-1;}
-  function goTo(i){ti=Math.max(0,Math.min(N-1,i)); label();}
-  items.forEach((it,i)=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-label",it.title);b.onclick=()=>goTo(i);dots.appendChild(b)});
-  $("#labPrev").onclick=()=>goTo(ti-1); $("#labNext").onclick=()=>goTo(ti+1);
-  const on=()=>$("#lab").classList.contains("on");
-  addEventListener("keydown",e=>{if(!on())return; if(e.key==="ArrowRight"){goTo(ti+1);e.preventDefault()} else if(e.key==="ArrowLeft"){goTo(ti-1);e.preventDefault()}});
-  label();
+  const items=P.filter(p=>!p.archive), N=items.length, lab=$("#lab");
+  const elT=$("#labTitle"), elK=$("#labTools"), elI=$("#labIdx"), elO=$("#labOpen"), elH=$("#labHover");
+  let focus=-1, from=null;
+  function open(i,tile){focus=((i%N)+N)%N; const it=items[focus]; elT.textContent=it.title; elK.textContent=((LANES[it.lane]||{}).name||"")+(it.tools?" · "+it.tools:"");
+    elI.textContent=String(focus+1).padStart(2,"0")+" / "+String(N).padStart(2,"0"); elO.href="#p-"+it.slug; lab.classList.add("focus"); from=tile||null; onOpen(tile!==undefined);}
+  function close(){focus=-1; lab.classList.remove("focus");}
+  let onOpen=()=>{};
+  $("#labPrev").onclick=()=>open(focus-1); $("#labNext").onclick=()=>open(focus+1); $("#labClose").onclick=close;
+  const on=()=>lab.classList.contains("on");
+  addEventListener("keydown",e=>{if(!on())return; if(e.key==="Escape")close(); else if(focus>=0&&e.key==="ArrowRight"){open(focus+1);e.preventDefault()} else if(focus>=0&&e.key==="ArrowLeft"){open(focus-1);e.preventDefault()}});
   const canvas=$("#gl-lab");
-  if(!HAS_GL){ $("#lab").classList.add("nogl"); const im=document.createElement("img"); im.className="lab-flat"; im.alt=""; $("#lab").prepend(im);
-    const sync=()=>{im.src=IMG[items[ti].slug].img}; dots.addEventListener("click",sync); $("#labPrev").addEventListener("click",sync); $("#labNext").addEventListener("click",sync); sync();
-    return {start(){},stop(){}}; }
+  if(!HAS_GL){ lab.classList.add("nogl"); const im=document.createElement("img"); im.className="lab-flat"; im.alt=""; lab.prepend(im);
+    onOpen=()=>{im.src=IMG[items[focus].slug].img}; return {start(){open(0)},stop(){}}; }
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-  renderer.setClearColor(0x050505,1);
+  const BG=new THREE.Color(0x060606); renderer.setClearColor(BG,1);
   const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(38,1,.05,60);
+  const camera=new THREE.PerspectiveCamera(55,1,.05,80);
   const loader=new THREE.TextureLoader();
-  const PW=2.1, PH=PW/1.6, FY=-PH/2-.07;
-  const G={uTime:{value:0},uLime:{value:LIME}};
-  const panelMat=(mir)=>new THREE.ShaderMaterial({transparent:!!mir,depthWrite:!mir,uniforms:{map:{value:null},uAspect:{value:1.6},uLit:{value:0},uFar:{value:0},uMirror:{value:mir},uLoaded:{value:0},uTime:G.uTime,uLime:G.uLime},
+  const G={uTime:{value:0},uLime:{value:LIME},uTravel:{value:0},uD:{value:26}};
+  const TEX=items.map(it=>{const e={t:null,a:1,users:[]}; e.t=loader.load(IMG[it.slug].img,(t)=>{e.a=t.image.width/t.image.height;e.ok=1;e.users.forEach(m=>{m.uniforms.uAspect.value=e.a;m.uniforms.uLoaded.value=1})}); return e;});
+  const tileMat=()=>new THREE.ShaderMaterial({transparent:true,uniforms:{map:{value:null},uAspect:{value:1},uPA:{value:1},uHover:{value:0},uFog:{value:1},uAlpha:{value:1},uLoaded:{value:0},uDim:{value:0},uTime:G.uTime,uLime:G.uLime},
     vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-    fragmentShader:`uniform sampler2D map;uniform float uAspect,uLit,uFar,uMirror,uLoaded,uTime;uniform vec3 uLime;varying vec2 vUv;
-      void main(){vec2 uv=vUv;float pa=1.6;vec2 sc=uAspect>pa?vec2(pa/uAspect,1.):vec2(1.,uAspect/pa);vec2 tuv=(uv-.5)*sc+.5;
-        vec3 c=mix(vec3(.05),texture2D(map,tuv,uMirror*2.5).rgb,uLoaded);
-        float l=dot(c,vec3(.299,.587,.114));c=mix(vec3(l)*.55,c,.35+.65*uLit);          // side panels are muted, the front one is in full colour
-        vec2 e=min(uv,1.-uv);float edge=min(e.x*1.6,e.y);float rim=smoothstep(.012,.0,edge);
-        c=mix(c,mix(vec3(.55),uLime,uLit),rim*(.5+.5*uLit));                             // thin frame, lime on the front one
-        c*=1.+.06*uLit*sin(uTime*1.3);
-        c*=exp(-uFar*.42);                                                                // falls into the dark with distance
-        float a=1.;if(uMirror>.5){a=.42*smoothstep(.62,0.,vUv.y)*exp(-uFar*.3);}
-        gl_FragColor=vec4(c,a);}`});
-  const geo=new THREE.PlaneGeometry(PW,PH), panels=[];
-  const group=new THREE.Group(); scene.add(group);
-  items.forEach((it,i)=>{
-    const g=new THREE.Group(), m=new THREE.Mesh(geo,panelMat(0)), r=new THREE.Mesh(geo,panelMat(1));
-    r.position.y=2*FY; r.scale.y=-1; r.material.side=THREE.DoubleSide; r.renderOrder=1;
-    // a dark slab behind each screen so it reads as an object with thickness
-    const back=new THREE.Mesh(new THREE.BoxGeometry(PW+.03,PH+.03,.05),new THREE.MeshBasicMaterial({color:0x0b0b0b})); back.position.z=-.03;
-    g.add(back,m,r); g.userData={i,it,m,r,loaded:false}; m.userData.i=i; group.add(g); panels.push(g);
-  });
-  function load(g){const u=g.userData; if(u.loaded) return; u.loaded=true;
-    loader.load(IMG[u.it.slug].img,(t)=>{const a=t.image.width/t.image.height;
-      for(const x of [u.m,u.r]){x.material.uniforms.map.value=t;x.material.uniforms.uAspect.value=a;x.material.uniforms.uLoaded.value=1;}});}
-  // floor: dark, glossy, lit by the front screen. Drawn over the reflections so they sink into it.
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(60,40),new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:G,
-    vertexShader:`varying vec2 vP;varying float vD;void main(){vP=position.xy;vec4 mv=modelViewMatrix*vec4(position,1.);vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`uniform vec3 uLime;uniform float uTime;varying vec2 vP;varying float vD;
-      float ln(float v){float f=abs(fract(v)-.5);float w=fwidth(v)*1.2;return 1.-smoothstep(0.,w,f);}
-      void main(){vec2 p=vec2(vP.x,-vP.y);float fog=exp(-max(vD-3.,0.)*.2);
-        float pool=exp(-(p.x*p.x*.35+(p.y-.5)*(p.y-.5)*.5));float wide=exp(-dot(p,p)*.03);
-        float g=max(ln(p.x),ln(p.y));
-        vec3 c=vec3(.5,.52,.5)*pool*.22+vec3(.3)*wide*.08+vec3(.6)*g*.05*wide+uLime*g*pool*.10;
-        float contact=smoothstep(.0,.9,abs(p.y))*.6+.4;                                    // darker right under the screens
-        gl_FragColor=vec4(c*fog*contact,.35+.3*(1.-pool));}`}));
-  floor.material.extensions={derivatives:true};
-  floor.rotation.x=-Math.PI/2; floor.position.y=FY; floor.renderOrder=2; scene.add(floor);
-  // back wall glow and dust give the room depth
-  const wall=new THREE.Mesh(new THREE.PlaneGeometry(60,40),new THREE.ShaderMaterial({uniforms:G,depthWrite:false,
-    vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-    fragmentShader:`uniform vec3 uLime;varying vec2 vUv;void main(){vec2 d=(vUv-vec2(.5,.47))*vec2(3.9,6.3);float a=exp(-dot(d,d)*3.);gl_FragColor=vec4(vec3(.105,.11,.105)*a+uLime*a*a*.018+vec3(.02),1.);}`}));
-  wall.position.set(0,2,-7); wall.renderOrder=-5; scene.add(wall);
-  const dg=new THREE.BufferGeometry(),dp=[];for(let i=0;i<(LITE?250:700);i++)dp.push((Math.random()-.5)*14,FY+Math.random()*4.5,-6+Math.random()*9);
+    fragmentShader:`uniform sampler2D map;uniform float uAspect,uPA,uHover,uFog,uAlpha,uLoaded,uDim;uniform vec3 uLime;varying vec2 vUv;
+      void main(){vec2 sc=uAspect>uPA?vec2(uPA/uAspect,1.):vec2(1.,uAspect/uPA);vec2 tuv=(vUv-.5)*sc*(1.-.05*uHover)+.5;
+        vec3 c=mix(vec3(.07),texture2D(map,tuv).rgb,uLoaded);
+        float l=dot(c,vec3(.299,.587,.114));c=mix(vec3(l)*.85,c,.85+.15*uHover);
+        vec2 e=min(vUv,1.-vUv)*vec2(uPA,1.);float rim=smoothstep(.014,.0,min(e.x,e.y));
+        c=mix(c,mix(vec3(.3),uLime,uHover),rim*(.35+.65*uHover));
+        c*=1.-uDim*.82;
+        c=mix(vec3(.024),c,uFog);
+        gl_FragColor=vec4(c,uAlpha);}`});
+  function bind(m,i){const e=TEX[i]; m.uniforms.map.value=e.t; if(e.ok){m.uniforms.uAspect.value=e.a;m.uniforms.uLoaded.value=1}else{m.uniforms.uLoaded.value=0;e.users.push(m)}}
+  const geo=new THREE.PlaneGeometry(1,1);
+  let tiles=[], field=null, lines=null, COLS=4, ROWS=3, CW=2.5, CH=2.3, DZ=2.6, LAY=10, D=26, builtNar=null;
+  function build(nar){
+    if(field){scene.remove(field);tiles.forEach(t=>t.material.dispose());if(lines){lines.geometry.dispose();lines.material.dispose()}}
+    field=new THREE.Group(); scene.add(field); tiles=[];
+    COLS=nar?2:4; ROWS=3; CW=nar?1.55:2.5; CH=nar?2.0:2.3; D=LAY*DZ; G.uD.value=D;
+    let k=0;
+    for(let l=0;l<LAY;l++)for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ if((c+r+l)%2) continue;
+      const tall=(k*7+l)%3!==0, w=nar?1.2:1.5, h=tall?w*1.25:w, m=new THREE.Mesh(geo,tileMat());
+      m.scale.set(w,h,1); m.material.uniforms.uPA.value=w/h;
+      const jx=(((k*37)%11)/11-.5)*.5, jy=(((k*53)%13)/13-.5)*.4;
+      m.userData={i:k%N,x:(c-(COLS-1)/2)*CW+jx,y:(r-(ROWS-1)/2)*CH+jy,z0:l*DZ+(((k*17)%7)/7)*.9,ph:k*1.7,hov:0,w,h};
+      bind(m.material,m.userData.i); field.add(m); tiles.push(m); k++; }
+    // hairlines running into the depth along the lattice, so the space reads as a grid
+    const lp=[]; for(let r=0;r<=ROWS;r++)for(let c=0;c<=COLS;c++){const x=(c-COLS/2)*CW,y=(r-ROWS/2)*CH;lp.push(x,y,0,x,y,-D);}
+    for(let l=0;l<LAY;l++){const z=-l*DZ; for(let r=0;r<=ROWS;r++){const y=(r-ROWS/2)*CH;lp.push(-COLS/2*CW,y,z,COLS/2*CW,y,z)} for(let c=0;c<=COLS;c++){const x=(c-COLS/2)*CW;lp.push(x,-ROWS/2*CH,z,x,ROWS/2*CH,z)}}
+    const lg=new THREE.BufferGeometry(); lg.setAttribute("position",new THREE.Float32BufferAttribute(lp,3));
+    lines=new THREE.LineSegments(lg,new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:G,
+      vertexShader:`uniform float uTravel,uD;varying float vF;void main(){vec3 p=position;float along=step(.5,abs(position.z+uD*.5)-uD*.5+.6);
+        if(position.z<-.01&&position.z>-uD+.01)p.z=-mod(-position.z-uTravel,uD);                 // the cross frames travel with the tiles
+        vec4 mv=modelViewMatrix*vec4(p,1.);vF=exp(mv.z*.11)*smoothstep(0.,-1.5,mv.z);gl_Position=projectionMatrix*mv;}`,
+      fragmentShader:`uniform vec3 uLime;varying float vF;void main(){gl_FragColor=vec4(mix(vec3(.5),uLime,.35),vF*.22);}`}));
+    lines.frustumCulled=false; field.add(lines);
+  }
+  // dust streaming past gives the speed
+  const dg=new THREE.BufferGeometry(),dp=[];for(let i=0;i<(LITE?300:900);i++)dp.push((Math.random()-.5)*14,(Math.random()-.5)*9,-Math.random()*26);
   dg.setAttribute("position",new THREE.Float32BufferAttribute(dp,3));
-  const dust=new THREE.Points(dg,new THREE.PointsMaterial({color:0xcfd4c0,size:.014,transparent:true,opacity:.35,depthWrite:false}));scene.add(dust);
+  const dust=new THREE.Points(dg,new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:G,
+    vertexShader:`uniform float uTravel,uD;varying float vF;void main(){vec3 p=position;p.z=-mod(-p.z-uTravel*1.0,uD);vec4 mv=modelViewMatrix*vec4(p,1.);vF=exp(mv.z*.12)*smoothstep(0.,-1.,mv.z);gl_Position=projectionMatrix*mv;gl_PointSize=min(14.,10./-mv.z);}`,
+    fragmentShader:`varying float vF;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;gl_FragColor=vec4(vec3(.85,.9,.75),vF*.5*smoothstep(.5,.1,d));}`}));
+  dust.frustumCulled=false; scene.add(dust);
+  // the piece brought to the front
+  const hero=new THREE.Mesh(geo,tileMat()); hero.visible=false; hero.renderOrder=10; hero.material.depthTest=false; hero.material.uniforms.uHover.value=1; scene.add(hero);
+  let hf=0; const hFrom=new THREE.Vector3(), hTo=new THREE.Vector3(), hs0=new THREE.Vector2(1,1);
+  onOpen=(fresh)=>{bind(hero.material,focus); if(fresh||!hero.visible){ if(from){from.getWorldPosition(hFrom);hs0.set(from.userData.w,from.userData.h)}else{hFrom.set(0,0,-9);hs0.set(1,1)} hf=0;} hero.visible=true;};
 
-  let W=1,H=1,t0=0,cur=0,dragging=false,dragX=0,dragCur=0,dragMoved=0,nar=false;
+  let W=1,H=1,t0=0,last=0,travel=0,vel=.4,nar=false,drag=false,dragY=0,dragX=0,moved=0,touch=false,hovered=null,inCanvas=false;
   const ray=new THREE.Raycaster(), pv=new THREE.Vector2();
-  canvas.addEventListener("pointerdown",e=>{dragging=true;dragX=e.clientX;dragCur=cur;dragMoved=0;canvas.setPointerCapture&&canvas.setPointerCapture(e.pointerId)});
-  canvas.addEventListener("pointermove",e=>{if(!dragging)return;const dx=e.clientX-dragX;dragMoved=Math.max(dragMoved,Math.abs(dx));cur=Math.max(-.35,Math.min(N-.65,dragCur-dx/(W*(nar?.55:.26))));});
-  const end=e=>{if(!dragging)return;dragging=false;
-    if(dragMoved<7){pv.set(e.clientX/W*2-1,-(e.clientY/H*2-1));ray.setFromCamera(pv,camera);const h=ray.intersectObjects(panels.map(g=>g.userData.m))[0];
-      if(h){const i=h.object.userData.i; if(i===ti) location.hash="p-"+items[i].slug; else goTo(i);} }
-    else goTo(Math.round(cur));};
-  canvas.addEventListener("pointerup",end); canvas.addEventListener("pointercancel",()=>{if(dragging){dragging=false;goTo(Math.round(cur))}});
-  let wheelAcc=0, wheelAt=0;
-  $("#lab").addEventListener("wheel",e=>{e.preventDefault();const now=performance.now();if(now-wheelAt<260)return;wheelAcc+=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
-    if(Math.abs(wheelAcc)>30){goTo(ti+(wheelAcc>0?1:-1));wheelAcc=0;wheelAt=now;}},{passive:false});
-  function resize(){W=innerWidth;H=innerHeight;nar=W<820;renderer.setPixelRatio(DPR(LITE?1.5:2));renderer.setSize(W,H,false);camera.aspect=W/H;camera.fov=nar?52:38;camera.updateProjectionMatrix();}
+  canvas.addEventListener("pointerenter",()=>inCanvas=true); canvas.addEventListener("pointerleave",()=>{inCanvas=false});
+  canvas.addEventListener("pointerdown",e=>{touch=e.pointerType!=="mouse";drag=true;dragY=e.clientY;dragX=e.clientX;moved=0;canvas.setPointerCapture&&canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener("pointermove",e=>{if(!drag)return;const dy=e.clientY-dragY,dx=e.clientX-dragX;dragY=e.clientY;dragX=e.clientX;moved+=Math.abs(dy)+Math.abs(dx);if(focus<0){vel+=(-dy)*.035+(-dx)*.012;}});
+  function pick(x,y){pv.set(x/W*2-1,-(y/H*2-1));ray.setFromCamera(pv,camera);const h=ray.intersectObjects(tiles.filter(t=>t.visible&&t.material.uniforms.uAlpha.value>.5))[0];return h?h.object:null}
+  canvas.addEventListener("pointerup",e=>{if(!drag)return;drag=false; if(moved>8)return;
+    if(focus>=0){pv.set(e.clientX/W*2-1,-(e.clientY/H*2-1));ray.setFromCamera(pv,camera);if(ray.intersectObject(hero)[0])location.hash="p-"+items[focus].slug;else close();return}
+    const t=pick(e.clientX,e.clientY); if(t)open(t.userData.i,t);});
+  canvas.addEventListener("pointercancel",()=>{drag=false});
+  lab.addEventListener("wheel",e=>{e.preventDefault();if(focus<0)vel+=Math.max(-60,Math.min(60,e.deltaY))*.03;},{passive:false});
+  function resize(){W=innerWidth;H=innerHeight;nar=W<820;renderer.setPixelRatio(DPR(LITE?1.5:2));renderer.setSize(W,H,false);camera.aspect=W/H;camera.fov=nar?68:55;camera.updateProjectionMatrix();if(nar!==builtNar){builtNar=nar;build(nar)}}
   addEventListener("resize",()=>{if(on())resize()});
+  const ease=x=>1-Math.pow(1-x,3);
   function frame(now){
-    const t=(now-t0)/1000; G.uTime.value=t;
-    if(!dragging) cur+=(ti-cur)*.11;
-    const sp=nar?1.25:1.62, side=nar?.5:.62;
-    for(const g of panels){const u=g.userData, d=u.i-cur, ad=Math.abs(d), s=Math.sign(d), k=Math.min(1,ad);
-      if(ad<5) load(g);
-      const e=k*k*(3-2*k);
-      g.position.set(s*(e*sp+Math.max(0,ad-1)*side), (1-e)*Math.sin(t*.8)*.012, -e*1.05-Math.max(0,ad-1)*.42);
-      g.rotation.y=-s*e*1.02;
-      g.visible=ad<7.5;
-      const lit=1-e; for(const x of [u.m,u.r]){x.material.uniforms.uLit.value=lit;x.material.uniforms.uFar.value=ad;}
-    }
-    const cz=nar?5.4:5.2;
-    camera.position.x+=(mouse.nx*.45-camera.position.x)*.05; camera.position.y+=(.42+mouse.ny*.2-camera.position.y)*.05; camera.position.z=cz;
-    camera.lookAt(0,nar?-.05:-.1,0);
-    dust.rotation.y=Math.sin(t*.05)*.1; dust.position.y=Math.sin(t*.2)*.06;
+    const t=(now-t0)/1000, dt=Math.min(.05,(now-last)/1000||.016); last=now; G.uTime.value=t;
+    const cruise=focus>=0?.05:.4; vel+=(cruise-vel)*Math.min(1,dt*1.6); vel=Math.max(-9,Math.min(9,vel)); travel+=vel*dt; G.uTravel.value=travel;
+    camera.position.x+=(mouse.nx*.55-camera.position.x)*.05; camera.position.y+=(mouse.ny*.4-camera.position.y)*.05;
+    camera.rotation.set(mouse.ny*.04,-mouse.nx*.06,Math.sin(t*.1)*.012); camera.updateMatrixWorld();
+    if(!touch&&inCanvas&&!drag&&focus<0){const h=pick(mouse.x,mouse.y); if(h!==hovered){hovered=h;canvas.style.cursor=h?"pointer":"grab";elH.textContent=h?items[h.userData.i].title:"";elH.classList.toggle("on",!!h)}}
+    else if(hovered&&(focus>=0||!inCanvas)){hovered=null;elH.classList.remove("on")}
+    const dim=focus>=0?1:0;
+    for(const m of tiles){const u=m.userData, un=m.material.uniforms;
+      const z=-((((u.z0-travel)%D)+D)%D);                                  // 0 at the camera, -D at the far end
+      u.hov+=((m===hovered?1:0)-u.hov)*.15;
+      m.position.set(u.x+Math.sin(t*.4+u.ph)*.05,u.y+Math.cos(t*.33+u.ph)*.07,z+u.hov*.25);
+      m.rotation.y=-u.x*.045+Math.sin(t*.3+u.ph)*.03; m.rotation.x=u.y*.03;
+      const s=1+u.hov*.07; m.scale.set(u.w*s,u.h*s,1);
+      un.uHover.value=u.hov; un.uFog.value=Math.exp(z*.085); un.uDim.value+=(dim-un.uDim.value)*.1;
+      un.uAlpha.value=Math.min(1,Math.max(0,(-z-.9)/1.4))*Math.min(1,Math.max(0,(D+z)/3));
+      m.visible=un.uAlpha.value>.01; m.material.depthWrite=un.uAlpha.value>.98;}
+    if(hero.visible){ hf+=((focus>=0?1:0)-hf)*.12; if(focus<0&&hf<.01){hero.visible=false} else {
+      const e=ease(Math.min(1,hf)), a=hero.material.uniforms.uAspect.value||1, dist=3.1, vh=2*dist*Math.tan(camera.fov*Math.PI/360), vw=vh*camera.aspect;
+      const hh=Math.min(vh*(nar?.46:.56),vw*.86/a), hw=hh*a; hero.material.uniforms.uPA.value=a;
+      hTo.set(0,nar?.34:.22,-dist).applyMatrix4(camera.matrixWorld);
+      hero.position.lerpVectors(hFrom,hTo,e); hero.quaternion.copy(camera.quaternion);
+      hero.scale.set(hs0.x+(hw-hs0.x)*e,hs0.y+(hh-hs0.y)*e,1); hero.material.uniforms.uAlpha.value=Math.min(1,hf*3); } }
     renderer.render(scene,camera);
   }
-  return {start(){t0=performance.now();resize();cur=ti;label();if(REDUCED){frame(t0+1000);setTimeout(()=>frame(performance.now()),900);return}runLoop(frame)},stop(){stopLoop()}};
+  return {start(){t0=performance.now();last=t0;resize();close();if(REDUCED){frame(t0+16);setTimeout(()=>frame(performance.now()),900);return}runLoop(frame)},stop(){stopLoop()}};
 })();
 
-/* ---------- ABOUT: the portrait as the same metal-ball fluid as the home mark ---------- */
+/* ---------- ABOUT: the portrait as points of ink on white, moved by the same fluid as the home mark ---------- */
 const Portrait = (function(){
   const fig=$("#portrait"), off={render(){},start(){}}; if(!fig) return off;
   if(!HAS_GL){fig.classList.add("nogl");return off}
   const canvas=$("#gl-portrait");
   const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true});
   if(!renderer.capabilities.isWebGL2){renderer.dispose();fig.classList.add("nogl");return off}
-  renderer.setClearColor(0x000000,0);
+  renderer.setClearColor(0xffffff,0);
   const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(30,4/5,.1,50); camera.position.set(0,0,4.6);
   const root=new THREE.Group(); scene.add(root);
-  let fluid=null, cloud=null, t0=0, ready=false, inside=false;
+  const U={tPos:{value:null},tVel:{value:null},uScan:{value:9},uH:{value:900},uR:{value:.01},uLime:{value:LIME},uLimeD:{value:LIME_D}};
+  let fluid=null, t0=0, ready=false, inside=false;
   const im=new Image();
   im.onload=()=>{
-    const w=LITE?120:168,h=Math.round(w*1.25),c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
-    const base=[],lum=[];const SW=1.97,SH=2.46,cell=SW/w;
-    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255; if(L>.92) continue; // drop the white backdrop
-      
-      base.push((x/w-.5)*SW+(Math.random()-.5)*cell*.5,-(y/h-.5)*SH+(Math.random()-.5)*cell*.5,(L-.5)*.34+(Math.random()-.5)*.03,Math.random()*.999);
-      lum.push(.16+Math.pow(Math.min(1,Math.max(0,(L-.04)/.7)),.75)*1.1);}
-    fluid=Fluid(renderer,base,{spring:7,springR:4,flow:.10,fall:9,drag:7,vortex:10,blast:45,blastR:5,scatter:1.2,scatterR:1.6});
+    const w=LITE?110:216,h=Math.round(w*1.25),c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
+    const base=[],ink=[];const SW=1.97,SH=2.46,cell=SW/w;
+    const ls=[];for(let i=0;i<w*h;i++){const L=d[i*4]/255;if(L<=.9)ls.push(L)} ls.sort((a,b)=>a-b);const lo=ls[Math.floor(ls.length*.04)]||0,hi=ls[Math.floor(ls.length*.96)]||1; // stretch the photo's own tones
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255; if(L>.9) continue; // the white backdrop stays paper
+      const k=Math.pow(1-Math.min(1,Math.max(0,(L-lo)/(hi-lo||1))),1.3); if(Math.random()>.04+k*.9) continue;                    // darker areas hold more points
+      base.push((x/w-.5)*SW+(Math.random()-.5)*cell*.9,-(y/h-.5)*SH+(Math.random()-.5)*cell*.9,(L-.5)*.10+(Math.random()-.5)*.02,Math.random()*.999);
+      ink.push(k);}
+    fluid=Fluid(renderer,base,{spring:7,springR:4,flow:.07,fall:9,drag:7,vortex:10,blast:45,blastR:5,scatter:1.2,scatterR:1.6});
+    U.tPos=fluid.T.tPos; U.tVel=fluid.T.tVel; U.uR.value=cell;
     const geo=new THREE.BufferGeometry();
     geo.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(fluid.N*3),3));
     geo.setAttribute("aRef",new THREE.Float32BufferAttribute(fluid.ref,2));
     geo.setAttribute("aRand",new THREE.Float32BufferAttribute(Float32Array.from({length:fluid.N},(_,i)=>base[i*4+3]),1));
-    geo.setAttribute("aCol",new THREE.Float32BufferAttribute(lum,1));
-    cloud=LitCloud(renderer,geo,fluid.T,{radius:cell*.66,diff:1.25,extent:1.75,range:8,sm:LITE?512:1024,light:new THREE.Vector3(-.55,.55,.62)});
-    cloud.U.uScanAxis.value=1;
-    root.add(cloud.pts); size(); ready=true;};
+    geo.setAttribute("aCol",new THREE.Float32BufferAttribute(ink,1));
+    const pts=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:U,transparent:true,depthTest:false,depthWrite:false,blending:THREE.NormalBlending,
+      vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uH,uR;attribute vec2 aRef;attribute float aRand,aCol;varying float vHot,vInk;
+        void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);
+          float sc=smoothstep(.03,0.,abs(p.y-uScan));vHot=clamp(sc+smoothstep(.3,2.2,sp),0.,1.);vInk=aCol;
+          vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
+          gl_PointSize=max(1.,uR*(.42+aCol*.62+fract(aRand*7.31)*.15+vHot*.6)*projectionMatrix[1][1]*uH/-mv.z);}`,
+      fragmentShader:`uniform vec3 uLime,uLimeD;varying float vHot,vInk;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
+        vec3 col=mix(vec3(.04),mix(uLimeD,uLime,.55),vHot);gl_FragColor=vec4(col,smoothstep(.5,.34,d)*(.7+vInk*.3+vHot*.3));}`}));
+    pts.frustumCulled=false; root.add(pts); size(); ready=true;};
   im.src=$("#portraitImg").src;
-  function size(){const r=canvas.getBoundingClientRect();if(!r.width)return;const pr=DPR(2);renderer.setPixelRatio(pr);renderer.setSize(r.width,r.height,false);if(cloud)cloud.U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
+  function size(){const r=canvas.getBoundingClientRect();if(!r.width)return;const pr=DPR(2);renderer.setPixelRatio(pr);renderer.setSize(r.width,r.height,false);U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
   addEventListener("resize",size);
   fig.addEventListener("pointermove",()=>{inside=true;fluid&&fluid.moved()},{passive:true});
   fig.addEventListener("pointerleave",()=>{inside=false});
   fig.addEventListener("pointerdown",()=>{inside=true;fluid&&fluid.press()},{passive:true});
   addEventListener("pointerup",()=>{fluid&&fluid.release()},{passive:true});
-  const ray=new THREE.Raycaster(),pv=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,0,1),0),hit=new THREE.Vector3(),local=new THREE.Vector3(),zero=new THREE.Vector3();
+  const ray=new THREE.Raycaster(),pv=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,0,1),0),hit=new THREE.Vector3(),local=new THREE.Vector3();
   return {start(){t0=performance.now();size();},
     render(now){if(!ready)return;const r=canvas.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight||!r.width)return;
       if(renderer.domElement.width<4)size();
       const t=(now-t0)/1000;
-      cloud.U.uScan.value=1.3-((t*.3)%1)*2.8; // scan sweeps top to bottom
+      U.uScan.value=1.3-((t*.3)%1)*2.8; // scan sweeps top to bottom
       pv.set(((mouse.x-r.left)/r.width)*2-1,-((mouse.y-r.top)/r.height)*2+1);
-      root.rotation.y=Math.sin(t*.3)*.16+(inside?pv.x*.14:0); root.rotation.x=Math.sin(t*.21)*.04-(inside?pv.y*.06:0); root.updateMatrixWorld();
+      root.rotation.y=Math.sin(t*.3)*.05+(inside?pv.x*.06:0); root.updateMatrixWorld();
       let loc=null; if(inside){ray.setFromCamera(pv,camera);if(ray.ray.intersectPlane(plane,hit))loc=local.copy(root.worldToLocal(hit));}
       fluid.step(now,loc,t);
-      cloud.shadow(zero);
       renderer.render(scene,camera);}};
 })();
 

@@ -59,3 +59,10 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 - **About portrait** runs the same GPU fluid and the same shading, with the photo's brightness as the metal's tone and as depth relief.
 - **White pages** drop the ink particles. Behind the content is a quiet white room: a grid floor running to the horizon and a few glass spheres that refract it, with soft shadows and caustics. The camera drifts with the cursor and moves forward as the page scrolls.
 - **Lab** is a carousel of screens standing in a dark room with a glossy floor. One piece in front, the rest fanned to the sides. Drag, swipe, wheel, arrow keys, arrow buttons and dots all move one piece. Click the front piece or the button to open it. No page scroll.
+
+## v1.8 Readability, organic glass, deeper Lab
+
+- **Home:** the Fig. captions and floating typewriter labels are gone, the mark sits higher, and a dark gradient behind the copy keeps the text readable over the particles.
+- **White pages:** the glass spheres are replaced by one organic, yellow-tinted glass form (ray-marched signed distance field at low resolution), blurred and veiled behind a frosted pane so it stays in the background. The thin hairline grid with small blocks from the brand book sits on top and travels with the scroll.
+- **About:** the portrait is back to points: black ink on a white frosted card, lime where the fluid moves or the scan passes. Same fluid simulation, no spheres.
+- **Lab:** a lattice of tiles receding into depth that drifts on its own. Scroll or drag to fly, point at a tile to light it, click to bring it to the front with its title and link. The lattice repeats, so it can hold any number of R&D posts.
