@@ -83,3 +83,8 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 - **Accent colour fix:** the brand colours were passed to the shaders through a colour-space conversion and came out darker and greener than #D1FB46. They are now raw values, so the lime in every 3D layer matches the rest of the site.
 - **About portrait:** particles are brand dark grey in the light tones and black in the dark ones. A moving particle is lime with a soft glow, with no in-between tints.
 - **Home:** the poster screen and the glass forms are gone. Behind the mark stands a fan of nine LED bars (lime, two white) with halos, floor pools and reflections. A slow pulse runs along them and they flare with the energy of the fluid.
+
+## v2.2 — ceiling lights, clean portrait
+
+- Home: the scan line is gone. The LED bars moved to the ceiling: 18 short white strips in three angled columns per side, receding to the back wall, each casting a soft pool on the floor.
+- About: portrait particles are black and grey only (no lime). Where the pointer stirs them they shrink instead of changing colour.
