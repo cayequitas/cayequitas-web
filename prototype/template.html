@@ -686,13 +686,14 @@ const Home=(function(){
    point sprite, it reflects a studio (soft box above, strip light, lime kicker), takes a key-light highlight,
    and looks itself up in a shadow map drawn from the light, so particles shade each other and the floor. */
 const LIT_GLSL=`
+uniform float uBack;
 vec3 envMap(vec3 r,vec3 lime){
   float top=smoothstep(.30,.92,r.y);
   float strip=smoothstep(.80,.97,dot(r,normalize(vec3(-.75,.3,.58))));
   float kick=smoothstep(.72,.98,dot(r,normalize(vec3(.8,.05,-.6))));
   float hor=exp(-abs(r.y-.05)*7.);
   float flo=smoothstep(0.,-.6,r.y);
-  return vec3(.03)+vec3(1.25)*top+vec3(2.6)*strip+lime*kick*1.5+vec3(.24)*hor+vec3(.08)*flo;}
+  return vec3(.03)+vec3(1.25)*top+vec3(2.6)*strip+lime*kick*1.5+vec3(.24)*hor+vec3(.08)*flo+lime*uBack*smoothstep(.35,1.,-r.z)*smoothstep(.75,-.1,abs(r.y-.2))*.9;}
 float shadowPCF(sampler2D sm,vec3 sc,float bias,float rad){
   if(sc.x<0.||sc.x>1.||sc.y<0.||sc.y>1.||sc.z>1.)return 1.;
   float a=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)*6.283;float s=0.;
@@ -706,7 +707,7 @@ function LitCloud(renderer,geo,T,o){
   const srt=new THREE.WebGLRenderTarget(o.sm,o.sm,{minFilter:THREE.NearestFilter,magFilter:THREE.NearestFilter,stencilBuffer:false});
   srt.depthTexture=new THREE.DepthTexture(o.sm,o.sm); srt.depthTexture.minFilter=srt.depthTexture.magFilter=THREE.NearestFilter;
   const U={tPos:T.tPos,tVel:T.tVel,tShadow:{value:srt.depthTexture},uShadowM:{value:new THREE.Matrix4()},uL:{value:L},uR:{value:o.radius},uH:{value:900},uScale:{value:1},
-    uScan:{value:-9},uScanAxis:{value:0},uFloor:{value:o.floor},uLime:{value:LIME},uDim:{value:1},uBias:{value:.004},uShR:{value:1.6/o.sm},uSmPx:{value:o.sm/o.extent},uAO:{value:new THREE.Vector2(o.ao[0],o.ao[1])},uDiff:{value:o.diff}};
+    uScan:{value:-9},uScanAxis:{value:0},uFloor:{value:o.floor},uLime:{value:LIME},uDim:{value:1},uBias:{value:.004},uShR:{value:1.6/o.sm},uSmPx:{value:o.sm/o.extent},uAO:{value:new THREE.Vector2(o.ao[0],o.ao[1])},uDiff:{value:o.diff},uBack:{value:o.back||0}};
   const VS=`uniform sampler2D tPos,tVel;uniform mat4 uShadowM;uniform float uScan,uScanAxis,uR,uH,uScale,uMirror,uFloor;uniform vec2 uAO;
     attribute vec2 aRef;attribute float aRand,aCol;varying float vScan,vSpd,vH,vRnd,vCol,vAO;varying vec3 vW,vSh;
     void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);float r=fract(aRand*7.31);vRnd=r;vCol=aCol;
@@ -843,9 +844,9 @@ const World = (function(){
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(44,1,.05,100); camera.position.set(0,1.1,4.9);
   const root=new THREE.Group(); scene.add(root);
-  const FLOOR=.62-3.4*.5/LOGO.mark.ar-.12;                   // just under the mark, so it stands on its own shadow
+  const FLOOR=.62-2.6*.5/LOGO.mark.ar-.12;                   // just under the mark, so it stands on its own shadow
   const U={uFloor:{value:FLOOR},uFocus:{value:4.6},uEnergy:{value:0},uLight:{value:new THREE.Vector2(0,0)},uTime:{value:0},uScan:{value:-2},uPx:{value:1},uDim:{value:1},uLime:{value:LIME},uLimeD:{value:LIME_D},tPos:{value:null},tVel:{value:null},
-    uTube:{value:3.3},tShadow:{value:null},uShadowM:{value:new THREE.Matrix4()},uShR:{value:.004},uBias:{value:.004}};
+    uTube:{value:-1.9},uBack:{value:0},tShadow:{value:null},uShadowM:{value:new THREE.Matrix4()},uShR:{value:.004},uBias:{value:.004}};
   const SIM={tPos:{value:null},tVel:{value:null},tOrigin:{value:null},uTime:{value:0},uDt:{value:.016},uFlow:{value:0},uBurst:{value:0},
     uMouse:{value:new THREE.Vector3(9,9,0)},uMouseVel:{value:new THREE.Vector3()},uHover:{value:0},uDown:{value:0},uBlast:{value:new THREE.Vector3(9,9,0)},uBlastAge:{value:9}};
   let cloud=null, count=0, ready=false, TW=256, TH=1, rt=null, flip=0, simScene=null, simCam=null, quad=null, velMat=null, posMat=null;
@@ -896,7 +897,7 @@ const World = (function(){
     geo.setAttribute("aRef",new THREE.Float32BufferAttribute(ref,2));
     geo.setAttribute("aRand",new THREE.Float32BufferAttribute(rnd,1));
     geo.setAttribute("aCol",new THREE.Float32BufferAttribute(col,1));
-    cloud=LitCloud(renderer,geo,U,{radius:LITE?.0135:.0098,ao:[-.26,.26],extent:2.7,range:9,floor:FLOOR,mirror:true,light:new THREE.Vector3(-.42,.85,.38)});
+    cloud=LitCloud(renderer,geo,U,{radius:LITE?.0105:.0077,ao:[-.2,.2],extent:2.7,range:9,floor:FLOOR,mirror:true,back:1,light:new THREE.Vector3(-.42,.85,.38)});
     U.tShadow.value=cloud.U.tShadow.value; U.uShadowM.value=cloud.U.uShadowM.value; U.uShR.value=cloud.U.uShR.value*3.2;
     cloud.U.uScan=U.uScan; cloud.pts.material.uniforms.uScan=U.uScan; cloud.mirror.material.uniforms.uScan=U.uScan;
     cloud.pts.material.uniforms.uDim=U.uDim; cloud.mirror.material.uniforms.uDim=U.uDim;
@@ -927,19 +928,19 @@ const World = (function(){
     const w=360,h=Math.round(w/LOGO.mark.ar),c=document.createElement("canvas");c.width=w;c.height=h;
     const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
     const sx=LITE?3:2, pts=[];for(let y=0;y<h;y+=sx)for(let x=0;x<w;x+=sx){if(d[(y*w+x)*4+3]>128)pts.push([x/w-.5,(y/h-.5)/LOGO.mark.ar])}
-    const L=LITE?5:6, S=3.4, keep=LITE?.8:.84, base=[], max=(LITE?128:256)*(LITE?128:240);
+    const L=LITE?5:6, S=2.6, keep=LITE?.8:.84, base=[], max=(LITE?128:256)*(LITE?128:240);
     for(const [x,y] of pts){ for(let l=0;l<L;l++){ if(Math.random()>keep||base.length/4>max) continue;
-      base.push(x*S+(Math.random()-.5)*.008, -y*S+.62+(Math.random()-.5)*.008, (l/(L-1)-.5)*.46+(Math.random()-.5)*.02, Math.random()*.999); } }
+      base.push(x*S+(Math.random()-.5)*.008, -y*S+.62+(Math.random()-.5)*.008, (l/(L-1)-.5)*.36+(Math.random()-.5)*.02, Math.random()*.999); } }
     for(let i=0;i<(LITE?300:900);i++) base.push((Math.random()-.5)*6,(Math.random()-.1)*2.6,(Math.random()-.5)*3.4,1+Math.random()*.4);
     build(base);
     
   };
   im.src=LOGO.mark.src;
 
-  const laser=new THREE.Mesh(new THREE.PlaneGeometry(.03,3.4),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{uLime:U.uLime,uDim:U.uDim},
+  const laser=new THREE.Mesh(new THREE.PlaneGeometry(.022,2.4),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{uLime:U.uLime,uDim:U.uDim},
     vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
     fragmentShader:`uniform vec3 uLime;uniform float uDim;varying vec2 vUv;void main(){float a=smoothstep(.5,0.,abs(vUv.x-.5))*smoothstep(0.,.25,vUv.y)*smoothstep(1.,.75,vUv.y);gl_FragColor=vec4(uLime,a*.55*uDim);}`}));
-  laser.position.set(0,.55,.3); laser.renderOrder=2; root.add(laser);
+  laser.position.set(0,.55,.24); laser.renderOrder=2; root.add(laser);
 
   // the studio floor: a lit surface under a spot, so the mark's shadow has something to fall on.
   // The fluid lights it too: a lime pool under the cursor that grows with the energy of the gesture.
@@ -959,65 +960,162 @@ const World = (function(){
         float tex=.9+.1*hh(floor(vP*90.));
         vec3 col=vec3(.19,.195,.2)*spot*tex*mix(.10,1.,sh);                 // lit floor, darkened by the shadow
         col+=vec3(.5)*g*.07*spot;                                         // faint grid
-        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);vec2 tb=vec2(abs(vP.x)-uTube,vP.y+.9);col+=uLime*(.20+g*.25)*exp(-dot(tb,tb)*1.1)*mix(.5,1.,sh);                         // light from the moving fluid
+        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);float pz=vP.y-uTube;float pxx=max(abs(vP.x)-.95,0.);col+=uLime*(.15+g*.10)*exp(-(pxx*pxx*.55+pz*pz*.11))*step(0.,pz)*tex*mix(.25,1.,sh);vec2 tb=vec2(abs(vP.x)-uTube,vP.y+.9);                         // light from the moving fluid
         gl_FragColor=vec4(col*fog*uDim,1.);}`}));
   floor.material.extensions={derivatives:true};
   floor.rotation.x=-Math.PI/2; floor.position.y=FLOOR; floor.renderOrder=-2; root.add(floor);
 
-  // the room behind the mark: the featured projects stand as screens in an arc, the one showing in the card is lit.
-  // Two light tubes mark the sides. Everything is reflected in the floor.
-  const scr=[], sgeo=new THREE.PlaneGeometry(1,1), SW_=1.9, SH_=1.19, sload=new THREE.TextureLoader();
-  const scrMat=(mir)=>new THREE.ShaderMaterial({transparent:!!mir,depthWrite:!mir,blending:mir?THREE.AdditiveBlending:THREE.NormalBlending,
-    uniforms:{map:{value:null},uAspect:{value:1.6},uOn:{value:0},uLoaded:{value:0},uMirror:{value:mir},uDim:U.uDim,uLime:U.uLime},
-    vertexShader:`varying vec2 vUv;varying float vD;void main(){vUv=uv;vec4 mv=modelViewMatrix*vec4(position,1.);vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`uniform sampler2D map;uniform float uAspect,uOn,uLoaded,uMirror,uDim;uniform vec3 uLime;varying vec2 vUv;varying float vD;
-      void main(){float pa=1.6;vec2 sc=uAspect>pa?vec2(pa/uAspect,1.):vec2(1.,uAspect/pa);vec3 c=texture2D(map,(vUv-.5)*sc+.5,uMirror*2.).rgb*uLoaded;
-        float l=dot(c,vec3(.299,.587,.114));c=mix(vec3(l)*.16,c*.95,uOn);
-        vec2 e=min(vUv,1.-vUv);float rim=smoothstep(.014,0.,min(e.x*1.6,e.y));c+=mix(vec3(.10),uLime*.9,uOn)*rim;
-        c*=exp(-max(vD-5.,0.)*.10)*uDim;
-        gl_FragColor=vec4(c*mix(1.,.30*smoothstep(.75,0.,vUv.y),uMirror),1.);}`});
-  FEAT.forEach((slug,i)=>{const m=new THREE.Mesh(sgeo,scrMat(0)), r=new THREE.Mesh(sgeo,scrMat(1)); r.material.side=THREE.DoubleSide; r.renderOrder=-1;
-    sload.load(IMG[slug].img,t=>{for(const x of [m,r]){x.material.uniforms.map.value=t;x.material.uniforms.uAspect.value=t.image.width/t.image.height;x.material.uniforms.uLoaded.value=1;}});
-    root.add(m,r); scr.push({m,r,on:0});});
-  const tubeMat=new THREE.ShaderMaterial({uniforms:U,vertexShader:`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform vec3 uLime;uniform float uDim;void main(){gl_FragColor=vec4(uLime*1.6*uDim,1.);}`});
-  const tubes=[0,1].map(()=>{const t=new THREE.Mesh(new THREE.BoxGeometry(.035,2.6,.035),tubeMat);root.add(t);return t});
-  function layoutRoom(nar){const n=scr.length, step=nar?.5:.4, R=nar?4.2:5.4, s=nar?.8:1;
-    scr.forEach((o,i)=>{const a=(i-(n-1)/2)*step, x=Math.sin(a)*R, z=-Math.cos(a)*R+(nar?1.2:1.9), y=FLOOR+SH_*s/2+.06;
-      o.m.position.set(x,y,z); o.m.rotation.y=-a; o.m.scale.set(SW_*s,SH_*s,1);
-      o.r.position.set(x,2*FLOOR-y,z); o.r.rotation.y=-a; o.r.scale.set(SW_*s,-SH_*s,1);});
-    tubes[0].position.set(nar?-1.9:-3.3,FLOOR+1.3,-.9); tubes[1].position.set(nar?1.9:3.3,FLOOR+1.3,-.9); U.uTube.value=nar?1.9:3.3;}
+  // the hall: a dark room with one thing glowing in it, a lime poster screen that shows the featured project.
+  // It lights the floor, the walls and the back of every particle. Ceiling strips give the room its perspective.
+  const PW_=1.9, PH_=2.58, PZ_=-2.4, pc=document.createElement("canvas"); pc.width=750; pc.height=1020;
+  const ptex=new THREE.CanvasTexture(pc); ptex.minFilter=THREE.LinearFilter; ptex.generateMipmaps=false;
+  const pimg={}, tintC=document.createElement("canvas");
+  function inkLogo(g,L,x,y,w){const im=inkLogo[L.src]||(inkLogo[L.src]=Object.assign(new Image(),{src:L.src,onload:()=>{posterFor=-1}})); if(!im.complete||!im.naturalWidth)return;
+    const h=w/L.ar; tintC.width=Math.ceil(w); tintC.height=Math.ceil(h); const t=tintC.getContext("2d"); t.drawImage(im,0,0,w,h); t.globalCompositeOperation="source-in"; t.fillStyle="#000"; t.fillRect(0,0,w,h); g.drawImage(tintC,x,y);}
+  let posterFor=-1;
+  function drawPoster(i){const p=bySlug[FEAT[i]], g=pc.getContext("2d"), W=pc.width, H=pc.height, m=46; if(!p) return;
+    g.fillStyle="#D1FB46"; g.fillRect(0,0,W,H);
+    g.strokeStyle="rgba(0,0,0,.5)"; g.lineWidth=1.5; const hl=(y,x0=m,x1=W-m)=>{g.beginPath();g.moveTo(x0,y);g.lineTo(x1,y);g.stroke()}, vl=(x,y0=m,y1=H-m)=>{g.beginPath();g.moveTo(x,y0);g.lineTo(x,y1);g.stroke()};
+    vl(m);vl(W-m);hl(m,0,W);hl(H-m,0,W);hl(200);hl(452);hl(488);hl(820);hl(928);
+    g.fillStyle="#000"; g.fillRect(0,0,m,m); g.fillRect(W-m-44,452,44,36); g.fillRect(W-m,488,m,150); g.fillRect(0,820,m,108);
+    inkLogo(g,LOGO.cs,m+6,m+26,190);
+    g.font='700 20px "Hogisogi",monospace'; g.textBaseline="alphabetic"; g.textAlign="right"; g.fillText(String(i+1).padStart(2,"0")+" / "+String(FEAT.length).padStart(2,"0"),W-m-6,m+44); g.textAlign="left";
+    // title, as big as fits in three lines
+    const words=p.title.toUpperCase().replace(" — "," ").split(" "); let fs=92, lines=[];
+    for(;fs>40;fs-=4){g.font='900 '+fs+'px "Heuvel Grotesk",Arial,sans-serif'; lines=[]; let cur="";
+      for(const w of words){const t=cur?cur+" "+w:w; if(g.measureText(t).width>W-2*m-12&&cur){lines.push(cur);cur=w}else cur=t} lines.push(cur);
+      if(lines.length<=3&&lines.every(l=>g.measureText(l).width<=W-2*m-12)) break;}
+    lines=lines.slice(0,3); const y0=438-(lines.length-1)*fs*.9; lines.forEach((l,k)=>g.fillText(l,m+4,y0+k*fs*.9));
+    g.font='700 19px "Hogisogi",monospace'; g.fillText(((LANES[p.lane]||{}).name||"").toUpperCase()+(p.year?"  ·  "+p.year:""),m+6,477);
+    const im=pimg[p.slug]||(pimg[p.slug]=Object.assign(new Image(),{src:IMG[p.slug].img,onload:()=>{posterFor=-1}}));
+    const bx=m,by=488,bw=W-2*m,bh=332; g.fillStyle="#111"; g.fillRect(bx,by,bw,bh);
+    if(im.complete&&im.naturalWidth){const ar=im.naturalWidth/im.naturalHeight, br=bw/bh; let sw=im.naturalWidth, sh=im.naturalHeight, sx=0, sy=0; if(ar>br){sw=sh*br;sx=(im.naturalWidth-sw)/2}else{sh=sw/br;sy=(im.naturalHeight-sh)/2} g.drawImage(im,sx,sy,sw,sh,bx,by,bw,bh);}
+    g.fillStyle="#000"; g.font='400 19px "Hogisogi",monospace';
+    const role=(p.role||p.roleShort||"").toUpperCase(); let rl=[],rc=""; for(const w of role.split(" ")){const t=rc?rc+" "+w:w; if(g.measureText(t).width>W-2*m-60&&rc){rl.push(rc);rc=w}else rc=t} rl.push(rc); rl.slice(0,3).forEach((l,k)=>g.fillText(l,m+6,852+k*26));
+    g.font='700 17px "Hogisogi",monospace'; g.fillText("CAYEQUITAS.COM",m+6,H-m-12); g.textAlign="right"; g.fillText("@CAYEQUITAS",W-m-6,H-m-12); g.textAlign="left";
+    inkLogo(g,LOGO.mark,W/2-58,H-m-14-116/LOGO.mark.ar,116);
+    ptex.needsUpdate=true; posterFor=i;}
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{posterFor=-1});
+  const posterMat=(mir)=>new THREE.ShaderMaterial({transparent:!!mir,depthWrite:!mir,blending:mir?THREE.AdditiveBlending:THREE.NormalBlending,uniforms:{map:{value:ptex},uMirror:{value:mir},uDim:U.uDim,uTime:U.uTime},
+    vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`uniform sampler2D map;uniform float uMirror,uDim,uTime;varying vec2 vUv;
+      void main(){vec3 c=texture2D(map,vUv).rgb;c=c*c*1.12;                       // screen: emits what it shows
+        c*=.96+.04*sin(vUv.y*900.)+.015*sin(uTime*3.);
+        gl_FragColor=vec4(c*uDim*mix(1.,.34*smoothstep(.55,0.,vUv.y),uMirror),1.);}`});
+  const sgeo=new THREE.PlaneGeometry(1,1), poster=new THREE.Mesh(sgeo,posterMat(0)), posterR=new THREE.Mesh(sgeo,posterMat(1)); posterR.material.side=THREE.DoubleSide; posterR.renderOrder=-1;
+  const frame_=new THREE.Mesh(new THREE.BoxGeometry(1,1,.12),new THREE.MeshBasicMaterial({color:0x050505}));
+  root.add(poster,posterR,frame_);
+  // walls: dark slats that catch the poster's light
+  const wallMat=()=>new THREE.ShaderMaterial({uniforms:{uLime:U.uLime,uDim:U.uDim,uP:{value:new THREE.Vector3(0,1.4,PZ_)}},
+    vertexShader:`varying vec3 vL;varying float vD;void main(){vec4 w=modelMatrix*vec4(position,1.);vL=position;vec4 mv=viewMatrix*w;vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`uniform vec3 uLime,uP;uniform float uDim;varying vec3 vL;varying float vD;
+      void main(){float sl=smoothstep(.0,.06,abs(fract(vL.x*2.2)-.5)-.18);float hz=smoothstep(.0,.02,abs(fract(vL.y*.55)-.5)-.47);
+        vec2 d=vec2(max(abs(vL.x-uP.x)-.95,0.),max(abs(vL.y-uP.y)-1.3,0.));float lit=exp(-dot(d,d)*.55);
+        vec3 c=vec3(.012)+uLime*lit*(.025+.05*sl)*(1.-hz*.5)+vec3(.02)*sl*exp(-abs(vL.y-3.2)*.8);
+        gl_FragColor=vec4(c*exp(-max(vD-6.,0.)*.08)*uDim,1.);}`});
+  const back=new THREE.Mesh(new THREE.PlaneGeometry(30,10),wallMat()); root.add(back);
+  const sideL=new THREE.Mesh(new THREE.PlaneGeometry(14,10),wallMat()), sideR=new THREE.Mesh(new THREE.PlaneGeometry(14,10),wallMat()); root.add(sideL,sideR);
+  const stripMat=new THREE.ShaderMaterial({uniforms:U,vertexShader:`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uDim;void main(){gl_FragColor=vec4(vec3(1.5,1.55,1.45)*uDim,1.);}`});
+  const strips=[]; for(let i=0;i<8;i++){const t=new THREE.Mesh(new THREE.BoxGeometry(.045,.03,.75),stripMat);root.add(t);strips.push(t)}
+  function layoutRoom(nar){const y=FLOOR+PH_/2+.78, hw=nar?3.1:5.2;
+    poster.position.set(0,y,PZ_); poster.scale.set(PW_,PH_,1); posterR.position.set(0,2*FLOOR-y,PZ_); posterR.scale.set(PW_,-PH_,1);
+    frame_.position.set(0,y,PZ_-.07); frame_.scale.set(PW_+.08,PH_+.08,1);
+    back.position.set(0,FLOOR+5,PZ_-1.3); back.material.uniforms.uP.value.set(0,y-(FLOOR+5),0);
+    sideL.position.set(-hw,FLOOR+5,PZ_-1.3+7); sideL.rotation.y=Math.PI/2; sideL.material.uniforms.uP.value.set(-8.3,y-(FLOOR+5),0);
+    sideR.position.set(hw,FLOOR+5,PZ_-1.3+7); sideR.rotation.y=-Math.PI/2; sideR.material.uniforms.uP.value.set(8.3,y-(FLOOR+5),0);
+    strips.forEach((t,i)=>{const side=i%2?1:-1, k=Math.floor(i/2); t.position.set(side*(hw*.42+k*.34),FLOOR+3.75+k*.12,PZ_+.9+k*1.25); t.rotation.set(.0,side*-.5,side*.25);});
+    U.uTube.value=PZ_;}
 
-  // post: bloom + lit haze. The scene is drawn to a texture, its bright (lime, highlights) parts are blurred twice,
-  // and the wide blur is multiplied by drifting noise so the glow reads as light scattering in fog.
+  // the organic glass form used on every page: a torus and a few lumps, melted together and then bent three times.
+  // No two bulges alike, with a hole through it.
+  const GSHAPE=`float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
+      mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+      float gshape(vec3 q,float T){
+        q+=sin(q.yzx*1.6+T*.16+vec3(0.,1.3,2.1))*.40;
+        q+=sin(q.zxy*3.3-T*.12+vec3(1.7,0.,.6))*.18;
+        q+=sin(q.yzx*6.3+T*.09)*.055;
+        float d=length(vec2(length(q.xy)-.74,q.z))-.33;
+        d=smin(d,length(q-vec3(.52,.46,.30))-.50,.34);
+        d=smin(d,length(q+vec3(.56,.40,.26))-.46,.34);
+        d=smin(d,length(q-vec3(-.30,.62,-.42))-.36,.30);
+        d=smin(d,length(q-vec3(.25,-.70,.35))-.30,.28);
+        return d;}`;
+  // home: two of those forms float in front of the mark. They are marched at half resolution into a small buffer
+  // (surface normal, thickness, coverage) and the final pass bends the finished picture through them.
+  const HG={uTime:U.uTime,uCamPos:{value:new THREE.Vector3()},uCamR:{value:new THREE.Matrix3()},uTan:{value:.4},uAsp:{value:1},uB1:{value:new THREE.Vector4(1.9,.4,1.5,.6)},uB2:{value:new THREE.Vector4(-2.1,1.5,.6,.42)}};
+  const hglass=new THREE.ShaderMaterial({uniforms:HG,vertexShader:VQ,depthTest:false,depthWrite:false,blending:THREE.NoBlending,
+    fragmentShader:`uniform float uTime,uTan,uAsp;uniform vec3 uCamPos;uniform mat3 uCamR;uniform vec4 uB1,uB2;varying vec2 vUv;
+      ${GSHAPE}
+      float map(vec3 p){
+        vec3 a=(p-uB1.xyz)/uB1.w;a.xz*=rot(uTime*.07);a.xy*=rot(.5+uTime*.05);
+        vec3 b=(p-uB2.xyz)/uB2.w;b.yz*=rot(1.3-uTime*.06);b.xy*=rot(2.+uTime*.04);
+        return min(gshape(a,uTime)*uB1.w,gshape(b,uTime*.8+7.)*uB2.w)*.33;}
+      vec3 nrm(vec3 p){vec2 e=vec2(.003,-.003);return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}
+      vec2 sph(vec3 ro,vec3 rd,vec4 s){vec3 oc=ro-s.xyz;float b=dot(oc,rd),c=dot(oc,oc)-s.w*s.w*3.8,h=b*b-c;if(h<0.)return vec2(1e9,-1e9);h=sqrt(h);return vec2(-b-h,-b+h);}
+      void main(){vec2 ndc=vUv*2.-1.;vec3 ro=uCamPos,rd=normalize(uCamR*vec3(ndc.x*uTan*uAsp,ndc.y*uTan,-1.));
+        vec2 h1=sph(ro,rd,uB1),h2=sph(ro,rd,uB2);float t=max(min(h1.x,h2.x),0.),tmax=max(h1.y,h2.y);
+        vec4 o=vec4(.5,.5,0.,0.);
+        if(tmax>t){bool hit=false;
+          for(int i=0;i<96;i++){float d=map(ro+rd*t);if(d<.003){hit=true;break;}t+=d;if(t>tmax)break;}
+          if(hit){vec3 p=ro+rd*t,n=nrm(p);vec3 r1=refract(rd,n,1./1.42);float ti=.03;
+            for(int i=0;i<18;i++){float d=-map(p+r1*ti);if(d<.004)break;ti+=max(d,.02);}
+            vec3 nv=n*uCamR;                                           // world normal to view space
+            o=vec4(nv.xy*.5+.5,clamp(ti*.6,0.,1.),1.);}}
+        gl_FragColor=o;}`});
   let post=null;
   function initPost(){
     const mkrt=(depth)=>new THREE.WebGLRenderTarget(4,4,{type:THREE.HalfFloatType,format:THREE.RGBAFormat,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:!!depth,stencilBuffer:false});
-    const PU={tA:{value:null},tB:{value:null},tC:{value:null},uDir:{value:new THREE.Vector2()},uTime:U.uTime,uAspect:{value:1},uEnergy:U.uEnergy,uLimeD:U.uLimeD,uDim:U.uDim};
+    const PU={tG:{value:null},uRes:{value:new THREE.Vector2(1,1)},uDpr:{value:1},uLime:U.uLime,tA:{value:null},tB:{value:null},tC:{value:null},uDir:{value:new THREE.Vector2()},uTime:U.uTime,uAspect:{value:1},uEnergy:U.uEnergy,uLimeD:U.uLimeD,uDim:U.uDim};
     const m=(fs)=>new THREE.ShaderMaterial({uniforms:PU,vertexShader:VQ,fragmentShader:fs,depthTest:false,depthWrite:false,blending:THREE.NoBlending});
-    post={S:mkrt(1),A:mkrt(),B:mkrt(),C:mkrt(),D:mkrt(),PU,
+    post={S:mkrt(1),A:mkrt(),B:mkrt(),C:mkrt(),D:mkrt(),G:new THREE.WebGLRenderTarget(4,4,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false,stencilBuffer:false}),PU,
       bright:m(`uniform sampler2D tA;varying vec2 vUv;void main(){vec4 c=texture2D(tA,vUv);float lim=clamp((c.g-c.b)*1.7,0.,1.);float hi=max(max(c.r,max(c.g,c.b))-.95,0.);
-        vec3 b=c.rgb*(.03+lim*1.05+hi*.5);b=b/(1.+max(b.r,max(b.g,b.b))*.55);gl_FragColor=vec4(b,1.);}`),
+        vec3 b=c.rgb*(.03+lim*.5+hi*.5);b=b/(1.+max(b.r,max(b.g,b.b))*.55);gl_FragColor=vec4(b,1.);}`),
       blur:m(`uniform sampler2D tA;uniform vec2 uDir;varying vec2 vUv;void main(){vec4 c=texture2D(tA,vUv)*.227;
         c+=(texture2D(tA,vUv+uDir*1.385)+texture2D(tA,vUv-uDir*1.385))*.316;c+=(texture2D(tA,vUv+uDir*3.231)+texture2D(tA,vUv-uDir*3.231))*.0703;gl_FragColor=c;}`),
-      comp:m(`uniform sampler2D tA,tB,tC;uniform float uTime,uAspect,uEnergy,uDim;uniform vec3 uLimeD;varying vec2 vUv;
+      comp:m(`uniform sampler2D tA,tB,tC,tG;uniform float uTime,uAspect,uEnergy,uDim,uDpr;uniform vec2 uRes;uniform vec3 uLime,uLimeD;varying vec2 vUv;
         float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
         float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
         float fbm(vec2 p){return n(p)*.5+n(p*2.03+7.1)*.3+n(p*4.1+3.3)*.2;}
         vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
-        void main(){vec4 s=texture2D(tA,vUv),g1=texture2D(tB,vUv),g2=texture2D(tC,vUv);
+        float box(vec2 p,vec2 c,vec2 s){vec2 d=abs(p-c)-s;return step(max(d.x,d.y),0.);}
+        void main(){
+          // glass: look at the scene through the form, each colour bent a little differently
+          vec4 gl=texture2D(tG,vUv);vec2 gn=(gl.xy*2.-1.)*step(.02,gl.a);float ga=smoothstep(.1,.9,gl.a);
+          vec2 off=-gn*(.07+.10*gl.b)*ga*vec2(1./uAspect,1.);
+          vec4 s=texture2D(tA,vUv+off);s.r=texture2D(tA,vUv+off*.86).r;s.b=texture2D(tA,vUv+off*1.14).b;
+          vec4 g1=texture2D(tB,vUv+off),g2=texture2D(tC,vUv+off);
           vec2 q=vec2(vUv.x*uAspect,vUv.y);float f=fbm(q*2.6+vec2(uTime*.035,-uTime*.02))*fbm(q*1.3-vec2(uTime*.02,0.));
           float grain=(h(vUv*913.+uTime)-.5)*.014;
           // the haze is brightest where the wide glow is, so moving fluid lights the room
           vec3 glow=g1.rgb*.5+g2.rgb*(.4+f*3.);
           vec3 amb=uLimeD*(.03+uEnergy*.05)*f*smoothstep(1.,.25,vUv.y)*uDim;
-          vec3 c=aces(s.rgb*1.05+glow)+amb+grain;
+          vec3 c=aces(s.rgb*1.05+glow)+amb;
+          if(ga>0.){float nz=sqrt(max(1.-dot(gn,gn),0.));vec3 N=vec3(gn,nz);float fr=pow(1.-nz,3.);
+            vec3 tint=exp(-gl.b*vec3(1.1,.25,3.4));                                  // lime-yellow glass, deeper where it is thick
+            vec3 gc=c*mix(vec3(1.),tint,.8)+uLime*.035*gl.b;
+            vec3 Rr=reflect(vec3(0.,0.,-1.),N);
+            float soft=smoothstep(.35,.95,Rr.y)*.55+smoothstep(.16,0.,abs(Rr.y+.12+.1*sin(Rr.x*6.)))*.16+smoothstep(.6,.98,-Rr.x)*.35;
+            gc+=vec3(.92,.96,.9)*soft*(.16+fr*.75)*uDim;                             // the studio lights sliding over it
+            gc+=pow(max(dot(Rr,normalize(vec3(-.4,.75,.55))),0.),140.)*1.1*uDim;      // glints
+            gc+=uLime*fr*.10*uDim;
+            c=mix(c,gc,ga);}
+          c+=grain;
           vec2 vq=vUv-.5;c*=1.-dot(vq,vq)*.55;                            // vignette
+          // brand-book grid as a quiet UI layer: hairlines and small blocks
+          vec2 px=gl_FragCoord.xy/uDpr,Rz=uRes/uDpr;float y=Rz.y-px.y,xr=Rz.x-max(28.,Rz.x*.045),g=0.;
+          g=max(g,1.-step(.5,abs(px.x-xr)));
+          float l1=Rz.y*.17,l2=Rz.y*.46;
+          g=max(g,(1.-step(.5,abs(y-l1)))*step(Rz.x*.60,px.x));
+          g=max(g,(1.-step(.5,abs(y-l2)))*step(Rz.x*.78,px.x));
+          float b=box(vec2(px.x,y),vec2(xr-7.,l1+18.),vec2(7.,18.))+box(vec2(px.x,y),vec2(xr-21.,l1+43.),vec2(7.,7.))+box(vec2(px.x,y),vec2(Rz.x*.80,l2-7.),vec2(7.,7.));
+          c=mix(c,vec3(.8),g*.30);c=mix(c,vec3(.62),min(b,1.)*.75);
           gl_FragColor=vec4(c,1.);}`)};
     sizePost();
   }
   function sizePost(){ if(!post) return; const v=renderer.getDrawingBufferSize(new THREE.Vector2()), w=v.x, h=v.y, q=LITE?5:4;
     post.S.setSize(w,h); post.A.setSize(Math.ceil(w/q),Math.ceil(h/q)); post.B.setSize(Math.ceil(w/q),Math.ceil(h/q));
-    post.C.setSize(Math.ceil(w/q/2.5),Math.ceil(h/q/2.5)); post.D.setSize(Math.ceil(w/q/2.5),Math.ceil(h/q/2.5)); post.PU.uAspect.value=w/h; }
+    post.C.setSize(Math.ceil(w/q/2.5),Math.ceil(h/q/2.5)); post.D.setSize(Math.ceil(w/q/2.5),Math.ceil(h/q/2.5)); post.PU.uAspect.value=w/h;
+    const gq=LITE?3:2; post.G.setSize(Math.ceil(w/gq),Math.ceil(h/gq)); post.PU.uRes.value.set(w,h); post.PU.uDpr.value=renderer.getPixelRatio(); }
   function draw(){
     if(!post){renderer.render(scene,camera);return}
     const {S,A,B,C,D,PU}=post;
@@ -1029,6 +1127,12 @@ const World = (function(){
     PU.tA.value=C.texture; PU.uDir.value.set(0,1.6/C.height); pass(post.blur,D);
     PU.tA.value=D.texture; PU.uDir.value.set(2.4/C.width,0); pass(post.blur,C);
     PU.tA.value=C.texture; PU.uDir.value.set(0,2.4/C.height); pass(post.blur,D);
+    // the glass forms, from the same camera
+    HG.uCamPos.value.copy(camera.position); HG.uCamR.value.setFromMatrix4(camera.matrixWorld); HG.uTan.value=Math.tan(camera.fov*Math.PI/360); HG.uAsp.value=camera.aspect;
+    const tt=U.uTime.value;
+    if(nar){HG.uB1.value.set(1.0,1.55+Math.sin(tt*.2)*.08,.8,.5);HG.uB2.value.set(-.95,3.3+Math.sin(tt*.17+2.)*.08,-.4,.38);}
+    else{HG.uB1.value.set(1.15,1.35+Math.sin(tt*.2)*.07,.5,.46);HG.uB2.value.set(-1.3,2.55+Math.sin(tt*.17+2.)*.07,-.7,.34);}
+    pass(hglass,post.G); PU.tG.value=post.G.texture;
     PU.tA.value=S.texture; PU.tB.value=A.texture; PU.tC.value=D.texture; pass(post.comp,null);
   }
 
@@ -1040,21 +1144,10 @@ const World = (function(){
   const blobRT2=blobRT.clone();
   const glass=new THREE.ShaderMaterial({uniforms:GU,vertexShader:VQ,depthTest:false,depthWrite:false,blending:THREE.NoBlending,
     fragmentShader:`uniform vec2 uRes,uMouse;uniform float uTime,uScroll;uniform vec3 uC,uLime;varying vec2 vUv;
-      float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
-      mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
-      // a torus and a few lumps, melted together and then bent three times: no two bulges alike, with a hole through it
+      ${GSHAPE}
       float map(vec3 p){p-=vec3(uC.xy,0.);p/=uC.z;
         p.xz*=rot(uTime*.05+uScroll*1.4+uMouse.x*.3);p.xy*=rot(.5+uTime*.035-uMouse.y*.2);
-        vec3 q=p;
-        q+=sin(q.yzx*1.6+uTime*.16+vec3(0.,1.3,2.1))*.40;
-        q+=sin(q.zxy*3.3-uTime*.12+vec3(1.7,0.,.6))*.18;
-        q+=sin(q.yzx*6.3+uTime*.09)*.055;
-        float d=length(vec2(length(q.xy)-.74,q.z))-.33;
-        d=smin(d,length(q-vec3(.52,.46,.30))-.50,.34);
-        d=smin(d,length(q+vec3(.56,.40,.26))-.46,.34);
-        d=smin(d,length(q-vec3(-.30,.62,-.42))-.36,.30);
-        d=smin(d,length(q-vec3(.25,-.70,.35))-.30,.28);
-        return d*uC.z*.33;}
+        return gshape(p,uTime)*uC.z*.33;}
       vec3 nrm(vec3 p){vec2 e=vec2(.003,-.003);return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}
       // the studio the glass sees: white, with a dark horizon, a side flag and soft boxes, so every bend shows as a swirl
       vec3 env(vec3 d){float v=.95;
@@ -1154,12 +1247,12 @@ const World = (function(){
     const bt=Math.min(1,(now-burstT)/700), burst=bt<1?Math.pow(1-bt,3):0;
     SIM.uBurst.value=burst*amp; SIM.uFlow.value=0;
     U.uDim.value=cur.dim;
-    scan=((t*.42)%3.6)-1.8;
+    scan=((t*.36)%3.)-1.5;
     U.uScan.value=scan; laser.position.x=scan;
     // slow orbit for depth, plus cursor parallax. The camera looks down a little so the floor and its shadows read.
     const orb=Math.sin(t*.16)*.9, baseZ=nar?9.2:4.9;
-    camera.position.x+=(mouse.nx*1.1+orb-camera.position.x)*.035; camera.position.y+=((nar?2.6:1.25)+mouse.ny*.5+Math.sin(t*.11)*.12-camera.position.y)*.035;
-    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?.2:.3,0);
+    camera.position.x+=(mouse.nx*1.1+orb-camera.position.x)*.035; camera.position.y+=((nar?2.9:1.45)+mouse.ny*.5+Math.sin(t*.11)*.12-camera.position.y)*.035;
+    camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?1.3:1.12,0);
     U.uFocus.value=camera.position.distanceTo(root.position)-.05;
     root.rotation.y=Math.sin(t*.25)*.2;
     root.updateMatrixWorld();
@@ -1175,7 +1268,7 @@ const World = (function(){
     const e=Math.min(1.6,SIM.uHover.value*Math.min(1,mVel.length()/9)+SIM.uDown.value*.9+bl*bl*1.6+burst*.8);
     U.uEnergy.value+=(e-U.uEnergy.value)*(e>U.uEnergy.value?.25:.035); U.uLight.value.set(mLocal.x,0);
     if(ready){step(dt); cloud.U.uScale.value=cur.s; U.uBias.value=cloud.U.uBias.value; cloud.shadow(wc.set(cur.x,cur.y+.55,cur.z));}
-    for(let i=0;i<scr.length;i++){const o=scr[i];o.on+=((i===fi?1:0)-o.on)*.06;o.m.material.uniforms.uOn.value=o.on;o.r.material.uniforms.uOn.value=o.on;}
+    if(posterFor!==fi) drawPoster(fi);
     draw();
     featTick(now);
   }
@@ -1334,11 +1427,15 @@ const Portrait = (function(){
     const pts=new THREE.Points(geo,new THREE.ShaderMaterial({uniforms:U,transparent:true,depthTest:false,depthWrite:false,blending:THREE.NormalBlending,
       vertexShader:`uniform sampler2D tPos,tVel;uniform float uScan,uH,uR;attribute vec2 aRef;attribute float aRand,aCol;varying float vHot,vInk;
         void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);
-          float sc=smoothstep(.03,0.,abs(p.y-uScan));vHot=clamp(sc+smoothstep(.3,2.2,sp),0.,1.);vInk=aCol;
+          vHot=smoothstep(.25,2.,sp);vInk=aCol;
           vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
-          gl_PointSize=max(1.,uR*(.30+aCol*1.12+vHot*.9)*projectionMatrix[1][1]*uH/-mv.z);}`,
-      fragmentShader:`uniform vec3 uLime,uLimeD;varying float vHot,vInk;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
-        vec3 col=mix(vec3(.04),mix(uLimeD,uLime,.55),vHot);gl_FragColor=vec4(col,smoothstep(.5,.3,d)*(.55+vInk*.45+vHot*.3));}`}));
+          gl_PointSize=max(1.,uR*(.30+aCol*1.12+vHot*4.5)*projectionMatrix[1][1]*uH/-mv.z);}`,
+      fragmentShader:`uniform vec3 uLime;varying float vHot,vInk;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
+        // at rest: a hard black dot. moving: a small brand-lime core inside a soft lime glow
+        float hard=smoothstep(.5,.3,d)*(.55+vInk*.45);
+        float core=smoothstep(.16,.08,d),halo=exp(-d*d*22.)*.55;
+        float a=mix(hard,max(core,halo),vHot);
+        gl_FragColor=vec4(mix(vec3(0.),uLime,smoothstep(0.,.35,vHot)),a);}`}));
     pts.frustumCulled=false; root.add(pts); size(); ready=true;};
   im.src=$("#portraitImg").src;
   function size(){const r=canvas.getBoundingClientRect();if(!r.width)return;const pr=DPR(2);renderer.setPixelRatio(pr);renderer.setSize(r.width,r.height,false);U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
