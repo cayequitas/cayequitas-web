@@ -66,3 +66,9 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 - **White pages:** the glass spheres are replaced by one organic, yellow-tinted glass form (ray-marched signed distance field at low resolution), blurred and veiled behind a frosted pane so it stays in the background. The thin hairline grid with small blocks from the brand book sits on top and travels with the scroll.
 - **About:** the portrait is back to points: black ink on a white frosted card, lime where the fluid moves or the scan passes. Same fluid simulation, no spheres.
 - **Lab:** a lattice of tiles receding into depth that drifts on its own. Scroll or drag to fly, point at a tile to light it, click to bring it to the front with its title and link. The lattice repeats, so it can hold any number of R&D posts.
+
+## v1.9 Portrait, real glass, fuller home
+
+- **About portrait** is rebuilt from the new studio photo: one particle per pixel that holds tone (about 100,000 on desktop), sized by darkness like a halftone, black on white, all running in the GPU fluid (stir, blast, swirl). The photo's backdrop is flattened at build time so only the figure becomes particles.
+- **White pages:** the glass form is no longer a blend of spheres. It is a torus and lumps melted together and bent three times, ray-marched at half resolution with refraction through to its far side, dispersion, yellow absorption by thickness and sharp glints. No blur, only a light veil.
+- **Home:** the room is furnished. The six featured projects stand as screens in an arc behind the mark, the one showing in the card is lit, and two lime light tubes mark the sides. All of it reflects in the floor.

@@ -303,7 +303,7 @@ a.ext:hover{background:var(--black);color:var(--lime)}
 .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) invert(1) contrast(1.2) brightness(.55);opacity:0;transition:opacity .6s}
 .portrait.nogl img{opacity:1;filter:grayscale(1) contrast(1.05)}
 .portrait canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.portrait figcaption{position:absolute;left:12px;bottom:10px;font-size:10px;color:var(--grey1);z-index:2}
+.portrait figcaption{position:absolute;left:12px;bottom:10px;font-size:10px;color:#fff;mix-blend-mode:difference;z-index:2;pointer-events:none}
 .portrait::after{content:none;position:absolute;right:10px;top:10px;font-family:var(--mono);font-size:10px;background:var(--lime);color:var(--black);padding:2px 6px}
 
 /* ---------- footer ---------- */
@@ -440,8 +440,8 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--fg)}
       <p>Carlos Serrano is a Colombian media artist and technical director based in Berlin. Since co-founding the collective <a class="ext" href="https://www.muchomasplay.com/" target="_blank" rel="noopener">+PLAY ↗</a> in 2015, he has built real-time visuals and immersive environments for stages, domes, museums and brands.</p>
       <p>His practice starts from the physical world. Photogrammetry, 3D scans and volumetric video become the raw material for generative, reactive systems that examine perception, memory and the machine's gaze. As Cayé he performs live A/V and creates fulldome and installation work; as Carlos Serrano he leads real-time pipelines and technical direction for studios and tours.</p>
       <p>He has taught in the M.A. Media Spaces programme and gives TouchDesigner talks and workshops.</p>
-      <figure class="portrait" id="portrait"><img id="portraitImg" alt="Carlos Serrano performing live at Sonar Istanbul 2025" src="__PORTRAIT__"><canvas id="gl-portrait" aria-hidden="true"></canvas>
-        <figcaption class="mono">Sonar Istanbul 2025 · Photo: Mete Kaan Özdilek</figcaption></figure>
+      <figure class="portrait" id="portrait"><img id="portraitImg" alt="Portrait of Carlos Serrano" src="__PORTRAIT__"><canvas id="gl-portrait" aria-hidden="true"></canvas>
+        <figcaption class="mono">Move to stir · click to blast · hold to swirl</figcaption></figure>
       <p class="mono pnote dim">Draft bio for review. Download CV (generated from the same project data)</p>
     </div>
     <div class="cards">
@@ -767,7 +767,7 @@ function LitCloud(renderer,geo,T,o){
 function Fluid(renderer, base, o){
   o=Object.assign({spring:5.5,springR:3.,flow:.18,fall:7.,drag:9.,vortex:14.,blast:70.,blastR:3.,damp:2.6,vmax:9.,scatter:2.,scatterR:2.5},o);
   const f=n=>Number(n).toFixed(4);
-  const N=base.length/4, TW=LITE?128:256, TH=Math.ceil(N/TW);
+  const N=base.length/4, TW=o.tw||(LITE?128:256), TH=Math.ceil(N/TW);
   const data=new Float32Array(TW*TH*4); data.set(base);
   for(let i=N;i<TW*TH;i++){data[i*4]=99;data[i*4+3]=.5;}
   const tOrigin=new THREE.DataTexture(data,TW,TH,THREE.RGBAFormat,THREE.FloatType); tOrigin.needsUpdate=true;
@@ -845,7 +845,7 @@ const World = (function(){
   const root=new THREE.Group(); scene.add(root);
   const FLOOR=.62-3.4*.5/LOGO.mark.ar-.12;                   // just under the mark, so it stands on its own shadow
   const U={uFloor:{value:FLOOR},uFocus:{value:4.6},uEnergy:{value:0},uLight:{value:new THREE.Vector2(0,0)},uTime:{value:0},uScan:{value:-2},uPx:{value:1},uDim:{value:1},uLime:{value:LIME},uLimeD:{value:LIME_D},tPos:{value:null},tVel:{value:null},
-    tShadow:{value:null},uShadowM:{value:new THREE.Matrix4()},uShR:{value:.004},uBias:{value:.004}};
+    uTube:{value:3.3},tShadow:{value:null},uShadowM:{value:new THREE.Matrix4()},uShR:{value:.004},uBias:{value:.004}};
   const SIM={tPos:{value:null},tVel:{value:null},tOrigin:{value:null},uTime:{value:0},uDt:{value:.016},uFlow:{value:0},uBurst:{value:0},
     uMouse:{value:new THREE.Vector3(9,9,0)},uMouseVel:{value:new THREE.Vector3()},uHover:{value:0},uDown:{value:0},uBlast:{value:new THREE.Vector3(9,9,0)},uBlastAge:{value:9}};
   let cloud=null, count=0, ready=false, TW=256, TH=1, rt=null, flip=0, simScene=null, simCam=null, quad=null, velMat=null, posMat=null;
@@ -945,7 +945,7 @@ const World = (function(){
   // The fluid lights it too: a lime pool under the cursor that grows with the energy of the gesture.
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(44,44),new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:U,
     vertexShader:`uniform mat4 uShadowM;varying vec2 vP;varying float vD;varying vec3 vSh;void main(){vP=vec2(position.x,-position.y);vec4 w=modelMatrix*vec4(position,1.);vSh=(uShadowM*w).xyz*.5+.5;vec4 mv=viewMatrix*w;vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`uniform sampler2D tShadow;uniform vec3 uLime,uLimeD;uniform float uDim,uEnergy,uScan,uTime,uShR,uBias;uniform vec2 uLight;varying vec2 vP;varying float vD;varying vec3 vSh;${LIT_GLSL}
+    fragmentShader:`uniform sampler2D tShadow;uniform vec3 uLime,uLimeD;uniform float uDim,uEnergy,uScan,uTime,uShR,uBias,uTube;uniform vec2 uLight;varying vec2 vP;varying float vD;varying vec3 vSh;${LIT_GLSL}
       float ln(float v){float f=abs(fract(v)-.5);float w=fwidth(v)*1.2;return 1.-smoothstep(0.,w,f);}
       float hh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       void main(){float fog=exp(-max(vD-3.,0.)*.16);
@@ -959,10 +959,33 @@ const World = (function(){
         float tex=.9+.1*hh(floor(vP*90.));
         vec3 col=vec3(.19,.195,.2)*spot*tex*mix(.10,1.,sh);                 // lit floor, darkened by the shadow
         col+=vec3(.5)*g*.07*spot;                                         // faint grid
-        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);                         // light from the moving fluid
+        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);vec2 tb=vec2(abs(vP.x)-uTube,vP.y+.9);col+=uLime*(.20+g*.25)*exp(-dot(tb,tb)*1.1)*mix(.5,1.,sh);                         // light from the moving fluid
         gl_FragColor=vec4(col*fog*uDim,1.);}`}));
   floor.material.extensions={derivatives:true};
   floor.rotation.x=-Math.PI/2; floor.position.y=FLOOR; floor.renderOrder=-2; root.add(floor);
+
+  // the room behind the mark: the featured projects stand as screens in an arc, the one showing in the card is lit.
+  // Two light tubes mark the sides. Everything is reflected in the floor.
+  const scr=[], sgeo=new THREE.PlaneGeometry(1,1), SW_=1.9, SH_=1.19, sload=new THREE.TextureLoader();
+  const scrMat=(mir)=>new THREE.ShaderMaterial({transparent:!!mir,depthWrite:!mir,blending:mir?THREE.AdditiveBlending:THREE.NormalBlending,
+    uniforms:{map:{value:null},uAspect:{value:1.6},uOn:{value:0},uLoaded:{value:0},uMirror:{value:mir},uDim:U.uDim,uLime:U.uLime},
+    vertexShader:`varying vec2 vUv;varying float vD;void main(){vUv=uv;vec4 mv=modelViewMatrix*vec4(position,1.);vD=-mv.z;gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`uniform sampler2D map;uniform float uAspect,uOn,uLoaded,uMirror,uDim;uniform vec3 uLime;varying vec2 vUv;varying float vD;
+      void main(){float pa=1.6;vec2 sc=uAspect>pa?vec2(pa/uAspect,1.):vec2(1.,uAspect/pa);vec3 c=texture2D(map,(vUv-.5)*sc+.5,uMirror*2.).rgb*uLoaded;
+        float l=dot(c,vec3(.299,.587,.114));c=mix(vec3(l)*.16,c*.95,uOn);
+        vec2 e=min(vUv,1.-vUv);float rim=smoothstep(.014,0.,min(e.x*1.6,e.y));c+=mix(vec3(.10),uLime*.9,uOn)*rim;
+        c*=exp(-max(vD-5.,0.)*.10)*uDim;
+        gl_FragColor=vec4(c*mix(1.,.30*smoothstep(.75,0.,vUv.y),uMirror),1.);}`});
+  FEAT.forEach((slug,i)=>{const m=new THREE.Mesh(sgeo,scrMat(0)), r=new THREE.Mesh(sgeo,scrMat(1)); r.material.side=THREE.DoubleSide; r.renderOrder=-1;
+    sload.load(IMG[slug].img,t=>{for(const x of [m,r]){x.material.uniforms.map.value=t;x.material.uniforms.uAspect.value=t.image.width/t.image.height;x.material.uniforms.uLoaded.value=1;}});
+    root.add(m,r); scr.push({m,r,on:0});});
+  const tubeMat=new THREE.ShaderMaterial({uniforms:U,vertexShader:`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform vec3 uLime;uniform float uDim;void main(){gl_FragColor=vec4(uLime*1.6*uDim,1.);}`});
+  const tubes=[0,1].map(()=>{const t=new THREE.Mesh(new THREE.BoxGeometry(.035,2.6,.035),tubeMat);root.add(t);return t});
+  function layoutRoom(nar){const n=scr.length, step=nar?.5:.4, R=nar?4.2:5.4, s=nar?.8:1;
+    scr.forEach((o,i)=>{const a=(i-(n-1)/2)*step, x=Math.sin(a)*R, z=-Math.cos(a)*R+(nar?1.2:1.9), y=FLOOR+SH_*s/2+.06;
+      o.m.position.set(x,y,z); o.m.rotation.y=-a; o.m.scale.set(SW_*s,SH_*s,1);
+      o.r.position.set(x,2*FLOOR-y,z); o.r.rotation.y=-a; o.r.scale.set(SW_*s,-SH_*s,1);});
+    tubes[0].position.set(nar?-1.9:-3.3,FLOOR+1.3,-.9); tubes[1].position.set(nar?1.9:3.3,FLOOR+1.3,-.9); U.uTube.value=nar?1.9:3.3;}
 
   // post: bloom + lit haze. The scene is drawn to a texture, its bright (lime, highlights) parts are blurred twice,
   // and the wide blur is multiplied by drifting noise so the glow reads as light scattering in fog.
@@ -1019,34 +1042,52 @@ const World = (function(){
     fragmentShader:`uniform vec2 uRes,uMouse;uniform float uTime,uScroll;uniform vec3 uC,uLime;varying vec2 vUv;
       float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
       mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+      // a torus and a few lumps, melted together and then bent three times: no two bulges alike, with a hole through it
       float map(vec3 p){p-=vec3(uC.xy,0.);p/=uC.z;
-        p.xz*=rot(uTime*.06+uScroll*1.4+uMouse.x*.25);p.xy*=rot(.4+uTime*.045-uMouse.y*.15);
-        float d=length(p)-.62;
-        for(int i=0;i<6;i++){float fi=float(i);
-          vec3 c=vec3(sin(fi*2.4+uTime*.19),cos(fi*1.7+uTime*.15),sin(fi*3.1-uTime*.17))*(.78+.2*sin(fi*1.3));
-          d=smin(d,length(p-c)-(.40+.13*sin(fi*5.)),.42);}
-        d+=sin(p.x*3.1+uTime*.35)*sin(p.y*2.7-uTime*.2)*sin(p.z*2.9)*.075;
-        return d*uC.z*.8;}
-      vec3 nrm(vec3 p){vec2 e=vec2(.004,-.004);return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}
-      vec3 env(vec3 r){float w=sin(r.y*6.+sin(r.x*4.+uTime*.1)*1.6);return vec3(.80)+vec3(.2)*smoothstep(-.2,.9,w)+vec3(.25)*smoothstep(.6,1.,r.y);}
+        p.xz*=rot(uTime*.05+uScroll*1.4+uMouse.x*.3);p.xy*=rot(.5+uTime*.035-uMouse.y*.2);
+        vec3 q=p;
+        q+=sin(q.yzx*1.6+uTime*.16+vec3(0.,1.3,2.1))*.40;
+        q+=sin(q.zxy*3.3-uTime*.12+vec3(1.7,0.,.6))*.18;
+        q+=sin(q.yzx*6.3+uTime*.09)*.055;
+        float d=length(vec2(length(q.xy)-.74,q.z))-.33;
+        d=smin(d,length(q-vec3(.52,.46,.30))-.50,.34);
+        d=smin(d,length(q+vec3(.56,.40,.26))-.46,.34);
+        d=smin(d,length(q-vec3(-.30,.62,-.42))-.36,.30);
+        d=smin(d,length(q-vec3(.25,-.70,.35))-.30,.28);
+        return d*uC.z*.33;}
+      vec3 nrm(vec3 p){vec2 e=vec2(.003,-.003);return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}
+      // the studio the glass sees: white, with a dark horizon, a side flag and soft boxes, so every bend shows as a swirl
+      vec3 env(vec3 d){float v=.95;
+        v-=.50*smoothstep(.16,0.,abs(d.y+.18+.08*sin(d.x*5.)));
+        v-=.28*smoothstep(.22,0.,abs(d.x-.45))*smoothstep(-.2,.5,d.y);
+        v-=.20*smoothstep(.5,1.,-d.y);
+        v+=.10*smoothstep(.7,1.,d.y);
+        return vec3(v);}
       void main(){vec2 uv=(gl_FragCoord.xy-.5*uRes)/uRes.y;
         vec3 bg=vec3(.945,.945,.94);
         vec2 sd=uv-(uC.xy*.36+vec2(-.62,-.10)*uC.z);bg*=1.-.10*exp(-dot(sd*vec2(.8,2.2),sd*vec2(.8,2.2))*2.2/(uC.z*uC.z));   // its soft shadow on the wall
         vec3 ro=vec3(0.,0.,5.),rd=normalize(vec3(uv,-1.8));
-        float t=2.;bool hit=false;
-        for(int i=0;i<52;i++){float d=map(ro+rd*t);if(d<.004){hit=true;break;}t+=d;if(t>9.)break;}
         vec3 col=bg;
-        if(hit){vec3 p=ro+rd*t,n=nrm(p);float nv=max(dot(n,-rd),0.);
-          vec3 rf=refract(rd,n,.74);float th=0.;vec3 q=p+rf*.05;
-          for(int i=0;i<12;i++){float d=map(q);th+=step(d,0.)*.14;q+=rf*.14;}              // how much glass the ray crosses
-          vec3 tint=exp(-th*vec3(.16,.05,1.9));                                             // yellow-lime absorption
-          vec3 behind=bg*(.92+.08*sin(q.y*9.+q.x*6.));
-          col=behind*mix(vec3(1.),tint,.9)+vec3(.10,.10,0.)*(1.-tint.b);
-          float fr=.04+.96*pow(1.-nv,4.);
-          col=mix(col,env(reflect(rd,n)),fr*.75);
-          col+=pow(max(dot(reflect(rd,n),normalize(vec3(-.4,.8,.45))),0.),60.)*.6;
-          col+=vec3(.15,.3,.9)*pow(1.-nv,7.)*.35;                                           // blue fringe on the rim
-          col*=.86+.14*smoothstep(0.,.5,nv);}
+        // only rays that cross its bounding sphere are marched
+        vec3 oc=ro-vec3(uC.xy,0.);float bb=dot(oc,rd),cc=dot(oc,oc)-pow(1.95*uC.z,2.),hh=bb*bb-cc;
+        if(hh>0.){float t=max(-bb-sqrt(hh),0.),tmax=-bb+sqrt(hh);bool hit=false;
+          for(int i=0;i<110;i++){float d=map(ro+rd*t);if(d<.0025){hit=true;break;}t+=d;if(t>tmax)break;}
+          if(hit){vec3 p=ro+rd*t,n=nrm(p);float nv=max(dot(n,-rd),0.);
+            // go through the glass to its far side, then out again
+            vec3 r1=refract(rd,n,1./1.42);float ti=.03;vec3 q=p;
+            for(int i=0;i<26;i++){q=p+r1*ti;float d=-map(q);if(d<.003)break;ti+=max(d,.012);}
+            vec3 n2=-nrm(q);vec3 tr=vec3(0.);
+            for(int k=0;k<3;k++){float ior=1.38+float(k)*.05;vec3 r2=refract(r1,n2,ior);if(dot(r2,r2)<.01)r2=reflect(r1,n2);tr[k]=env(r2+n*.15)[k];}
+            vec3 ab=exp(-ti*vec3(.14,.035,1.25)/uC.z);                                   // yellow absorption grows with the thickness crossed
+            tr=tr*ab+vec3(.07,.07,0.)*(1.-ab.b);                                    // and the thick parts glow a little
+            float fr=.03+.97*pow(1.-nv,5.);
+            vec3 rl=env(reflect(rd,n));
+            col=mix(tr,rl,fr*.85);
+            vec3 hv=reflect(rd,n);
+            col+=pow(max(dot(hv,normalize(vec3(-.45,.75,.5))),0.),220.)*1.4;            // sharp light glints
+            col+=pow(max(dot(hv,normalize(vec3(.6,.3,.7))),0.),30.)*.12;
+            col+=vec3(.12,.25,.95)*pow(1.-nv,6.)*.30*smoothstep(-.2,.6,n.x-n.y);        // blue fringe on some rims
+          }}
         gl_FragColor=vec4(col,1.);}`});
   const blurM=new THREE.ShaderMaterial({uniforms:GU,vertexShader:VQ,depthTest:false,depthWrite:false,blending:THREE.NoBlending,
     fragmentShader:`uniform sampler2D tA;uniform vec2 uPx;varying vec2 vUv;void main(){vec4 c=texture2D(tA,vUv)*.227;
@@ -1056,9 +1097,9 @@ const World = (function(){
       float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float box(vec2 p,vec2 c,vec2 s){vec2 d=abs(p-c)-s;return step(max(d.x,d.y),0.);}
       void main(){vec2 px=gl_FragCoord.xy/uDpr;vec2 R=uRes/uDpr;
-        vec2 j=(vec2(h(gl_FragCoord.xy),h(gl_FragCoord.xy+17.))-.5)*.010;                   // frosted: each pixel looks a slightly different way
+        vec2 j=(vec2(h(gl_FragCoord.xy),h(gl_FragCoord.xy+17.))-.5)*.0022;                   // frosted: each pixel looks a slightly different way
         vec3 c=texture2D(tA,vUv+j).rgb;
-        c=mix(c,vec3(.975),.38);                                                            // the pane in front
+        c=mix(c,vec3(.975),.34);                                                            // the pane in front
         // brand-book grid: hairlines and small blocks, fixed to the screen, the horizontals travel with the scroll
         float y=R.y-px.y;float xr=R.x-max(28.,R.x*.045);float g=0.;
         g=max(g,1.-step(.5,abs(px.x-xr)));
@@ -1072,19 +1113,14 @@ const World = (function(){
         c+=(h(gl_FragCoord.xy+uTime)-.5)*.014;
         gl_FragColor=vec4(c,1.);}`});
   function drawGlass(t){
-    const v=renderer.getDrawingBufferSize(new THREE.Vector2()), q=LITE?5:4, w=Math.ceil(v.x/q), h=Math.ceil(v.y/q);
+    const v=renderer.getDrawingBufferSize(new THREE.Vector2()), q=LITE?2.5:2, w=Math.ceil(v.x/q), h=Math.ceil(v.y/q);
     if(blobRT.width!==w||blobRT.height!==h){blobRT.setSize(w,h);blobRT2.setSize(w,h);}
     const asp=v.x/v.y, nar=asp<.8;
     GU.uTime.value=t; GU.uScroll.value=sy*.0006; GU.uScrollPx.value=sy; GU.uDpr.value=renderer.getPixelRatio();
     GU.uMouse.value.x+=(mouse.nx-GU.uMouse.value.x)*.04; GU.uMouse.value.y+=(mouse.ny-GU.uMouse.value.y)*.04;
     // the form sits low on the right, partly off the page, so the content keeps the stage
-    GU.uC.value.set(nar?.55:asp*.98, (nar?-1.05:-.5)+Math.sin(t*.13)*.06+GU.uMouse.value.y*.05, nar?.9:1.3);
+    GU.uC.value.set(nar?.55:asp*.98, (nar?-1.05:-.5)+Math.sin(t*.13)*.06+GU.uMouse.value.y*.05, nar?.8:1.12);
     GU.uRes.value.set(w,h); pass(glass,blobRT);
-    const br=LITE?.7:.9;
-    GU.tA.value=blobRT.texture; GU.uPx.value.set(br/w,0); pass(blurM,blobRT2);
-    GU.tA.value=blobRT2.texture; GU.uPx.value.set(0,br/h); pass(blurM,blobRT);
-    GU.tA.value=blobRT.texture; GU.uPx.value.set(br*1.6/w,0); pass(blurM,blobRT2);
-    GU.tA.value=blobRT2.texture; GU.uPx.value.set(0,br*1.6/h); pass(blurM,blobRT);
     GU.tA.value=blobRT.texture; GU.uRes.value.copy(v); pass(frost,null);
   }
 
@@ -1105,7 +1141,7 @@ const World = (function(){
     Object.assign(tgt,{x:0,y:nar?.9:.2,z:0,s:1,dim:1});
   }
   function resize(){const pr=DPR(LITE?1.5:2);renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;
-    camera.position.z=innerWidth<820?9.2:4.9;camera.updateProjectionMatrix();U.uPx.value=pr*(innerHeight/900);targets();sizePost();
+    camera.position.z=innerWidth<820?9.2:4.9;camera.updateProjectionMatrix();U.uPx.value=pr*(innerHeight/900);targets();sizePost();layoutRoom(innerWidth<820);
     if(cloud) cloud.U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
   addEventListener("resize",()=>{if(mode)resize()});
   function frame(now){
@@ -1139,6 +1175,7 @@ const World = (function(){
     const e=Math.min(1.6,SIM.uHover.value*Math.min(1,mVel.length()/9)+SIM.uDown.value*.9+bl*bl*1.6+burst*.8);
     U.uEnergy.value+=(e-U.uEnergy.value)*(e>U.uEnergy.value?.25:.035); U.uLight.value.set(mLocal.x,0);
     if(ready){step(dt); cloud.U.uScale.value=cur.s; U.uBias.value=cloud.U.uBias.value; cloud.shadow(wc.set(cur.x,cur.y+.55,cur.z));}
+    for(let i=0;i<scr.length;i++){const o=scr[i];o.on+=((i===fi?1:0)-o.on)*.06;o.m.material.uniforms.uOn.value=o.on;o.r.material.uniforms.uOn.value=o.on;}
     draw();
     featTick(now);
   }
@@ -1281,14 +1318,13 @@ const Portrait = (function(){
   let fluid=null, t0=0, ready=false, inside=false;
   const im=new Image();
   im.onload=()=>{
-    const w=LITE?110:216,h=Math.round(w*1.25),c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
+    const w=LITE?250:400,h=Math.round(w*1.25),c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.drawImage(im,0,0,w,h);const d=g.getImageData(0,0,w,h).data;
     const base=[],ink=[];const SW=1.97,SH=2.46,cell=SW/w;
-    const ls=[];for(let i=0;i<w*h;i++){const L=d[i*4]/255;if(L<=.9)ls.push(L)} ls.sort((a,b)=>a-b);const lo=ls[Math.floor(ls.length*.04)]||0,hi=ls[Math.floor(ls.length*.96)]||1; // stretch the photo's own tones
-    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255; if(L>.9) continue; // the white backdrop stays paper
-      const k=Math.pow(1-Math.min(1,Math.max(0,(L-lo)/(hi-lo||1))),1.3); if(Math.random()>.04+k*.9) continue;                    // darker areas hold more points
-      base.push((x/w-.5)*SW+(Math.random()-.5)*cell*.9,-(y/h-.5)*SH+(Math.random()-.5)*cell*.9,(L-.5)*.10+(Math.random()-.5)*.02,Math.random()*.999);
+    // one particle per pixel of the photo that holds any tone: its size is the darkness there, like a halftone
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const L=d[(y*w+x)*4]/255, k=Math.pow(1-L,.62); if(k<.17) continue;
+      base.push((x/w-.5)*SW+(Math.random()-.5)*cell*.55,-(y/h-.5)*SH+(Math.random()-.5)*cell*.55,(k-.5)*.10,Math.random()*.999);
       ink.push(k);}
-    fluid=Fluid(renderer,base,{spring:7,springR:4,flow:.07,fall:9,drag:7,vortex:10,blast:45,blastR:5,scatter:1.2,scatterR:1.6});
+    fluid=Fluid(renderer,base,{tw:LITE?256:512,spring:7,springR:4,flow:.05,fall:9,drag:7,vortex:10,blast:45,blastR:5,scatter:1.2,scatterR:1.6});
     U.tPos=fluid.T.tPos; U.tVel=fluid.T.tVel; U.uR.value=cell;
     const geo=new THREE.BufferGeometry();
     geo.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(fluid.N*3),3));
@@ -1300,9 +1336,9 @@ const Portrait = (function(){
         void main(){vec3 p=texture2D(tPos,aRef).xyz;float sp=length(texture2D(tVel,aRef).xyz);
           float sc=smoothstep(.03,0.,abs(p.y-uScan));vHot=clamp(sc+smoothstep(.3,2.2,sp),0.,1.);vInk=aCol;
           vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
-          gl_PointSize=max(1.,uR*(.42+aCol*.62+fract(aRand*7.31)*.15+vHot*.6)*projectionMatrix[1][1]*uH/-mv.z);}`,
+          gl_PointSize=max(1.,uR*(.30+aCol*1.12+vHot*.9)*projectionMatrix[1][1]*uH/-mv.z);}`,
       fragmentShader:`uniform vec3 uLime,uLimeD;varying float vHot,vInk;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
-        vec3 col=mix(vec3(.04),mix(uLimeD,uLime,.55),vHot);gl_FragColor=vec4(col,smoothstep(.5,.34,d)*(.7+vInk*.3+vHot*.3));}`}));
+        vec3 col=mix(vec3(.04),mix(uLimeD,uLime,.55),vHot);gl_FragColor=vec4(col,smoothstep(.5,.3,d)*(.55+vInk*.45+vHot*.3));}`}));
     pts.frustumCulled=false; root.add(pts); size(); ready=true;};
   im.src=$("#portraitImg").src;
   function size(){const r=canvas.getBoundingClientRect();if(!r.width)return;const pr=DPR(2);renderer.setPixelRatio(pr);renderer.setSize(r.width,r.height,false);U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
