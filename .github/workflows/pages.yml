@@ -22,6 +22,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -29,6 +31,22 @@ jobs:
         run: |
           pip install fonttools brotli
           python3 prototype/build.py --public --site _site
+      # Design previews, served next to the live site so both can be compared online:
+      #   /preview/long-scroll/  latest redesign (branch claude/project-thread-fasidj)
+      #   /preview/fluid/        the earlier particle-fluid iteration of that redesign
+      # They are rebuilt on every deploy; to refresh them after pushing the redesign branch,
+      # run this workflow by hand (Actions > Deploy prototype to GitHub Pages > Run workflow).
+      - name: Build design previews
+        run: |
+          git fetch origin claude/project-thread-fasidj
+          preview () {
+            git worktree add "$RUNNER_TEMP/$1" "$2"
+            python3 "$RUNNER_TEMP/$1/prototype/build.py" --public --site "_site/preview/$1"
+            # keep previews out of search results
+            sed -i 's#<head>#<head>\n<meta name="robots" content="noindex">#' "_site/preview/$1/index.html"
+          }
+          preview long-scroll FETCH_HEAD
+          preview fluid a5afe17
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
