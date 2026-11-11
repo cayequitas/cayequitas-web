@@ -93,3 +93,8 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 
 - Home: the slatted walls and scattered strips are replaced by a plain charcoal room with a ceiling and two recessed linear lights running from the back wall toward the camera.
 - Walls, ceiling and floor are lit by the analytic falloff of those two line lights, with a soft glossy streak on the floor.
+
+## v2.4 — open space
+
+- Home: the room (walls, ceiling, lights) and both grids (floor grid and the brand-book hairline overlay) are removed. Only the floor and the particles remain.
+- The camera sits closer (z 3.85 desktop, 7.4 phone) so the mark fills more of the screen. Particle size is unchanged.

@@ -960,9 +960,8 @@ const World = (function(){
         float lit=clamp(pool+sc,0.,1.6);
         float tex=.9+.1*hh(floor(vP*90.));
         vec3 col=vec3(.19,.195,.2)*spot*tex*mix(.10,1.,sh);                 // lit floor, darkened by the shadow
-        col+=vec3(.5)*g*.035*spot;                                         // faint grid
-        col+=uLime*lit*(.16+g*.4)*mix(.55,1.,sh);for(int i=0;i<2;i++){float dx=vP.x-(i==0?-uBars[0].x:uBars[0].x);float h=uBars[0].y;float r2=dx*dx+h*h;col+=vec3(.9,.91,.88)*uSI*.085*tex*(h/sqrt(r2))/(r2*.55+sqrt(r2)*.5+.1)*mix(.35,1.,sh);}
-        gl_FragColor=vec4(col*fog*uDim,1.);}`}));
+                                                 // faint grid
+        col+=uLime*lit*.2*mix(.55,1.,sh);gl_FragColor=vec4(col*fog*uDim,1.);}`}));
   floor.material.extensions={derivatives:true};
   floor.rotation.x=-Math.PI/2; floor.position.y=FLOOR; floor.renderOrder=-2; root.add(floor);
 
@@ -1011,7 +1010,7 @@ const World = (function(){
     const t=new THREE.Mesh(new THREE.PlaneGeometry(.045,LLEN),stripMat), sl=new THREE.Mesh(new THREE.PlaneGeometry(.11,LLEN),slotMat), r=new THREE.Mesh(new THREE.PlaneGeometry(.9,LLEN),reflMat);
     r.renderOrder=-1; root.add(sl,t,r); strips.push(t); slots.push(sl); refls.push(r);}
   function layoutRoom(nar){const hw=nar?2.6:4.6, lx=nar?1.25:2.35, H=nar?3.3:2.45, ly=FLOOR+H, zb=PZ_-1.6, zm=zb+LLEN/2;
-    bars.forEach(o=>o.ms.forEach(m=>m.visible=false));
+    bars.forEach(o=>o.ms.forEach(m=>m.visible=false)); [back,sideL,sideR,ceil,...strips,...slots,...refls].forEach(m=>m.visible=false);   // open space: floor and particles only
     LU.uLX.value=lx; LU.uLY.value=ly; BU.uBars.value[0].set(lx,H,1);
     back.position.set(0,FLOOR+6,zb);
     sideL.position.set(-hw,FLOOR+6,zb+8); sideL.rotation.y=Math.PI/2;
@@ -1106,7 +1105,6 @@ const World = (function(){
           g=max(g,(1.-step(.5,abs(y-l1)))*step(Rz.x*.60,px.x));
           g=max(g,(1.-step(.5,abs(y-l2)))*step(Rz.x*.78,px.x));
           float b=box(vec2(px.x,y),vec2(xr-7.,l1+18.),vec2(7.,18.))+box(vec2(px.x,y),vec2(xr-21.,l1+43.),vec2(7.,7.))+box(vec2(px.x,y),vec2(Rz.x*.80,l2-7.),vec2(7.,7.));
-          c=mix(c,vec3(.8),g*.30);c=mix(c,vec3(.62),min(b,1.)*.75);
           gl_FragColor=vec4(c,1.);}`)};
     sizePost();
   }
@@ -1232,7 +1230,7 @@ const World = (function(){
     Object.assign(tgt,{x:0,y:nar?.9:.2,z:0,s:1,dim:1});
   }
   function resize(){const pr=DPR(LITE?1.5:2);renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;
-    camera.position.z=innerWidth<820?9.2:4.9;camera.updateProjectionMatrix();U.uPx.value=pr*(innerHeight/900);targets();sizePost();layoutRoom(innerWidth<820);
+    camera.position.z=innerWidth<820?7.4:3.85;camera.updateProjectionMatrix();U.uPx.value=pr*(innerHeight/900);targets();sizePost();layoutRoom(innerWidth<820);
     if(cloud) cloud.U.uH.value=renderer.getDrawingBufferSize(new THREE.Vector2()).y;}
   addEventListener("resize",()=>{if(mode)resize()});
   function frame(now){
@@ -1247,7 +1245,7 @@ const World = (function(){
     U.uDim.value=cur.dim;
     U.uScan.value=-9; laser.visible=false;
     // slow orbit for depth, plus cursor parallax. The camera looks down a little so the floor and its shadows read.
-    const orb=Math.sin(t*.16)*.9, baseZ=nar?9.2:4.9;
+    const orb=Math.sin(t*.16)*.9, baseZ=nar?7.4:3.85;
     camera.position.x+=(mouse.nx*1.1+orb-camera.position.x)*.035; camera.position.y+=((nar?2.8:1.35)+mouse.ny*.5+Math.sin(t*.11)*.12-camera.position.y)*.035;
     camera.position.z+=(baseZ-Math.abs(orb)*.25-camera.position.z)*.035; camera.lookAt(0,nar?.9:.72,0);
     U.uFocus.value=camera.position.distanceTo(root.position)-.05;
