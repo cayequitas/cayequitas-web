@@ -103,3 +103,8 @@ floating wireframe cubes, rings and the tron floor grid, and the blurred 3D ambi
 
 - Home floor: polished dark marble generated in the shader (cloudy black body, long white veins, fine hairlines), so it is sharp at any resolution and costs no download. The mirrored particles are stronger on it.
 - Home background: a linear gradient, black at the bottom to dark grey at the top.
+
+## v2.6 — home back to the v1.7 studio
+
+- Home is restored to the 17:20 version of 11 Nov (v1.7): dark studio, faint grid floor with shadow and reflection, mark size, particle size and camera as they were. The room, ceiling lights, marble floor and background gradient are removed.
+- Kept from later work: the scan line stays off on home, and the About portrait and white pages are unchanged.
