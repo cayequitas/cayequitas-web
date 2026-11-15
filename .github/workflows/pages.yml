@@ -31,24 +31,26 @@ jobs:
         run: |
           pip install fonttools brotli
           python3 prototype/build.py --public --site _site
-      # Design previews, served next to the live site so both can be compared online:
-      #   /preview/next/         latest redesign (branch claude/project-thread-fasidj)
-      #   /preview/long-scroll/  the long-scroll iteration of that redesign
+      # Next to the live site:
+      #   /archive/              the previous site (main as of 15 Nov 2026, commit f1ebd02), kept online for reference
+      #   /preview/next/         work in progress on branch claude/project-thread-fasidj
+      #   /preview/long-scroll/  the long-scroll iteration of the redesign
       #   /preview/fluid/        the earlier particle-fluid iteration
-      # They are rebuilt on every deploy; to refresh them after pushing the redesign branch,
+      # They are rebuilt on every deploy; to refresh /preview/next/ after pushing that branch,
       # run this workflow by hand (Actions > Deploy prototype to GitHub Pages > Run workflow).
-      - name: Build design previews
+      - name: Build archive and design previews
         run: |
-          git fetch origin claude/project-thread-fasidj
-          preview () {
-            git worktree add "$RUNNER_TEMP/$1" "$2"
-            python3 "$RUNNER_TEMP/$1/prototype/build.py" --public --site "_site/preview/$1"
-            # keep previews out of search results
-            sed -i 's#<head>#<head>\n<meta name="robots" content="noindex">#' "_site/preview/$1/index.html"
+          git fetch origin claude/project-thread-fasidj || true
+          extra () {   # extra <site path> <name> <commit>
+            git worktree add "$RUNNER_TEMP/$2" "$3"
+            python3 "$RUNNER_TEMP/$2/prototype/build.py" --public --site "_site/$1"
+            # keep these copies out of search results
+            sed -i 's#<head>#<head>\n<meta name="robots" content="noindex">#' "_site/$1/index.html"
           }
-          preview next FETCH_HEAD
-          preview long-scroll ace7932
-          preview fluid a5afe17
+          extra archive archive f1ebd02
+          if git rev-parse -q --verify FETCH_HEAD >/dev/null; then extra preview/next next FETCH_HEAD; fi
+          extra preview/long-scroll long-scroll ace7932
+          extra preview/fluid fluid a5afe17
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
