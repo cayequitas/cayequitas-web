@@ -109,6 +109,11 @@ for p in P:
     if not w: continue
     p['media'] = {'hero': w['hero'], 'body': w['body'], 'gallery': w['gallery'], 'credits': w['credits']}
 PUBLIC = '--public' in sys.argv
+# --mediajob: the media-designer application variant (variants/mediajob.py)
+MEDIAJOB = '--mediajob' in sys.argv
+if MEDIAJOB:
+    sys.path.insert(0, os.path.join(base, 'variants'))
+    import mediajob
 if PUBLIC:
     # Review build for GitHub Pages: no prototype notes, placeholders or TBC markers.
     import re
@@ -127,8 +132,9 @@ if PUBLIC:
         S2.append(s)
     P, SHOWS = P2, S2
     html = re.sub(r'<p class="[^"]*\bpnote\b[^"]*"[^>]*>.*?</p>', '', html, flags=re.S)
-    html = html.replace('__TITLE__', 'Carlos Serrano · Portfolio')
+    html = html.replace('__TITLE__', mediajob.TITLE if MEDIAJOB else 'Carlos Serrano · Portfolio')
     VENUES = ['Biennale Danza Venezia', 'Berlin Atonal', 'Roskilde', 'Primavera Sound', 'Zeiss-Großplanetarium', 'Parookaville', 'Art Basel Miami Beach', 'Red Dot']
+    if MEDIAJOB: VENUES = [v.replace('&', '&amp;') for v in mediajob.RIBBON]
     tick = ''.join('<span>%s</span>' % v for v in VENUES * 2)
     html = html.replace('__RIBBON__', '<div class="tick mono" aria-label="Selected venues"><div class="track">%s</div></div><a class="mono ig" href="https://www.instagram.com/cayequitas/" target="_blank" rel="noopener">@cayequitas ↗</a>' % tick)
     html = html.replace('<main', '<script>document.documentElement.classList.add("public")</script><main', 1)
@@ -139,6 +145,7 @@ else:
     html = html.replace('__RIBBON__', '<div class="tick mono"><div class="track"><span>Prototype v1.0 · look and structure only</span><span>Heuvel Grotesk + Hogisogi · real logos</span><span>Prototype v1.0 · look and structure only</span><span>Heuvel Grotesk + Hogisogi · real logos</span></div></div>')
     html = html.replace('const P = ', 'const PUBLIC = false;\nconst P = ', 1)
     out = os.path.join(base, 'cayequitas-prototype.html')
+if MEDIAJOB: html = mediajob.apply(html)
 html = html.replace('__MEDIA__', 'assets/media/' if '--site' in sys.argv else 'media/')
 html = html.replace('__IMGDATA__', json.dumps(IMG)).replace('__PROJECTS__', json.dumps(P, ensure_ascii=False)).replace('__SHOWS__', json.dumps(SHOWS, ensure_ascii=False)).replace('__LAB__', json.dumps(LAB, ensure_ascii=False))
 import base64
@@ -196,8 +203,8 @@ else:
     head = head.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', '')
     doc = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
            '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
-           '<meta name="theme-color" content="#000000">\n'
-           '<meta name="description" content="Carlos Serrano (Cayé): media artist and technical director in Berlin. Real-time visuals, immersive worlds and live A/V.">\n'
+           '<meta name="theme-color" content="#000000">\n' +
+           ('<meta name="description" content="%s">\n' % (mediajob.DESC.replace('&', '&amp;') if MEDIAJOB else 'Carlos Serrano (Cayé): media artist and technical director in Berlin. Real-time visuals, immersive worlds and live A/V.')) +
            '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n' + preload + head + '\n</head>\n<body>\n' + body + '\n</body>\n</html>\n')
     open(os.path.join(SITE, 'index.html'), 'w').write(doc)
     open(os.path.join(SITE, '.nojekyll'), 'w').write('')

@@ -31,6 +31,9 @@ jobs:
         run: |
           pip install fonttools brotli
           python3 prototype/build.py --public --site _site
+          # /mediajob/: the media-designer application variant (prototype/variants/mediajob.py), unlisted
+          python3 prototype/build.py --public --mediajob --site _site/mediajob
+          sed -i 's#<head>#<head>\n<meta name="robots" content="noindex">#' _site/mediajob/index.html
       # Next to the live site:
       #   /archive/              the previous site (main as of 15 Nov 2026, commit f1ebd02), kept online for reference
       #   /preview/next/         work in progress on branch claude/project-thread-fasidj

@@ -33,3 +33,7 @@ Heuvel Grotesk and Hogisogi are in `prototype/fonts/` (source files) and `protot
 ### Palette
 
 #000000, #FFFFFF, #5A5A5A, #707070, Synthetic Green #D1FB46, #86A80C. No other accents.
+
+### Media-designer variant
+
+`python3 prototype/build.py --public --mediajob --site _site/mediajob` builds the same site in a commercial voice for job applications: a Brand work view with short cases, a media-designer bio and home line, brands in the ribbon. Content lives in `prototype/variants/mediajob.py`. Pages serves it unlisted at `/mediajob/`.
